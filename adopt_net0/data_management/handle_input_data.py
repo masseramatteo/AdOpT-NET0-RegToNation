@@ -713,13 +713,13 @@ class DataHandle:
         """
         connection_data = {}
         connection_pressures = {}
+        target_carriers = self.model_config["performance"]["pressure"][
+            "compressed_carrier"
+        ]
 
         for investment_period in self.topology["investment_periods"]:
             connection_data[investment_period] = {}
             connection_pressures[investment_period] = {}
-            target_carriers = self.model_config["performance"]["pressure"][
-                "compressed_carrier"
-            ]
 
             for carrier_i in target_carriers:
                 connection_data[investment_period][carrier_i] = {}
@@ -762,17 +762,17 @@ class DataHandle:
                             # the function add_network_to_list should not only add the network
                             # but also it should already read the pressure information and add to the list/dictionary
 
-                    technologies_by_node = self.technology_data[investment_period][
+                    technologies_at_node = self.technology_data[investment_period][
                         node_i
                     ]
-                    for _, technologies_i in technologies_by_node.items():
+                    for _, technology_i in technologies_at_node.items():
                         # first we look at the one that has hydrogen as input
-                        if carrier_i in technologies_i.input_parameters.pressure.keys():
-                            pressure_param = technologies_i.input_parameters.pressure
+                        if carrier_i in technology_i.input_parameters.pressure.keys():
+                            pressure_param = technology_i.input_parameters.pressure
                             if "inlet" in pressure_param[carrier_i]:
                                 # as done it before we have a function that write the technology and their INPUT pressure
                                 tech, pressure = add_tech_to_list(
-                                    technologies_i, carrier_i, "Input"
+                                    technology_i, carrier_i, "Input"
                                 )
                                 connection_data[investment_period][carrier_i][node_i][
                                     "inputs"
@@ -783,7 +783,7 @@ class DataHandle:
                             if "outlet" in pressure_param[carrier_i]:
                                 # same as before, but with OUTPUT carrier and pressure
                                 tech, pressure = add_tech_to_list(
-                                    technologies_i, carrier_i, "Output"
+                                    technology_i, carrier_i, "Output"
                                 )
                                 # technology_output.append([tech, pressure, node_i])
                                 connection_data[investment_period][carrier_i][node_i][

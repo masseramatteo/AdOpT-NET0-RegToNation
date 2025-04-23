@@ -210,6 +210,14 @@ def open_json(tec: str, load_path: Path) -> dict:
 
 
 def add_tech_to_list(tech_obj, carrier, direction):
+    """
+    Add a docstring here
+
+    :param tech_obj:
+    :param carrier:
+    :param direction:
+    :return:
+    """
     pressure_data = tech_obj.input_parameters.pressure
     tech_name = tech_obj.name
     pressure = ()
@@ -221,6 +229,14 @@ def add_tech_to_list(tech_obj, carrier, direction):
 
 
 def add_netw_to_list(netw_obj, carrier, direction):
+    """
+    Add a docstring here
+
+    :param tech_obj:
+    :param carrier:
+    :param direction:
+    :return:
+    """
     pressure_data = netw_obj.input_parameters.pressure
     netw_name = netw_obj.name
     pressure = ()

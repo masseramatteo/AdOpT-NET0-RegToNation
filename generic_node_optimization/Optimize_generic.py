@@ -54,6 +54,9 @@ configuration["solveroptions"]["lpwarmstart"]["value"] = 0
 configuration["solveroptions"]["NoRelHeurTime"] = 0
 configuration["solveroptions"]["timelim"]["value"] = 50
 
+configuration["reporting"]["save_path"]["value"] = str(results_data_path)
+configuration["reporting"]["save_summary_path"]["value"] = str(results_data_path)
+
 # Set pressure consideration
 configuration["performance"]["pressure"]["pressure_on"]["value"] = 1
 configuration["performance"]["pressure"]["pressure_carriers"]["value"] = ["hydrogen"]
@@ -142,7 +145,7 @@ define_hydrogen_pipeline2(input_data_path)
 define_hydrogen_storage(input_data_path)
 define_electrolyzers(input_data_path)
 
-n_timestep = 1
+n_timestep = 10
 
 hourly_data = {}
 connection_pressure_data = {}

@@ -174,11 +174,11 @@
         },
         "save_summary_path": {
             "description": "Path to save the summary file path to.",
-            "value": "./userData/"
+            "value": "/home/mmassera/data/storage_matteo/PycharmProjects/AdOpT-NET0-RegToNation/generic_node_optimization/userData"
         },
         "save_path": {
             "description": "Option to define the save path.",
-            "value": "./userData/"
+            "value": "/home/mmassera/data/storage_matteo/PycharmProjects/AdOpT-NET0-RegToNation/generic_node_optimization/userData"
         },
         "case_name": {
             "description": "Option to define a case study name that is added to the results folder name.",

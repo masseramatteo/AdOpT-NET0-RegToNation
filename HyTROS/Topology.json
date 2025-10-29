@@ -1,0 +1,32 @@
+{
+    "nodes": [
+        "Roermond",
+        "Dongen",
+        "Oosterhout",
+        "Maastricht",
+        "Venlo",
+        "Arnhem",
+        "East_Groningen",
+        "Betuwe",
+        "Heerlen",
+        "Dordrecht",
+        "Wageningen",
+        "Rotterdam",
+        "Zeeland",
+        "North_Sea",
+        "North_Netherlands",
+        "Chemelot",
+        "Zuidwending"
+    ],
+    "carriers": [
+        "electricity",
+        "hydrogen"
+    ],
+    "investment_periods": [
+        "period1"
+    ],
+    "start_date": "2022-01-01 00:00",
+    "end_date": "2022-01-01 00:00",
+    "resolution": "1h",
+    "investment_period_length": 1
+}

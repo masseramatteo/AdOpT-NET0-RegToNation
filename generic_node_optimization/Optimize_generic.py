@@ -12,12 +12,13 @@ from define_components_spec import define_electrolyzers
 
 import adopt_net0 as adopt
 
+base_path =Path(__file__).parent
 # Create folder for results
-results_data_path = Path(r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\FirstWork simulations\x_nodes_generation\userData")
+results_data_path = base_path/"userData"
 results_data_path.mkdir(parents=True, exist_ok=True)
 
 # Create input data path and optimization templates
-input_data_path = Path(r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\FirstWork simulations\x_nodes_generation")
+input_data_path = base_path
 input_data_path.mkdir(parents=True, exist_ok=True)
 
 adopt.create_optimization_templates(input_data_path)
@@ -65,7 +66,7 @@ adopt.create_input_data_folder_template(input_data_path)
 
 # Define node locations - read from generated scenario file
 scenario_to_use = "1751"  # Start with first scenario for testing
-scenario_node_file = Path(r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\FirstWork simulations\x_nodes_generation\input_data\scenarios") / f"NodeLocations_{scenario_to_use}.csv"
+scenario_node_file = base_path/"input_data"/"scenarios" / f"NodeLocations_{scenario_to_use}.csv"
 
 if scenario_node_file.exists():
     # Read the generated scenario coordinates
@@ -141,7 +142,7 @@ define_hydrogen_pipeline2(input_data_path)
 define_hydrogen_storage(input_data_path)
 define_electrolyzers(input_data_path)
 
-n_timestep = 744
+n_timestep = 1
 
 hourly_data = {}
 connection_pressure_data = {}

@@ -29,7 +29,7 @@ def calculate_distances_from_coordinates(input_data_path, scenario_to_use):
     from the generated topology scenario.
     """
     # Read coordinates from the generated scenario file
-    scenario_file = Path(r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\FirstWork simulations\x_nodes_generation\input_data\scenarios") / f"NodeLocations_{scenario_to_use}.csv"
+    scenario_file = input_data_path /"input_data"/"scenarios" / f"NodeLocations_{scenario_to_use}.csv"
     
     if not scenario_file.exists():
         raise FileNotFoundError(f"Scenario file not found: {scenario_file}")

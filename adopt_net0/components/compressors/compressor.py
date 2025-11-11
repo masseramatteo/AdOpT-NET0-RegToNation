@@ -21,7 +21,14 @@ log = logging.getLogger(__name__)
 
 class Compressor(ModelComponent):
     """
-    Class to read and manage data for compressors
+    Class to read and manage data for compressors.
+
+    Important
+    ---------
+    - The component that has the gas as **output** is defined as ``output_component``
+      (with respective output pressure, type, existing).
+    - The component that has the gas as **input** is defined as ``input_component``
+      (with respective input pressure, type, existing).
 
     **Parameter declarations:**
 
@@ -88,12 +95,11 @@ class Compressor(ModelComponent):
         self.sequence = None
         self.compression_active = None
 
-        # TODO: definition of input/output
         self.output_component = compr_data["connection_info"]["components"][0]
         self.input_component = compr_data["connection_info"]["components"][1]
         self.output_pressure = compr_data["connection_info"]["pressure"][0]
         self.input_pressure = compr_data["connection_info"]["pressure"][1]
-        # to be fixed
+
         self.carrier = compr_data["carrier"]
         self.output_type = compr_data["connection_info"]["type"][0]
         self.input_type = compr_data["connection_info"]["type"][1]
@@ -204,11 +210,6 @@ class Compressor(ModelComponent):
         # SET T
         self.set_t_full = set_t_full
 
-        # MODELING TYPICAL DAYS
-        technologies_modelled_with_full_res = config["optimization"]["typicaldays"][
-            "technologies_with_full_res"
-        ]["value"]
-
         if config["optimization"]["typicaldays"]["N"]["value"] == 0:
             # everything with full resolution
             self.modelled_with_full_res = True
@@ -228,24 +229,8 @@ class Compressor(ModelComponent):
             # be full resolution
             self.set_t_global = set_t_full
 
-        # Coefficients
-        if self.modelled_with_full_res:
-            if config["optimization"]["timestaging"]["value"] == 0:
-                self.processed_coeff.time_dependent_used = (
-                    self.processed_coeff.time_dependent_full
-                )
-            else:
-                self.processed_coeff.time_dependent_used = (
-                    self.processed_coeff.time_dependent_averaged
-                )
-        else:
-            self.processed_coeff.time_dependent_used = (
-                self.processed_coeff.time_dependent_clustered
-            )
-
         # GENERAL TECHNOLOGY CONSTRAINTS
         b_compr = self._define_flow(b_compr)
-        b_compr = self._define_compressor_name(b_compr)
         if self.compression_active == 1:
             b_compr = self._define_energyconsumption_parameters(b_compr)
             b_compr = self._define_energy_consumption(b_compr, data)
@@ -256,16 +241,6 @@ class Compressor(ModelComponent):
             b_compr = self._define_capex_constraints(b_compr, data)
             b_compr = self._define_opex_fixed(b_compr, data)
 
-        return b_compr
-
-    def _define_compressor_name(self, b_compr):
-        """
-        Defines the name of the component as carrier_component1_component2(_existing)
-
-        :param b_compr: pyomo block with compressor model
-        :return: pyomo block with compressor model
-        """
-        b_compr.para_name = pyo.Param(initialize=[self.name_compressor], within=pyo.Any)
         return b_compr
 
     def _define_flow(self, b_compr):
@@ -543,38 +518,75 @@ class Compressor(ModelComponent):
 
         return b_compr
 
-    def _define_decommissioning_at_once_constraints(self, b_compr):
+    # def _define_decommissioning_at_once_constraints(self, b_compr):
+    #     """
+    #     Defines constraints to ensure that a technology can only be decommissioned as a whole.
+    #
+    #     This function creates a disjunction formulation that enforces
+    #     full-plant decommissioning decisions, meaning that either the technology is fully installed
+    #     or fully decommissioned, with no partial decommissioning allowed.
+    #
+    #     :param b_tec: The block representing the technology.
+    #
+    #     :return: The modified technology block with added decommissioning constraints.
+    #     """
+    #
+    #     # Full plant decommissioned only
+    #     self.big_m_transformation_required = 1
+    #     s_indicators = range(0, 2)
+    #
+    #     def init_decommission_full(dis, ind):
+    #         if ind == 0:  # compressor not installed
+    #             dis.const_decommissioned = pyo.Constraint(expr=b_compr.var_size == 0)
+    #         else:  # tech installed
+    #             dis.const_installed = pyo.Constraint(
+    #                 expr=b_compr.var_size == b_compr.para_size_initial
+    #             )
+    #
+    #     b_compr.dis_decommission_full = gdp.Disjunct(
+    #         s_indicators, rule=init_decommission_full
+    #     )
+    #
+    #     def bind_disjunctions(dis):
+    #         return [b_compr.dis_decommission_full[i] for i in s_indicators]
+    #
+    #     b_compr.disjunction_decommission_full = gdp.Disjunction(rule=bind_disjunctions)
+    #
+    #     return b_compr
+
+    def write_results_compressor_design(self, h5_group, model_block):
         """
-        Defines constraints to ensure that a technology can only be decommissioned as a whole.
+        Function to report compressor design
 
-        This function creates a disjunction formulation that enforces
-        full-plant decommissioning decisions, meaning that either the technology is fully installed
-        or fully decommissioned, with no partial decommissioning allowed.
+        :param model_block: pyomo network block
+        :param h5_group: h5 group to write to
+        """
+        if self.compression_active == 1:
+            h5_group.create_dataset("size", data=[model_block.var_size.value])
+            if self.existing == 0:
+                h5_group.create_dataset("capex_tot", data=[model_block.var_capex.value])
+            else:
+                return
+        else:
+            return
 
-        :param b_tec: The block representing the technology.
+    def write_results_compressor_operation(self, h5_group, model_block):
+        """
+        Function to report compressor operation
 
-        :return: The modified technology block with added decommissioning constraints.
+        :param model_block: pyomo network block
+        :param h5_group: h5 group to write to
         """
 
-        # Full plant decommissioned only
-        self.big_m_transformation_required = 1
-        s_indicators = range(0, 2)
-
-        def init_decommission_full(dis, ind):
-            if ind == 0:  # tech not installed
-                dis.const_decommissioned = pyo.Constraint(expr=b_compr.var_size == 0)
-            else:  # tech installed
-                dis.const_installed = pyo.Constraint(
-                    expr=b_compr.var_size == b_compr.para_size_initial
-                )
-
-        b_compr.dis_decommission_full = gdp.Disjunct(
-            s_indicators, rule=init_decommission_full
+        h5_group.create_dataset(
+            "flow", data=[model_block.var_flow[t].value for t in self.set_t_global]
         )
 
-        def bind_disjunctions(dis):
-            return [b_compr.dis_decommission_full[i] for i in s_indicators]
-
-        b_compr.disjunction_decommission_full = gdp.Disjunction(rule=bind_disjunctions)
-
-        return b_compr
+        for car in model_block.set_consumed_carriers:
+            h5_group.create_dataset(
+                "energy consumption",
+                data=[
+                    model_block.var_consumption_energy[t, car].value
+                    for t in self.set_t_global
+                ],
+            )

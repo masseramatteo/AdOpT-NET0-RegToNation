@@ -320,7 +320,7 @@ class DataHandle:
                 ) as json_file:
                     connection_pressure_options = json.load(json_file)
 
-                    # CHeck for correct data
+                    # Check for correct data
                     for carrier, connections in connection_pressure_options.items():
                         for connection_type, value in connections.items():
                             if not isinstance(value["value"], (int, float)):
@@ -849,9 +849,7 @@ class DataHandle:
             "outputs": [],
         }
 
-        # here actually we should look at connection.loc [node_i, NODE 2] =1
         for _, network_i in self.network_data[investment_period].items():
-            # here there is a matrix in network_topology
             if "pressure" in network_i.performance_data:
                 if carrier_i in network_i.performance_data["pressure"].keys():
                     if network_i.connection.loc[node_i, :].sum() >= 1:
@@ -861,15 +859,14 @@ class DataHandle:
                         )
 
                     if network_i.connection.loc[:, node_i].sum() >= 1:
+                        # means that there is a network arriving at this node
                         pressure_data_at_node["outputs"].append(
                             get_pressure_info(network_i, carrier_i, "Output")
                         )
 
-                    # the function add_network_to_list should not only add the network
-                    # but also it should already read the pressure information and add to the list/dictionary
         technologies_by_node = self.technology_data[investment_period][node_i]
         for _, technologies_i in technologies_by_node.items():
-            # first we look at the one that has hydrogen as input
+            # We look at the one that has the gas as input
             if "pressure" in technologies_i.performance_data:
                 if carrier_i in technologies_i.performance_data["pressure"].keys():
                     pressure_param = technologies_i.performance_data["pressure"]
@@ -930,6 +927,23 @@ class DataHandle:
                     "name": "Import",
                     "pressure": (info_node_exchange_pressure["Import"]["value"]),
                     "type": "Import",
+                    "existing": 1,
+                }
+            )
+
+        if (
+            self.time_series["full"][investment_period][node_i]["CarrierData"][
+                carrier_i
+            ]["Generic production"].any()
+            != 0
+        ):
+            pressure_data_at_node["outputs"].append(
+                {
+                    "name": "Generic production",
+                    "pressure": (
+                        info_node_exchange_pressure["Generic production"]["value"]
+                    ),
+                    "type": "Generic production",
                     "existing": 1,
                 }
             )

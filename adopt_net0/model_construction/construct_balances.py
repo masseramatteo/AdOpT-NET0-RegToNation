@@ -1,5 +1,4 @@
 import pyomo.environ as pyo
-from networkx.classes import nodes
 
 from ..utilities import get_set_t, get_data_for_investment_period
 
@@ -106,29 +105,83 @@ def construct_network_constraints(model, config: dict):
 
 def construct_compressor_constrains(model, config: dict):
     """
-    Construct the compressor constraints to calculate inflow and outflow for each compressor
-    For each carrier consider with pressure, at each node:
+    Construct the compressor constraints to calculate inflow and outflow for each compressor.
+
+    For each **period**, **node**, and **carrier**, compressor flows must satisfy the following constraints.
+
+    Technologies
+    ------------
 
     .. math::
-      inflowFromTechnology = \\sum(flow \for all compressor that as the technology as inflow)\\
+
+       Output\_tech_{tec}(t, car) =
+       \sum_{i \in C^{in}_{node,car,\,tec}} flow^{comp}_i(t, car)
 
     .. math::
-      inflowFromNetwork = \\sum(flow \for all compressor that as the network as inflow)\\
+
+       Input\_tech_{tec}(t, car) =
+       \sum_{i \in C^{out}_{node,car,\,tec}} flow^{comp}_i(t, car)
+
+
+    Networks
+    --------
 
     .. math::
-      outflowToTechnology = \\sum(flow \for all compressor that as the technology as outflow)\\
+
+       Input\_{netw}(t, car) =
+       \sum_{i \in C^{in}_{node,car,\,netw}} flow^{comp}_i(t, car)
 
     .. math::
-      outflowToNetwork = \\sum(flow \for all compressor that as the network as outflow)\\
+
+       Output\_{netw}(t, car) =
+       \sum_{i \in C^{out}_{node,car,\,netw}} flow^{comp}_i(t, car)
+
+
+    Demand
+    ------
 
     .. math::
-      outflowToDemand = \\sum(flow \for all compressor that as the demand as outflow)\\
+
+       Demand(t, car) =
+       \sum_{i \in C^{out}_{node,car,\,demand}} flow^{comp}_i(t, car)
+
+
+    Export
+    ------
 
     .. math::
-      outflowToExport = \\sum(flow \for all compressor that as the export as outflow)\\
+
+       Export(t, car) =
+       \sum_{i \in C^{out}_{node,car,\,export}} flow^{comp}_i(t, car)
+
+
+    Import
+    ------
 
     .. math::
-      inflowToImport = \\sum(flow \for all compressor that as the import as inflow)\\
+
+       Import(t, car) =
+       \sum_{i \in C^{in}_{node,car,\,import}} flow^{comp}_i(t, car)
+
+
+    Generic Production
+    ------------------
+
+    .. math::
+
+       Generic Production(t, car) =
+       \sum_{i \in C^{in}_{node,car,\,genProd}} flow^{comp}_i(t, car)
+
+    Notation
+    --------
+    - :math:`t` = time step
+    - :math:`car` = carrier (e.g. hydrogen, methane, etc.)
+    - :math:`tec` = technology at the node
+    - :math:`netw` = network at the node
+    - :math:`flow^{comp}_i(t, car)` = flow through compressor :math:`i` at time :math:`t` for carrier :math:`car`
+    - :math:`C^{in}_{node,car,x}` = set of compressors at the node that provide inflow to component :math:`x` for :math:`car`
+    - :math:`C^{out}_{node,car,x}` = set of compressors at the node that provide outflow to component :math:`x` for :math:`car`
+    --------
 
     :param model: pyomo model
     :param dict config: dict containing model information
@@ -268,6 +321,25 @@ def construct_compressor_constrains(model, config: dict):
 
             b_compr_const.const_compr_inflow_import = pyo.Constraint(
                 set_t, rule=init_compr_inflow_import
+            )
+
+            def init_compr_generic_production(const, t):
+                """Define constrain for the flow input to compressor from generic production"""
+                if any(
+                    compressor[0] == car and compressor[2] == "Generic production"
+                    for compressor in b_node.set_compressor
+                ):
+                    return b_node.var_generic_production[t, car] == sum(
+                        b_node.compressor_blocks_active[compressor].var_flow[t]
+                        for compressor in b_node.set_compressor
+                        if (compressor[0] == car)
+                        and (compressor[1] == "Generic production")
+                    )
+                else:
+                    return pyo.Constraint.Skip
+
+            b_compr_const.const_compr_inflow_generic_production = pyo.Constraint(
+                set_t, rule=init_compr_generic_production
             )
 
         else:

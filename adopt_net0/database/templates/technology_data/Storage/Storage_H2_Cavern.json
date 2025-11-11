@@ -30,7 +30,8 @@
       "hydrogen"
     ],
     "emission_factor": 0,
-    "allow_only_one_direction": 0,
+    "allow_only_one_direction": 1,
+    "allow_only_one_direction_precise": 1,
     "performance": {
       "eta_in": 0.93,
       "eta_out": 0.93,
@@ -40,6 +41,12 @@
         "in": {
           "electricity": 0.011
         }
+      }
+    },
+    "pressure": {
+      "hydrogen": {
+        "inlet": 450,
+        "outlet": 450
       }
     }
   },

@@ -1,0 +1,1 @@
+all pipeline have min size equal to zero

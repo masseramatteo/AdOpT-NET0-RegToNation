@@ -1,0 +1,84 @@
+
+Gurobi 12.0.3 (win64) logging started Wed Oct 15 17:05:28 2025
+
+Set parameter LogFile to value "userData\20251015170528-1\solver_log.txt"
+Set parameter TimeLimit to value 1080000
+Set parameter MIPGap to value 0.02
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 0
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value -1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Set parameter NoRelHeurTime to value 1500
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (win64 - Windows Server 2016.0 (14393.2))
+
+CPU model: QEMU Virtual CPU version 2.5+, instruction set [SSE2]
+Thread count: 48 physical cores, 48 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  1080000
+MIPGap  0.02
+LPWarmStart  0
+NodefileStart  60
+NoRelHeurTime  1500
+
+Optimize a model with 5154 rows, 4584 columns and 11652 nonzeros
+Model fingerprint: 0x9320876e
+Variable types: 3888 continuous, 696 integer (696 binary)
+Coefficient statistics:
+  Matrix range     [3e-03, 7e+04]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 7e+09]
+  RHS range        [1e+00, 1e+05]
+Warning: Model contains large bounds
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 4380 rows and 3433 columns
+Presolve time: 0.01s
+Presolved: 774 rows, 1151 columns, 2681 nonzeros
+Variable types: 815 continuous, 336 integer (336 binary)
+Found heuristic solution: objective 9.384269e+08
+Starting NoRel heuristic
+Found heuristic solution: objective 8.746664e+07
+Found heuristic solution: objective 8.248410e+07
+Found heuristic solution: objective 8.203916e+07
+Found heuristic solution: objective 7.549579e+07
+Found heuristic solution: objective 7.263696e+07
+Found heuristic solution: objective 6.802251e+07
+Found heuristic solution: objective 6.752319e+07
+Found heuristic solution: objective 5.587163e+07
+Found heuristic solution: objective 5.535606e+07
+Found heuristic solution: objective 5.488912e+07
+Found heuristic solution: objective 5.485200e+07
+Found heuristic solution: objective 5.451445e+07
+Found heuristic solution: objective 5.432062e+07
+Found heuristic solution: objective 5.403208e+07
+Found heuristic solution: objective 5.390308e+07
+Found heuristic solution: objective 5.389722e+07
+Found heuristic solution: objective 5.355476e+07
+Found heuristic solution: objective 5.353672e+07
+Found heuristic solution: objective 5.351869e+07
+Elapsed time for NoRel heuristic: 5s (best bound 4.8906e+07)
+Elapsed time for NoRel heuristic: 12s (best bound 4.8906e+07)
+Elapsed time for NoRel heuristic: 19s (best bound 4.8906e+07)
+Elapsed time for NoRel heuristic: 26s (best bound 4.8906e+07)
+Elapsed time for NoRel heuristic: 31s (best bound 4.8906e+07)
+Elapsed time for NoRel heuristic: 37s (best bound 4.8906e+07)
+Elapsed time for NoRel heuristic: 44s (best bound 4.8906e+07)
+Elapsed time for NoRel heuristic: 50s (best bound 4.8906e+07)
+NoRel heuristic complete
+
+Explored 0 nodes (0 simplex iterations) in 53.63 seconds (12.78 work units)
+Thread count was 32 (of 48 available processors)
+
+Solution count 10: 5.35187e+07 5.35367e+07 5.35548e+07 ... 5.48891e+07
+
+Solve interrupted
+Best objective 5.351869114420e+07, best bound 4.890601881468e+07, gap 8.6188%

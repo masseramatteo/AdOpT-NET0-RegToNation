@@ -1,0 +1,101 @@
+
+Gurobi 12.0.3 (win64) logging started Fri Sep 19 16:23:01 2025
+
+Set parameter LogFile to value "userData\20250919162210-1\solver_log.txt"
+Set parameter TimeLimit to value 1080000
+Set parameter MIPGap to value 0.02
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 0
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value -1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (win64 - Windows Server 2016.0 (14393.2))
+
+CPU model: QEMU Virtual CPU version 2.5+, instruction set [SSE2]
+Thread count: 48 physical cores, 48 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  1080000
+MIPGap  0.02
+LPWarmStart  0
+NodefileStart  60
+
+Optimize a model with 517932 rows, 352357 columns and 1168726 nonzeros
+Model fingerprint: 0x03fdc808
+Variable types: 295237 continuous, 57120 integer (56784 binary)
+Coefficient statistics:
+  Matrix range     [3e-03, 2e+05]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 7e+09]
+  RHS range        [1e+00, 1e+05]
+Warning: Model contains large bounds
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 398532 rows and 239208 columns
+Presolve time: 3.12s
+Presolved: 119400 rows, 113149 columns, 415189 nonzeros
+Variable types: 84589 continuous, 28560 integer (28560 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing primal log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   11905    5.1621264e+07   3.098142e+01   9.762492e+08      5s
+   18766    1.7674751e+08   0.000000e+00   2.226098e+07      5s
+   48824    1.1248826e+08   0.000000e+00   1.194124e+10     10s
+   70061    9.8792185e+07   0.000000e+00   8.290403e+08     15s
+   81673    9.3411505e+07   0.000000e+00   1.239039e+09     20s
+   91046    9.0757595e+07   0.000000e+00   2.343574e+09     25s
+   98868    8.9212961e+07   0.000000e+00   8.806056e+08     30s
+  107568    8.7174422e+07   0.000000e+00   5.428423e+08     35s
+  119386    8.5950977e+07   0.000000e+00   6.368392e+08     40s
+  132040    8.4851609e+07   0.000000e+00   2.316699e+09     45s
+  140323    8.4015922e+07   0.000000e+00   2.284433e+08     50s
+  148999    8.3054296e+07   0.000000e+00   5.598251e+08     55s
+  156090    8.2672502e+07   0.000000e+00   5.182347e+06     60s
+  163345    8.2665744e+07   0.000000e+00   2.314824e+06     65s
+  169099    8.2658322e+07   0.000000e+00   1.160635e+06     70s
+  174295    8.2655708e+07   0.000000e+00   1.952268e+06     75s
+Concurrent spin time: 0.00s
+
+Solved with dual simplex
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+  151698    8.2644468e+07   0.000000e+00   1.298326e+02     85s
+  151699    8.2644468e+07   0.000000e+00   0.000000e+00     85s
+Extra simplex iterations after uncrush: 1
+
+Root relaxation: objective 8.264447e+07, 151699 iterations, 81.16 seconds (67.84 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 8.2644e+07    0   47          - 8.2644e+07      -     -   85s
+H    0     0                    8.527376e+07 8.2644e+07  3.08%     -   87s
+H    0     0                    8.505603e+07 8.2644e+07  2.84%     -   87s
+H    0     0                    8.372130e+07 8.2666e+07  1.26%     -  196s
+     0     0 8.2688e+07    0  588 8.3721e+07 8.2688e+07  1.23%     -  199s
+
+Cutting planes:
+  MIR: 838
+  Flow cover: 1747
+  Network: 20
+
+Explored 1 nodes (194084 simplex iterations) in 199.89 seconds (172.84 work units)
+Thread count was 32 (of 48 available processors)
+
+Solution count 3: 8.37213e+07 8.5056e+07 8.52738e+07 
+
+Optimal solution found (tolerance 2.00e-02)
+Best objective 8.372130088325e+07, best bound 8.268846489090e+07, gap 1.2337%

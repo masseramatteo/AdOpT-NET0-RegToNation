@@ -56,6 +56,8 @@ def network_factory(netw_data: dict):
         return Electricity(netw_data)
     elif netw_data["network_type"] == "simple":
         return Simple(netw_data)
+    elif netw_data["network_type"] == "FixedPipeline":
+        return FixedPipeline(netw_data)
 
 
 def technology_factory(tec_data: dict):

@@ -1,0 +1,22 @@
+{
+    "nodes": [
+        "BIG1",
+        "BIG2",
+        "SMALL1",
+        "SMALL2",
+        "SMALL3",
+        "SMALL4",
+        "STORAGE"
+    ],
+    "carriers": [
+        "electricity",
+        "hydrogen"
+    ],
+    "investment_periods": [
+        "period1"
+    ],
+    "start_date": "2022-01-01 00:00",
+    "end_date": "2022-01-01 09:00",
+    "resolution": "1h",
+    "investment_period_length": 1
+}

@@ -1,0 +1,90 @@
+
+Gurobi 12.0.3 (win64) logging started Mon Sep 22 17:42:25 2025
+
+Set parameter LogFile to value "userData\20250922174224-1\solver_log.txt"
+Set parameter TimeLimit to value 1080000
+Set parameter MIPGap to value 0.02
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 0
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value -1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (win64 - Windows Server 2016.0 (14393.2))
+
+CPU model: QEMU Virtual CPU version 2.5+, instruction set [SSE2]
+Thread count: 48 physical cores, 48 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  1080000
+MIPGap  0.02
+LPWarmStart  0
+NodefileStart  60
+
+Optimize a model with 6590 rows, 4500 columns and 13269 nonzeros
+Model fingerprint: 0xa7e535f4
+Variable types: 3154 continuous, 1346 integer (1010 binary)
+Coefficient statistics:
+  Matrix range     [3e-03, 5e+07]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 7e+09]
+  RHS range        [1e+00, 5e+07]
+Warning: Model contains large bounds
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 5974 rows and 3677 columns
+Presolve time: 0.03s
+Presolved: 616 rows, 823 columns, 2224 nonzeros
+Variable types: 487 continuous, 336 integer (336 binary)
+Found heuristic solution: objective 4.775948e+09
+
+Root relaxation: objective 3.794566e+07, 630 iterations, 0.01 seconds (0.01 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 3.7946e+07    0   14 4.7759e+09 3.7946e+07  99.2%     -    0s
+H    0     0                    3.096928e+08 3.7946e+07  87.7%     -    0s
+H    0     0                    1.965864e+08 3.7946e+07  80.7%     -    0s
+H    0     0                    1.439309e+08 3.7946e+07  73.6%     -    0s
+     0     0 9.0936e+07    0   14 1.4393e+08 9.0936e+07  36.8%     -    0s
+H    0     0                    1.421216e+08 9.0970e+07  36.0%     -    0s
+     0     0 1.2366e+08    0   10 1.4212e+08 1.2366e+08  13.0%     -    0s
+     0     0 1.2366e+08    0   10 1.4212e+08 1.2366e+08  13.0%     -    0s
+     0     0 1.2367e+08    0   14 1.4212e+08 1.2367e+08  13.0%     -    0s
+     0     0 1.2367e+08    0   14 1.4212e+08 1.2367e+08  13.0%     -    0s
+     0     0 1.2873e+08    0   12 1.4212e+08 1.2873e+08  9.42%     -    0s
+     0     0 1.2873e+08    0   14 1.4212e+08 1.2873e+08  9.42%     -    0s
+     0     0 1.2873e+08    0   10 1.4212e+08 1.2873e+08  9.42%     -    0s
+     0     0 1.2873e+08    0   13 1.4212e+08 1.2873e+08  9.42%     -    0s
+     0     0 1.2873e+08    0   13 1.4212e+08 1.2873e+08  9.42%     -    0s
+     0     0 1.2898e+08    0    8 1.4212e+08 1.2898e+08  9.24%     -    0s
+     0     0 1.2898e+08    0    8 1.4212e+08 1.2898e+08  9.24%     -    0s
+     0     0 1.2916e+08    0    8 1.4212e+08 1.2916e+08  9.12%     -    0s
+     0     0 1.2927e+08    0   13 1.4212e+08 1.2927e+08  9.04%     -    0s
+     0     0 1.2927e+08    0   15 1.4212e+08 1.2927e+08  9.04%     -    0s
+H    0     0                    1.389867e+08 1.2927e+08  6.99%     -    0s
+     0     0 1.3407e+08    0    5 1.3899e+08 1.3407e+08  3.54%     -    0s
+     0     0 1.3407e+08    0    8 1.3899e+08 1.3407e+08  3.54%     -    0s
+     0     0 1.3407e+08    0    8 1.3899e+08 1.3407e+08  3.54%     -    0s
+     0     0 1.3407e+08    0    7 1.3899e+08 1.3407e+08  3.54%     -    0s
+     0     0 1.3529e+08    0    3 1.3899e+08 1.3529e+08  2.66%     -    0s
+
+Cutting planes:
+  Implied bound: 2
+  MIR: 5
+  Flow cover: 15
+
+Explored 1 nodes (1840 simplex iterations) in 0.27 seconds (0.06 work units)
+Thread count was 32 (of 48 available processors)
+
+Solution count 10: 1.38987e+08 1.38987e+08 1.42122e+08 ... 1.96586e+08
+
+Optimal solution found (tolerance 2.00e-02)
+Best objective 1.389866740195e+08, best bound 1.373208767264e+08, gap 1.1985%

@@ -133,6 +133,17 @@ def test_network_unidirectional(request):
     )
     assert m.var_capex.value > 0
 
+    # Size_min =! 0 CASE
+    netw.size_min = 100
+    m = construct_netw_model(netw, nr_timesteps)
+    m.test_const_outflow1 = pyo.Constraint(
+        expr=m.var_inflow[1, "hydrogen", "node1"] == 0
+    )
+
+    termination = run_model(m, request.config.solver, objective="capex")
+    assert termination == pyo.TerminationCondition.optimal
+    assert m.arc_block["node2", "node1"].var_flow[1].value <= netw.size_min
+
 
 def test_network_bidirectional(request):
     """
@@ -330,9 +341,13 @@ def test_network_decommission(request):
 
     m = construct_netw_model(netw, nr_timesteps)
 
+    # run model
+    run_model(m, request.config.solver, objective="capex")
+
     # No decommissioning
-    assert isinstance(
-        m.arc_block["node1", "node2"].var_size, pyomo.core.base.param.ScalarParam
+    assert (
+        m.arc_block["node1", "node2"].var_size.value
+        == size_initial.loc["node1", "node2"]
     )
 
     # Technology can decommission

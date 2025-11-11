@@ -23,6 +23,7 @@ def get_gurobi_parameters(solveroptions: dict):
     solver.options["FeasibilityTol"] = solveroptions["feastol"]["value"]
     solver.options["Cuts"] = solveroptions["cuts"]["value"]
     solver.options["NumericFocus"] = solveroptions["numericfocus"]["value"]
+    solver.options["NoRelHeurTime"] = solveroptions["NoRelHeurTime"]
 
     return solver
 
@@ -141,6 +142,13 @@ def determine_flow_existing_compressors(self, compressor, b_period, node):
             self.data.time_series["full"][period_name][node]["CarrierData"][
                 compressor.carrier
             ]["Import limit"]
+        )
+
+    elif type_component[0] == "Generic production":
+        component_output_bound = max(
+            self.data.time_series["full"][period_name][node]["CarrierData"][
+                compressor.carrier
+            ]["Generic production"]
         )
 
     if type_component[1] == "Technology":

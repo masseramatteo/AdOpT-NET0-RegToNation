@@ -59,7 +59,7 @@ class ModelHub:
         self.info_solving_algorithms["time_stage"] = 1
 
     def read_data(
-        self, data_path: Path | str, start_period: int = None, end_period: int = None
+            self, data_path: Path | str, start_period: int = None, end_period: int = None
     ):
         """
         Reads in data from the specified path. The data is specified as the DataHandle
@@ -138,7 +138,7 @@ class ModelHub:
                     for tec_name in self.data.technology_data[period][node]:
                         tec = self.data.technology_data[period][node][tec_name]
                         if ("ramping_const_int" in tec.processed_coeff.dynamics) and (
-                            tec.processed_coeff.dynamics["ramping_const_int"] != -1
+                                tec.processed_coeff.dynamics["ramping_const_int"] != -1
                         ):
                             raise Exception(
                                 f"Ramping constraint with integers (ramping_const_int) for technology {tec_name} "
@@ -155,7 +155,7 @@ class ModelHub:
                     for tec_name in self.data.technology_data[period][node]:
                         tec = self.data.technology_data[period][node][tec_name]
                         if ("ramping_time" in tec.processed_coeff.dynamics) and (
-                            tec.processed_coeff.dynamics["ramping_time"] != -1
+                                tec.processed_coeff.dynamics["ramping_time"] != -1
                         ):
                             raise Exception(
                                 f"Ramping Rate for technology {tec_name} "
@@ -185,10 +185,10 @@ class ModelHub:
                             ]
                             for par in par_check:
                                 if (
-                                    par
-                                    not in self.data.technology_data[period][node][
-                                        tec
-                                    ].processed_coeff.dynamics
+                                        par
+                                        not in self.data.technology_data[period][node][
+                                    tec
+                                ].processed_coeff.dynamics
                                 ):
                                     raise ValueError(
                                         f"The technology '{tec}' does not have dynamic parameter '{par}'. Add the parameters in the "
@@ -270,6 +270,7 @@ class ModelHub:
         # DEFINE GLOBAL VARIABLES
         model.var_npv = pyo.Var()
         model.var_emissions_net = pyo.Var()
+        model.var_cost_networks = pyo.Var()
 
         # INVESTMENT PERIOD BLOCK
         def init_period_block(b_period):
@@ -285,7 +286,6 @@ class ModelHub:
 
             # NETWORK BLOCK
             if not config["energybalance"]["copperplate"]["value"]:
-
                 def init_network_block(b_netw, netw):
                     """Pyomo rule to initialize a block holding all networks"""
                     # Add sets, parameters, variables, constraints to block
@@ -329,7 +329,6 @@ class ModelHub:
 
                 # COMPRESSOR BLOCK
                 if config["performance"]["pressure"]["pressure_on"]["value"] == 1:
-
                     def init_compressor_block(b_compr, car, comp1, comp2):
                         """Pyomo rule to initialize a block holding all compressors at node"""
                         b_compr = construct_compressor_block(
@@ -358,7 +357,7 @@ class ModelHub:
                         ]
 
                         if (compressor.compression_active == 1) and (
-                            compressor.existing == 1
+                                compressor.existing == 1
                         ):
                             size = determine_flow_existing_compressors(
                                 self, compressor, b_period, node
@@ -495,7 +494,7 @@ class ModelHub:
         # Make sure that no aggregation algorithm is used
         config = self.data.model_config
         if (config["optimization"]["typicaldays"]["N"]["value"] != 0) or (
-            config["optimization"]["timestaging"]["value"] != 0
+                config["optimization"]["timestaging"]["value"] != 0
         ):
             raise Exception(
                 "You cannot add a technolgy retrospectively if using time aggragation algorithms"
@@ -623,6 +622,8 @@ class ModelHub:
             self._optimize_costs_minE()
         elif objective == "costs_emissionlimit":
             self._optimize_costs_emissionslimit()
+        elif objective == "supply_willingness_to_pay":
+            self._optimize_costs_supply_willingness()
         else:
             raise Exception("objective in Configurations is incorrect")
 
@@ -713,6 +714,23 @@ class ModelHub:
             self.solver.add_constraint(model.const_emission_limit)
         self._optimize_cost()
 
+    def _optimize_costs_supply_willingness(self):
+        """
+        Minimize infrastructure cost, with willingness to pay constrain
+        """
+        model = self.model[self.info_solving_algorithms["aggregation_model"]]
+
+        self._delete_objective()
+
+        def init_objective(obj):
+            return model.var_cost_networks
+
+        model.objective = pyo.Objective(rule=init_objective, sense=pyo.minimize)
+        log_msg = "Set objective on infrastructure due to willingness to pay"
+        print(log_msg)
+        log.info(log_msg)
+        self._call_solver()
+
     def scale_model(self):
         """
         Creates a scaled model using the scale factors specified in the json files
@@ -802,40 +820,40 @@ class ModelHub:
 
             # Period Variables
             model_full.scaling_factor[b_period.var_cost_capex_tecs] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_cost_capex_netws] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_cost_opex_tecs] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_cost_opex_netws] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_cost_tecs] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_cost_netws] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_cost_imports] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_cost_exports] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_cost_violation] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_carbon_revenue] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_carbon_cost] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
             model_full.scaling_factor[b_period.var_cost_total] = (
-                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                    f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
             )
 
             for node in b_period.node_blocks:
@@ -867,11 +885,11 @@ class ModelHub:
 
         # Global cost balance
         model_full.scaling_factor[model_full.const_npv] = (
-            f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
+                f_global["cost_vars"]["value"] * f_global["energy_vars"]["value"]
         )
         # Scale objective
         model_full.scaling_factor[model_full.objective] = (
-            f_global["objective"]["value"] * f_global["cost_vars"]["value"]
+                f_global["objective"]["value"] * f_global["cost_vars"]["value"]
         )
 
         self.model["scaled"] = pyo.TransformationFactory(
@@ -895,7 +913,7 @@ class ModelHub:
             folder_name = str(time_stamp)
         else:
             folder_name = (
-                str(time_stamp) + "_" + config["reporting"]["case_name"]["value"]
+                    str(time_stamp) + "_" + config["reporting"]["case_name"]["value"]
             )
         if self.info_pareto["pareto_point"]:
             folder_name = folder_name + str(self.info_pareto["pareto_point"])
@@ -948,7 +966,7 @@ class ModelHub:
         # Check if solution is available
         if write_results:
             if (self.solution.solver.status == pyo.SolverStatus.ok) or (
-                self.solution.solver.status == pyo.SolverStatus.warning
+                    self.solution.solver.status == pyo.SolverStatus.warning
             ):
                 write_results = True
             if self.solution.solver.termination_condition in [
@@ -1034,8 +1052,8 @@ class ModelHub:
 
         # Emission limit
         emission_limits = np.linspace(emissions_max, emissions_min, num=pareto_points)[
-            1:-1
-        ]
+                          1:-1
+                          ]
 
         for limit in range(0, len(emission_limits)):
             self.info_pareto["pareto_point"] += 1
@@ -1092,17 +1110,17 @@ class ModelHub:
 
         # Technologies
         if (
-            bounds_on == "all"
-            or bounds_on == "only_technologies"
-            or bounds_on == "no_storage"
+                bounds_on == "all"
+                or bounds_on == "only_technologies"
+                or bounds_on == "no_storage"
         ):
 
             def size_constraint_block_tecs_init(block, period, node):
                 def size_constraints_tecs_init(const, tec):
                     if (
-                        self.data.technology_data[period][node][tec].technology_model
-                        == "STOR"
-                        and bounds_on == "no_storage"
+                            self.data.technology_data[period][node][tec].technology_model
+                            == "STOR"
+                            and bounds_on == "no_storage"
                     ):
                         return pyo.Constraint.Skip
                     elif self.data.technology_data[period][node][tec].existing:
@@ -1115,14 +1133,14 @@ class ModelHub:
                         log.info(log_msg)
 
                         return (
-                            m_avg.periods[period]
-                            .node_blocks[node]
-                            .tech_blocks_active[tec]
-                            .var_size.value
-                            <= m_full.periods[period]
-                            .node_blocks[node]
-                            .tech_blocks_active[tec]
-                            .var_size
+                                m_avg.periods[period]
+                                .node_blocks[node]
+                                .tech_blocks_active[tec]
+                                .var_size.value
+                                <= m_full.periods[period]
+                                .node_blocks[node]
+                                .tech_blocks_active[tec]
+                                .var_size
                         )
 
                 block.size_constraints_tecs = pyo.Constraint(
@@ -1138,15 +1156,12 @@ class ModelHub:
 
         # Networks
         if (
-            bounds_on == "all"
-            or bounds_on == "only_networks"
-            or bounds_on == "no_storage"
+                bounds_on == "all"
+                or bounds_on == "only_networks"
+                or bounds_on == "no_storage"
         ):
-
             def size_constraint_block_netw_init(block, period):
-
                 def size_constraints_netw_init(const, netw):
-
                     b_netw_full = m_full.periods[period].network_block[netw]
                     b_netw_avg = m_avg.periods[period].network_block[netw]
 
@@ -1156,8 +1171,8 @@ class ModelHub:
 
                     def size_constraints_arcs_init(const, node_from, node_to):
                         return (
-                            b_netw_full.arc_block[node_from, node_to].var_size
-                            >= b_netw_avg.arc_block[node_from, node_to].var_size.value
+                                b_netw_full.arc_block[node_from, node_to].var_size
+                                >= b_netw_avg.arc_block[node_from, node_to].var_size.value
                         )
 
                     block.size_constraints_arcs = pyo.Constraint(

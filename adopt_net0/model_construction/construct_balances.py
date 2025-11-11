@@ -1097,4 +1097,12 @@ def construct_global_balance(model):
 
     model.const_emissions = pyo.Constraint(rule=init_emissions)
 
+    def init_network_cost(cost):
+        return(
+            sum(model.periods[period].var_cost_netws for period in model.set_periods)
+            == model.var_cost_networks
+        )
+
+    model.const_network = pyo.Constraint(rule=init_network_cost)
+
     return model

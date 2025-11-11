@@ -1,0 +1,108 @@
+
+Gurobi 12.0.3 (win64) logging started Tue Oct 21 18:52:12 2025
+
+Set parameter LogFile to value "userData\20251021184111-1\solver_log.txt"
+Set parameter TimeLimit to value 180000
+Set parameter MIPGap to value 0.01
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 0
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value -1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Set parameter NoRelHeurTime to value 0
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (win64 - Windows Server 2016.0 (14393.2))
+
+CPU model: QEMU Virtual CPU version 2.5+, instruction set [SSE2]
+Thread count: 48 physical cores, 48 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  180000
+MIPGap  0.01
+LPWarmStart  0
+NodefileStart  60
+
+Optimize a model with 7437774 rows, 5116340 columns and 16242158 nonzeros
+Model fingerprint: 0xec447dd0
+Variable types: 4292816 continuous, 823524 integer (823524 binary)
+Coefficient statistics:
+  Matrix range     [1e-02, 7e+04]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 7e+09]
+  RHS range        [1e+00, 1e+05]
+Warning: Model contains large bounds
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 4853368 rows and 3416728 columns (presolve time = 5s)...
+Presolve removed 4862166 rows and 3416766 columns (presolve time = 10s)...
+Presolve removed 5230086 rows and 3784686 columns (presolve time = 15s)...
+Presolve removed 5230086 rows and 3784686 columns (presolve time = 20s)...
+Presolve removed 5230086 rows and 3784686 columns (presolve time = 25s)...
+Presolve removed 5230086 rows and 3784686 columns (presolve time = 32s)...
+Presolve removed 5230086 rows and 3784720 columns (presolve time = 37s)...
+Presolve removed 5230086 rows and 3784728 columns (presolve time = 40s)...
+Presolve removed 5230086 rows and 3784728 columns
+Presolve time: 41.30s
+Presolved: 2207688 rows, 1331612 columns, 6395136 nonzeros
+Variable types: 919850 continuous, 411762 integer (411762 binary)
+Found heuristic solution: objective 5.532354e+09
+
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Ordering time: 2.47s
+
+Barrier statistics:
+ Dense cols : 50
+ AA' NZ     : 6.912e+06
+ Factor NZ  : 1.518e+07 (roughly 1.2 GB of memory)
+ Factor Ops : 3.809e+08 (less than 1 second per iteration)
+ Threads    : 30
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0   3.73667950e+10 -2.99217800e+12  1.14e+03 1.38e+02  6.51e+06    99s
+   1   2.22795165e+10 -7.83813274e+11  5.45e+02 3.39e+02  1.45e+06   100s
+   2   2.06459302e+10 -5.87234711e+11  5.00e+02 1.17e-04  1.61e+06   101s
+   3   6.43856618e+09 -3.61557059e+11  5.71e-10 2.38e-04  1.04e+05   103s
+   4   5.73721700e+09 -1.45531731e+10  3.52e-10 6.55e-06  5.75e+03   104s
+   5   5.67387659e+09  1.97065941e+09  1.39e-09 1.07e-06  1.05e+03   105s
+   6   5.62599693e+09  4.78732432e+09  1.34e-09 2.50e-07  2.38e+02   106s
+   7   5.61534843e+09  4.92583085e+09  1.73e-09 2.04e-07  1.95e+02   107s
+   8   5.60196972e+09  5.09881540e+09  9.09e-13 1.49e-07  1.43e+02   109s
+   9   5.58071927e+09  5.29366160e+09  9.09e-13 8.19e-08  8.13e+01   111s
+  10   5.56092263e+09  5.38090363e+09  9.09e-13 5.27e-08  5.10e+01   112s
+  11   5.54283191e+09  5.42784615e+09  9.09e-13 3.58e-08  3.26e+01   114s
+  12   5.53302135e+09  5.46550880e+09  9.09e-13 2.18e-08  1.91e+01   115s
+  13   5.52588330e+09  5.49445097e+09  9.09e-13 1.00e-08  8.90e+00   116s
+
+Barrier performed 13 iterations in 116.13 seconds (45.09 work units)
+Objective cutoff exceeded
+
+Concurrent spin time: 0.00s
+
+Solved with barrier
+
+Root relaxation: interrupted, 0 iterations, 45.73 seconds (14.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0          -    0      5.5324e+09 5.4945e+09  0.69%     -  117s
+
+Explored 1 nodes (0 simplex iterations) in 118.79 seconds (45.83 work units)
+Thread count was 32 (of 48 available processors)
+
+Solution count 1: 5.53235e+09 
+
+Optimal solution found (tolerance 1.00e-02)
+Warning: max constraint violation (1.1312e-05) exceeds tolerance
+Best objective 5.532354255697e+09, best bound 5.494450968981e+09, gap 0.6851%

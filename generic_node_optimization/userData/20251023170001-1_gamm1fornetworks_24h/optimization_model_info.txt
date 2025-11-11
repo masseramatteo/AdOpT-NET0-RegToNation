@@ -1,0 +1,1 @@
+new cahnge in capex function to reproduced disjuction of size, add gamma 1 to netowrks

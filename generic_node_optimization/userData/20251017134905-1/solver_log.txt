@@ -1,0 +1,100 @@
+
+Gurobi 12.0.3 (win64) logging started Fri Oct 17 13:49:18 2025
+
+Set parameter LogFile to value "userData\20251017134905-1\solver_log.txt"
+Set parameter TimeLimit to value 72000
+Set parameter MIPGap to value 0.01
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 0
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value -1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Set parameter NoRelHeurTime to value 0
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (win64 - Windows Server 2016.0 (14393.2))
+
+CPU model: QEMU Virtual CPU version 2.5+, instruction set [SSE2]
+Thread count: 48 physical cores, 48 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  72000
+MIPGap  0.01
+LPWarmStart  0
+NodefileStart  60
+
+Optimize a model with 177562 rows, 119005 columns and 481244 nonzeros
+Model fingerprint: 0xe126b931
+Variable types: 117961 continuous, 1044 integer (1044 binary)
+Coefficient statistics:
+  Matrix range     [3e-03, 1e+05]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 7e+09]
+  RHS range        [1e+00, 1e+05]
+Warning: Model contains large bounds
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 76922 rows and 50480 columns
+Presolve time: 0.97s
+Presolved: 100640 rows, 68525 columns, 331360 nonzeros
+Variable types: 68005 continuous, 520 integer (520 binary)
+Deterministic concurrent LP optimizer: primal and dual simplex
+Showing primal log only...
+
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+    4226    2.3460381e+09   3.904947e+02   4.836975e+08      5s
+    4731    5.8113602e+09   0.000000e+00   1.588271e+08      6s
+   22913    5.5591301e+09   0.000000e+00   6.868388e+08     10s
+   29321    5.5561807e+09   0.000000e+00   1.298993e+09     15s
+   34037    5.5558107e+09   0.000000e+00   8.742895e+08     23s
+   35075    5.5550944e+09   0.000000e+00   4.122281e+08     25s
+   37587    5.5545104e+09   0.000000e+00   2.112191e+08     30s
+   40085    5.5543058e+09   0.000000e+00   6.325417e+08     35s
+   41795    5.5540695e+09   0.000000e+00   1.539393e+10     40s
+   44293    5.5539736e+09   0.000000e+00   1.999400e+08     45s
+   45903    5.5539640e+09   0.000000e+00   6.469280e+08     50s
+   47823    5.5539547e+09   0.000000e+00   9.346409e+09     55s
+   49719    5.5539441e+09   0.000000e+00   4.650931e+07     60s
+   51349    5.5539418e+09   0.000000e+00   3.728238e+07     65s
+   53119    5.5539383e+09   0.000000e+00   1.394755e+07     70s
+   55549    5.5539354e+09   0.000000e+00   1.696298e+08     75s
+   58399    5.5539324e+09   0.000000e+00   3.605270e+06     80s
+   63913    5.5539329e+09   0.000000e+00   0.000000e+00     84s
+Concurrent spin time: 9.00s
+
+Solved with dual simplex
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   48856    5.5539329e+09   0.000000e+00   0.000000e+00     94s
+
+Root relaxation: objective 5.553933e+09, 48856 iterations, 92.17 seconds (96.73 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 5.5539e+09    0   10          - 5.5539e+09      -     -   93s
+H    0     0                    5.559919e+09 5.5539e+09  0.11%     -  109s
+
+Cutting planes:
+  Gomory: 4
+  MIR: 216
+  Flow cover: 550
+
+Explored 1 nodes (48857 simplex iterations) in 109.72 seconds (117.17 work units)
+Thread count was 32 (of 48 available processors)
+
+Solution count 1: 5.55992e+09 
+
+Optimal solution found (tolerance 1.00e-02)
+Warning: max constraint violation (1.9826e-06) exceeds tolerance
+Best objective 5.559919461093e+09, best bound 5.553945747024e+09, gap 0.1074%

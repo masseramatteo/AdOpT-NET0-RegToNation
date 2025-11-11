@@ -1,0 +1,1 @@
+no minimum size for pipelines, one month with compression

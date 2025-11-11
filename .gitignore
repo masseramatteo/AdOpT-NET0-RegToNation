@@ -1,5 +1,6 @@
 # User Folders
 userData
+.venv
 results
 /adopt_net0/test/test_data
 

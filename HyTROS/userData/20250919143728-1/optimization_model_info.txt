@@ -1,0 +1,1 @@
+only cost as gamma4 in pipeline, bidirection on

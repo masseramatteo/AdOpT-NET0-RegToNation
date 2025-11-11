@@ -1,0 +1,94 @@
+
+Gurobi 12.0.3 (win64) logging started Wed Sep 24 11:03:53 2025
+
+Set parameter LogFile to value "userData\20250924110352-1\solver_log.txt"
+Set parameter TimeLimit to value 1080000
+Set parameter MIPGap to value 0.02
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 0
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value -1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (win64 - Windows Server 2016.0 (14393.2))
+
+CPU model: QEMU Virtual CPU version 2.5+, instruction set [SSE2]
+Thread count: 48 physical cores, 48 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  1080000
+MIPGap  0.02
+LPWarmStart  0
+NodefileStart  60
+
+Optimize a model with 5750 rows, 4164 columns and 11925 nonzeros
+Model fingerprint: 0x05680872
+Variable types: 3154 continuous, 1010 integer (674 binary)
+Coefficient statistics:
+  Matrix range     [3e-03, 5e+07]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 7e+09]
+  RHS range        [1e+00, 5e+07]
+Warning: Model contains large bounds
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 5298 rows and 3339 columns
+Presolve time: 0.02s
+Presolved: 452 rows, 825 columns, 1738 nonzeros
+Variable types: 489 continuous, 336 integer (336 binary)
+Found heuristic solution: objective 1.006843e+10
+
+Root relaxation: objective 3.874999e+07, 572 iterations, 0.01 seconds (0.01 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 3.8750e+07    0   14 1.0068e+10 3.8750e+07   100%     -    0s
+H    0     0                    3.096928e+08 3.8750e+07  87.5%     -    0s
+H    0     0                    1.713867e+08 3.8750e+07  77.4%     -    0s
+H    0     0                    1.505144e+08 3.8750e+07  74.3%     -    0s
+H    0     0                    1.501643e+08 3.8750e+07  74.2%     -    0s
+     0     0 5.2988e+07    0   16 1.5016e+08 5.2988e+07  64.7%     -    0s
+     0     0 7.6296e+07    0   21 1.5016e+08 7.6296e+07  49.2%     -    0s
+     0     0 7.8629e+07    0   26 1.5016e+08 7.8629e+07  47.6%     -    0s
+     0     0 8.0112e+07    0   31 1.5016e+08 8.0112e+07  46.7%     -    0s
+     0     0 1.0062e+08    0   29 1.5016e+08 1.0062e+08  33.0%     -    0s
+     0     0 1.0103e+08    0   33 1.5016e+08 1.0103e+08  32.7%     -    0s
+     0     0 1.0103e+08    0   33 1.5016e+08 1.0103e+08  32.7%     -    0s
+     0     0 1.1677e+08    0   26 1.5016e+08 1.1677e+08  22.2%     -    0s
+     0     0 1.1687e+08    0   25 1.5016e+08 1.1687e+08  22.2%     -    0s
+     0     0 1.3301e+08    0   15 1.5016e+08 1.3301e+08  11.4%     -    0s
+     0     0 1.3301e+08    0   14 1.5016e+08 1.3301e+08  11.4%     -    0s
+     0     0 1.3301e+08    0   18 1.5016e+08 1.3301e+08  11.4%     -    0s
+     0     0 1.4304e+08    0    4 1.5016e+08 1.4304e+08  4.74%     -    0s
+     0     0 1.4309e+08    0    6 1.5016e+08 1.4309e+08  4.71%     -    0s
+     0     0 1.4321e+08    0   11 1.5016e+08 1.4321e+08  4.63%     -    0s
+     0     0 1.4343e+08    0    6 1.5016e+08 1.4343e+08  4.48%     -    0s
+     0     0 1.4413e+08    0    3 1.5016e+08 1.4413e+08  4.02%     -    0s
+     0     0 1.4583e+08    0    9 1.5016e+08 1.4583e+08  2.89%     -    0s
+     0     0 1.4583e+08    0    6 1.5016e+08 1.4583e+08  2.89%     -    0s
+     0     0          -    0      1.5016e+08 1.4784e+08  1.55%     -    0s
+
+Cutting planes:
+  Gomory: 2
+  Cover: 3
+  Implied bound: 6
+  Clique: 1
+  MIR: 8
+  Relax-and-lift: 2
+
+Explored 1 nodes (2188 simplex iterations) in 0.31 seconds (0.07 work units)
+Thread count was 32 (of 48 available processors)
+
+Solution count 6: 1.50164e+08 1.50164e+08 1.50514e+08 ... 1.00684e+10
+
+Optimal solution found (tolerance 2.00e-02)
+Warning: max constraint violation (2.1576e-06) exceeds tolerance
+Warning: max bound violation (2.1576e-06) exceeds tolerance
+Best objective 1.501642989422e+08, best bound 1.478379958270e+08, gap 1.5492%

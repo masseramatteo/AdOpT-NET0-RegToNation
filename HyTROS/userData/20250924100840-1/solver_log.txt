@@ -1,0 +1,154 @@
+
+Gurobi 12.0.3 (win64) logging started Wed Sep 24 10:08:43 2025
+
+Set parameter LogFile to value "userData\20250924100840-1\solver_log.txt"
+Set parameter TimeLimit to value 1080000
+Set parameter MIPGap to value 0.02
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 0
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value -1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (win64 - Windows Server 2016.0 (14393.2))
+
+CPU model: QEMU Virtual CPU version 2.5+, instruction set [SSE2]
+Thread count: 48 physical cores, 48 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  1080000
+MIPGap  0.02
+LPWarmStart  0
+NodefileStart  60
+
+Optimize a model with 6590 rows, 4500 columns and 13269 nonzeros
+Model fingerprint: 0x87914fdb
+Variable types: 3154 continuous, 1346 integer (1010 binary)
+Coefficient statistics:
+  Matrix range     [3e-03, 2e+07]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 7e+09]
+  RHS range        [1e+00, 2e+07]
+Warning: Model contains large bounds
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 5970 rows and 3675 columns
+Presolve time: 0.02s
+Presolved: 620 rows, 825 columns, 2242 nonzeros
+Variable types: 489 continuous, 336 integer (336 binary)
+
+Root relaxation: objective 1.615648e+07, 615 iterations, 0.00 seconds (0.01 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 1.6156e+07    0   14          - 1.6156e+07      -     -    0s
+H    0     0                    2.944509e+07 1.6156e+07  45.1%     -    0s
+H    0     0                    2.764406e+07 1.6156e+07  41.6%     -    0s
+H    0     0                    2.680372e+07 1.6156e+07  39.7%     -    0s
+H    0     0                    2.672210e+07 1.6156e+07  39.5%     -    0s
+H    0     0                    2.640387e+07 1.6156e+07  38.8%     -    0s
+H    0     0                    2.549689e+07 1.6156e+07  36.6%     -    0s
+     0     0 1.8716e+07    0   17 2.5497e+07 1.8716e+07  26.6%     -    0s
+     0     0 1.8716e+07    0   17 2.5497e+07 1.8716e+07  26.6%     -    0s
+     0     0 1.9449e+07    0   19 2.5497e+07 1.9449e+07  23.7%     -    0s
+     0     0 1.9472e+07    0   22 2.5497e+07 1.9472e+07  23.6%     -    0s
+H    0     0                    2.517865e+07 1.9472e+07  22.7%     -    0s
+H    0     0                    2.493997e+07 1.9472e+07  21.9%     -    0s
+H    0     0                    2.476494e+07 1.9487e+07  21.3%     -    0s
+     0     0 1.9487e+07    0   32 2.4765e+07 1.9487e+07  21.3%     -    0s
+H    0     0                    2.447872e+07 1.9489e+07  20.4%     -    0s
+     0     0 1.9489e+07    0   31 2.4479e+07 1.9489e+07  20.4%     -    0s
+     0     0 1.9571e+07    0   29 2.4479e+07 1.9571e+07  20.1%     -    0s
+     0     0 1.9571e+07    0   14 2.4479e+07 1.9571e+07  20.1%     -    0s
+     0     0 1.9571e+07    0   25 2.4479e+07 1.9571e+07  20.1%     -    0s
+     0     0 1.9571e+07    0   26 2.4479e+07 1.9571e+07  20.1%     -    0s
+     0     0 1.9571e+07    0   27 2.4479e+07 1.9571e+07  20.1%     -    0s
+     0     0 1.9704e+07    0   29 2.4479e+07 1.9704e+07  19.5%     -    0s
+     0     0 1.9718e+07    0   28 2.4479e+07 1.9718e+07  19.4%     -    0s
+     0     0 1.9718e+07    0   28 2.4479e+07 1.9718e+07  19.4%     -    0s
+     0     0 1.9718e+07    0   30 2.4479e+07 1.9718e+07  19.4%     -    0s
+H    0     0                    2.422413e+07 1.9718e+07  18.6%     -    0s
+     0     0 1.9774e+07    0   40 2.4224e+07 1.9774e+07  18.4%     -    0s
+     0     0 2.0013e+07    0   31 2.4224e+07 2.0013e+07  17.4%     -    0s
+     0     0 2.0013e+07    0   31 2.4224e+07 2.0013e+07  17.4%     -    0s
+     0     0 2.0021e+07    0   37 2.4224e+07 2.0021e+07  17.4%     -    0s
+     0     0 2.0023e+07    0   38 2.4224e+07 2.0023e+07  17.3%     -    0s
+     0     0 2.0023e+07    0   39 2.4224e+07 2.0023e+07  17.3%     -    0s
+     0     0 2.0091e+07    0   24 2.4224e+07 2.0091e+07  17.1%     -    0s
+     0     0 2.0094e+07    0   23 2.4224e+07 2.0094e+07  17.0%     -    0s
+     0     0 2.0094e+07    0   26 2.4224e+07 2.0094e+07  17.0%     -    0s
+     0     0 2.0123e+07    0   34 2.4224e+07 2.0123e+07  16.9%     -    0s
+     0     0 2.0156e+07    0   36 2.4224e+07 2.0156e+07  16.8%     -    0s
+     0     0 2.0156e+07    0   36 2.4224e+07 2.0156e+07  16.8%     -    0s
+     0     0 2.0811e+07    0   41 2.4224e+07 2.0811e+07  14.1%     -    0s
+     0     0 2.0811e+07    0   41 2.4224e+07 2.0811e+07  14.1%     -    0s
+     0     0 2.1086e+07    0   40 2.4224e+07 2.1086e+07  13.0%     -    0s
+     0     0 2.1086e+07    0   39 2.4224e+07 2.1086e+07  13.0%     -    0s
+     0     0 2.1086e+07    0   40 2.4224e+07 2.1086e+07  13.0%     -    0s
+     0     0 2.1086e+07    0   39 2.4224e+07 2.1086e+07  13.0%     -    0s
+     0     0 2.1087e+07    0   34 2.4224e+07 2.1087e+07  12.9%     -    0s
+     0     0 2.1099e+07    0   40 2.4224e+07 2.1099e+07  12.9%     -    0s
+     0     0 2.1103e+07    0   40 2.4224e+07 2.1103e+07  12.9%     -    0s
+     0     0 2.1106e+07    0   40 2.4224e+07 2.1106e+07  12.9%     -    0s
+     0     0 2.1108e+07    0   39 2.4224e+07 2.1108e+07  12.9%     -    0s
+     0     0 2.1118e+07    0   37 2.4224e+07 2.1118e+07  12.8%     -    0s
+     0     0 2.1120e+07    0   37 2.4224e+07 2.1120e+07  12.8%     -    0s
+     0     0 2.1225e+07    0   28 2.4224e+07 2.1225e+07  12.4%     -    0s
+     0     0 2.1284e+07    0   31 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   32 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   35 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   35 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   14 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   20 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   29 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   25 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   33 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   30 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   30 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1284e+07    0   34 2.4224e+07 2.1284e+07  12.1%     -    0s
+     0     0 2.1345e+07    0   35 2.4224e+07 2.1345e+07  11.9%     -    0s
+     0     0 2.1381e+07    0   35 2.4224e+07 2.1381e+07  11.7%     -    0s
+H    0     0                    2.400001e+07 2.1405e+07  10.8%     -    0s
+     0     0 2.1405e+07    0   36 2.4000e+07 2.1405e+07  10.8%     -    0s
+     0     0 2.1500e+07    0   37 2.4000e+07 2.1500e+07  10.4%     -    0s
+     0     0 2.1508e+07    0   38 2.4000e+07 2.1508e+07  10.4%     -    0s
+     0     0 2.1517e+07    0   36 2.4000e+07 2.1517e+07  10.3%     -    0s
+     0     0 2.1517e+07    0   37 2.4000e+07 2.1517e+07  10.3%     -    0s
+     0     0 2.1533e+07    0   36 2.4000e+07 2.1533e+07  10.3%     -    0s
+     0     0 2.1536e+07    0   36 2.4000e+07 2.1536e+07  10.3%     -    0s
+H    0     0                    2.397141e+07 2.1577e+07  10.0%     -    1s
+H    0     0                    2.392367e+07 2.1577e+07  9.81%     -    1s
+H    0     0                    2.384089e+07 2.1577e+07  9.49%     -    1s
+H    0     0                    2.382820e+07 2.1577e+07  9.45%     -    1s
+     0     2 2.1577e+07    0   35 2.3828e+07 2.1577e+07  9.45%     -    1s
+H 1058   867                    2.362135e+07 2.2027e+07  6.75%  14.0    1s
+H 1059   867                    2.352266e+07 2.2027e+07  6.36%  14.0    1s
+
+Cutting planes:
+  Gomory: 6
+  Lift-and-project: 9
+  Cover: 18
+  Implied bound: 1
+  MIR: 41
+  Flow cover: 114
+  Inf proof: 12
+  Zero half: 1
+  Network: 6
+  RLT: 1
+  Relax-and-lift: 1
+  BQP: 1
+
+Explored 9995 nodes (177725 simplex iterations) in 5.07 seconds (1.20 work units)
+Thread count was 32 (of 48 available processors)
+
+Solution count 10: 2.35227e+07 2.35227e+07 2.36213e+07 ... 2.4e+07
+
+Optimal solution found (tolerance 2.00e-02)
+Best objective 2.352265720542e+07, best bound 2.313359386568e+07, gap 1.6540%

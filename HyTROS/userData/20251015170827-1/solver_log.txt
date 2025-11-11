@@ -1,0 +1,59 @@
+
+Gurobi 12.0.3 (win64) logging started Wed Oct 15 17:08:27 2025
+
+Set parameter LogFile to value "userData\20251015170827-1\solver_log.txt"
+Set parameter TimeLimit to value 1080000
+Set parameter MIPGap to value 0.02
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 0
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value -1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (win64 - Windows Server 2019.0 (17763.2))
+
+CPU model: Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 8 physical cores, 8 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  1080000
+MIPGap  0.02
+LPWarmStart  0
+NodefileStart  60
+
+Optimize a model with 3612 rows, 3637 columns and 8651 nonzeros
+Model fingerprint: 0xe5d966d0
+Variable types: 3613 continuous, 24 integer (24 binary)
+Coefficient statistics:
+  Matrix range     [1e-06, 7e+04]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e-03, 7e+09]
+  RHS range        [1e+00, 1e+05]
+Warning: Model contains large bounds
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 3174 rows and 2822 columns
+Presolve time: 0.01s
+Presolved: 438 rows, 815 columns, 1673 nonzeros
+Variable types: 815 continuous, 0 integer (0 binary)
+
+Root relaxation: objective 9.384269e+08, 178 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0    9.384269e+08 9.3843e+08  0.00%     -    0s
+
+Explored 1 nodes (178 simplex iterations) in 0.03 seconds (0.01 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 1: 9.38427e+08 
+
+Optimal solution found (tolerance 2.00e-02)
+Best objective 9.384269414604e+08, best bound 9.384269414604e+08, gap 0.0000%

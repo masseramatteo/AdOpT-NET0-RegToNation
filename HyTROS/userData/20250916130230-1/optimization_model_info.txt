@@ -1,0 +1,1 @@
+no EHB installed. all small connection, connections to big cluster and possible EHB to be installed. Almost no eletrcity in small clusters, more import possible from big clusters

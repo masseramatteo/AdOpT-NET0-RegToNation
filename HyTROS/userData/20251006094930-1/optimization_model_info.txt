@@ -1,0 +1,1 @@
+10 typical days with NoHeurTime=500

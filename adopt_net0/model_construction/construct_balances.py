@@ -1146,12 +1146,14 @@ def construct_system_cost(model, data):
     return model
 
 
-def construct_global_balance(model):
+def construct_global_balance(model, data):
     """
     Calculates total npv and total emissions over all investment periods
     :param model: pyomo model
     :return: pyomo model
     """
+
+    config = data.model_config
 
     def init_npv(const):
         return (
@@ -1169,12 +1171,45 @@ def construct_global_balance(model):
 
     model.const_emissions = pyo.Constraint(rule=init_emissions)
 
-    def init_network_cost(cost):
-        return(
+    def init_network_cost(const):
+        return (
             sum(model.periods[period].var_cost_netws for period in model.set_periods)
             == model.var_cost_networks
         )
 
     model.const_network = pyo.Constraint(rule=init_network_cost)
+
+    # Calculate total demand from parameters
+    def calculate_total_demand():
+        total_demand = 0
+        for period in model.set_periods:
+            b_period = model.periods[period]
+            set_t = get_set_t(config, b_period)
+
+            data_period = get_data_for_investment_period(data, period, "full")
+            hour_factors = data_period["hour_factors"]
+            nr_timesteps_averaged = data_period["nr_timesteps_averaged"]
+
+            period_demand = sum(
+                sum(
+                    sum(
+                        b_period.node_blocks[node].para_demand[t, car]
+                        * nr_timesteps_averaged
+                        * hour_factors[t - 1]
+                        for t in set_t
+                    )
+                    for car in b_period.node_blocks[node].set_carriers
+                )
+                for node in model.set_nodes
+            )
+            total_demand += period_demand
+
+        return total_demand
+
+
+    model.para_total_demand = pyo.Param(
+        initialize=calculate_total_demand(),
+        mutable=False
+    )
 
     return model

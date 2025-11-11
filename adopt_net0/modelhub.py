@@ -270,6 +270,7 @@ class ModelHub:
         model.var_npv = pyo.Var()
         model.var_emissions_net = pyo.Var()
         model.var_cost_networks = pyo.Var()
+        model.var_total_demand = pyo.Var()
 
         # INVESTMENT PERIOD BLOCK
         def init_period_block(b_period):
@@ -397,7 +398,7 @@ class ModelHub:
 
         model = construct_emission_balance(model, data)
         model = construct_system_cost(model, data)
-        model = construct_global_balance(model)
+        model = construct_global_balance(model, data)
 
         log_msg = (
             f"Constructing balances completed in {str(round(time.time() - start))}s"
@@ -723,6 +724,12 @@ class ModelHub:
 
         def init_objective(obj):
             return model.var_cost_networks
+
+        h2_demand = model.para_total_demand.value
+
+        model.const_willingness_to_pay = pyo.Constraint(
+            expr=model.var_npv <= (h2_demand * 200000000000)
+        )
 
         model.objective = pyo.Objective(rule=init_objective, sense=pyo.minimize)
         log_msg = "Set objective on infrastructure due to willingness to pay"

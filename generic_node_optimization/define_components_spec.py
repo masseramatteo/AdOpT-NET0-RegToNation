@@ -54,7 +54,7 @@ def define_hydrogen_pipeline2(input_data_path):
     network_data["Economics"]["gamma4"] = 1500
 
     network_data["Performance"]["bidirectional_network"] = 1
-    network_data["Performance"]["bidirectional_network_precise"] = 0
+    network_data["Performance"]["bidirectional_network_precise"] = 1
 
     network_data["Performance"]["min_transport"] = 0
 
@@ -74,7 +74,7 @@ def define_hydrogen_pipeline2(input_data_path):
     network_data["Economics"]["gamma4"] = 800
 
     network_data["Performance"]["bidirectional_network"] = 1
-    network_data["Performance"]["bidirectional_network_precise"] = 0
+    network_data["Performance"]["bidirectional_network_precise"] = 1
 
     network_data["Performance"]["min_transport"] = 0
 
@@ -87,7 +87,7 @@ def define_hydrogen_storage(input_data_path):
         cavern_data = json.load(json_file)
 
     cavern_data["Performance"]["allow_only_one_direction"] = 1
-    cavern_data["Performance"]["allow_only_one_direction_precise"] = 0
+    cavern_data["Performance"]["allow_only_one_direction_precise"] = 1
     cavern_data["Flexibility"]["charge_rate"] = 0.5
     cavern_data["Flexibility"]["discharge_rate"] = 0.5
 
@@ -101,7 +101,7 @@ def define_hydrogen_storage(input_data_path):
             storage_data = json.load(json_file)
 
         storage_data["Performance"]["allow_only_one_direction"] = 1
-        storage_data["Performance"]["allow_only_one_direction_precise"] = 0
+        storage_data["Performance"]["allow_only_one_direction_precise"] = 1
         storage_data["Flexibility"]["charge_rate"] = 0.8
         storage_data["Flexibility"]["discharge_rate"] = 0.8
         storage_data["Performance"]["performance"]["eta_in"] = 0.95
@@ -117,7 +117,7 @@ def define_hydrogen_storage(input_data_path):
             storage_data = json.load(json_file)
 
         storage_data["Performance"]["allow_only_one_direction"] = 1
-        storage_data["Performance"]["allow_only_one_direction_precise"] = 0
+        storage_data["Performance"]["allow_only_one_direction_precise"] = 1
         storage_data["Flexibility"]["charge_rate"] = 0.9
         storage_data["Flexibility"]["discharge_rate"] = 0.9
         storage_data["Performance"]["performance"]["eta_in"] = 0.95

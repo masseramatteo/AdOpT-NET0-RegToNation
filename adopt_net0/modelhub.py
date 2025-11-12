@@ -728,7 +728,7 @@ class ModelHub:
         h2_demand = model.para_total_demand.value
 
         model.const_willingness_to_pay = pyo.Constraint(
-            expr=model.var_npv <= (h2_demand * 200000000000)
+            expr=model.var_npv <= (h2_demand * 500)
         )
 
         model.objective = pyo.Objective(rule=init_objective, sense=pyo.minimize)

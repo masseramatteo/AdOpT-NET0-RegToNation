@@ -32,7 +32,7 @@
                 "outlet": 50
             }
         },
-        "bidirectional_network_precise": 0
+        "bidirectional_network_precise": 1
     },
     "Units": {
         "size": "MW",

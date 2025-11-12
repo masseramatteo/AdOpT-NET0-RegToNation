@@ -147,7 +147,7 @@ define_hydrogen_pipeline2(input_data_path)
 define_hydrogen_storage(input_data_path)
 define_electrolyzers(input_data_path)
 
-n_timestep = 1
+n_timestep = 744
 
 hourly_data = {}
 connection_pressure_data = {}

@@ -71,7 +71,7 @@
         },
         "threads": {
             "description": "Value to define number of threads (default is maximum available).",
-            "value": 0
+            "value": 48
         },
         "mipfocus": {
             "description": "Modifies high level solution strategy.",

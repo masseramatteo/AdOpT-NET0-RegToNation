@@ -271,6 +271,7 @@ class ModelHub:
         model.var_emissions_net = pyo.Var()
         model.var_cost_networks = pyo.Var()
         model.var_total_demand = pyo.Var()
+        model.var_netws_distance_weighted = pyo.Var()
 
         # INVESTMENT PERIOD BLOCK
         def init_period_block(b_period):
@@ -728,7 +729,30 @@ class ModelHub:
         h2_demand = model.para_total_demand.value
 
         model.const_willingness_to_pay = pyo.Constraint(
-            expr=model.var_npv <= (h2_demand * 500)
+            expr=model.var_npv <= (h2_demand * 170)
+        )
+
+        model.objective = pyo.Objective(rule=init_objective, sense=pyo.minimize)
+        log_msg = "Set objective on infrastructure due to willingness to pay"
+        print(log_msg)
+        log.info(log_msg)
+        self._call_solver()
+
+    def _optimize_network_distance_supply_willingness(self):
+        """
+        Minimize infrastructure distance, with willingness to pay constrain
+        """
+        model = self.model[self.info_solving_algorithms["aggregation_model"]]
+
+        self._delete_objective()
+
+        def init_objective(obj):
+            return model.var_cost_networks
+
+        h2_demand = model.para_total_demand.value
+
+        model.const_willingness_to_pay = pyo.Constraint(
+            expr=model.var_npv <= (h2_demand * 170)
         )
 
         model.objective = pyo.Objective(rule=init_objective, sense=pyo.minimize)

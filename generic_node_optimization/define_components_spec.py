@@ -44,14 +44,14 @@ def define_hydrogen_pipeline2(input_data_path):
     with open(input_data_path / "period1" / "network_data"/ "hydrogenPipelineOnshore_lowP.json", "r") as json_file:
         network_data = json.load(json_file)
 
-    network_data["size_min"] = 100
+    network_data["size_min"] = 0
     network_data["size_max"] = 250
 
     network_data["Economics"]["gamma1"] = 0
     network_data["Economics"]["gamma3"] = 0
 
     network_data["Economics"]["gamma2"] = 0
-    network_data["Economics"]["gamma4"] = 1500
+    network_data["Economics"]["gamma4"] = 4000
 
     network_data["Performance"]["bidirectional_network"] = 1
     network_data["Performance"]["bidirectional_network_precise"] = 1
@@ -64,14 +64,14 @@ def define_hydrogen_pipeline2(input_data_path):
     with open(input_data_path / "period1" / "network_data" / "hydrogenPipelineOnshore_highP.json", "r") as json_file:
         network_data = json.load(json_file)
 
-    network_data["size_min"] = 600
-    network_data["size_max"] = 1000
+    network_data["size_min"] = 0
+    network_data["size_max"] = 600
 
     network_data["Economics"]["gamma1"] = 0
     network_data["Economics"]["gamma3"] = 0
 
     network_data["Economics"]["gamma2"] = 0
-    network_data["Economics"]["gamma4"] = 800
+    network_data["Economics"]["gamma4"] = 4400
 
     network_data["Performance"]["bidirectional_network"] = 1
     network_data["Performance"]["bidirectional_network_precise"] = 1

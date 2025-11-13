@@ -91,6 +91,7 @@ def construct_investment_period_block(b_period, data: dict):
     b_period.var_carbon_revenue = Var()
     b_period.var_carbon_cost = Var()
     b_period.var_cost_total = Var()
+    b_period.var_netws_distance_weighted = Var()
 
     b_period.var_emissions_pos = Var()
     b_period.var_emissions_neg = Var()

@@ -30,7 +30,7 @@ def delete_all_balances(model):
 
 
 def construct_network_constraints(model, config: dict):
-    """
+    """`
     Construct the network constraints to calculate nodal in- and outflow
 
     .. math::
@@ -1178,6 +1178,16 @@ def construct_global_balance(model, data):
         )
 
     model.const_network = pyo.Constraint(rule=init_network_cost)
+
+    def init_netw_distance_weighted(const):
+        return (
+                sum(model.periods[period].network_block[netw].var_distance_weighted
+                    for netw in model.set_networks
+                    for period in model.set_periods)
+                == model.var_netws_distance_weighted
+        )
+
+    model.const_netw_distance_weighted = pyo.Constraint(rule=init_netw_distance_weighted)
 
     # Calculate total demand from parameters
     def calculate_total_demand():

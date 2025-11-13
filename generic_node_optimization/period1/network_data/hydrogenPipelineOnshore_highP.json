@@ -4,7 +4,7 @@
     "capex_defined_per_arc": 0,
     "size_max_defined_per_arc": 0,
     "decommission": "impossible",
-    "size_min": 600,
+    "size_min": 500,
     "size_max": 1000,
     "Economics": {
         "comment": "CAPEX coefficients are in EUR, EUR/MW or EUR/MW/km, opex_variable in EUR/MWh total output, opex_fixed in % of CAPEX_annual",

@@ -53,6 +53,7 @@ configuration["solveroptions"]["cuts"]["value"] = -1
 configuration["solveroptions"]["lpwarmstart"]["value"] = 0
 configuration["solveroptions"]["NoRelHeurTime"] = 0
 configuration["solveroptions"]["timelim"]["value"] = 50
+configuration["solveroptions"]["threads"]["value"] = 48
 
 configuration["reporting"]["save_path"]["value"] = str(results_data_path)
 configuration["reporting"]["save_summary_path"]["value"] = str(results_data_path)
@@ -147,7 +148,7 @@ define_hydrogen_pipeline2(input_data_path)
 define_hydrogen_storage(input_data_path)
 define_electrolyzers(input_data_path)
 
-n_timestep = 744
+n_timestep = 1
 
 hourly_data = {}
 connection_pressure_data = {}
@@ -228,7 +229,6 @@ for node in ["BIG1", "BIG2"]:
 # adopt.load_climate_data_from_api(input_data_path)
 
 m = adopt.ModelHub()
-m.read_data(input_data_path)
 m.quick_solve()
 
 result_folder_path = m.last_solve_info["result_folder_path"]

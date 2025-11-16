@@ -1,0 +1,1 @@
+1 year minimizing distance * size, max 300 for hydrogen

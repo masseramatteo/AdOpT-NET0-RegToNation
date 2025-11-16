@@ -1182,8 +1182,9 @@ def construct_global_balance(model, data):
     def init_netw_distance_weighted(const):
         return (
                 sum(model.periods[period].network_block[netw].var_distance_weighted
-                    for netw in model.set_networks
-                    for period in model.set_periods)
+                    for period in model.set_periods
+                    for netw in model.periods[period].set_networks
+                    )
                 == model.var_netws_distance_weighted
         )
 

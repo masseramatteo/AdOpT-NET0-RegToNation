@@ -58,7 +58,8 @@ configuration["solveroptions"]["threads"]["value"] = 48
 configuration["reporting"]["save_path"]["value"] = str(results_data_path)
 configuration["reporting"]["save_summary_path"]["value"] = str(results_data_path)
 
-configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
+# configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
+configuration["optimization"]["objective"]["value"] = "distance_willingness_to_pay"
 
 # Set pressure consideration
 configuration["performance"]["pressure"]["pressure_on"]["value"] = 1
@@ -148,7 +149,7 @@ define_hydrogen_pipeline2(input_data_path)
 define_hydrogen_storage(input_data_path)
 define_electrolyzers(input_data_path)
 
-n_timestep = 1
+n_timestep = 8760
 
 hourly_data = {}
 connection_pressure_data = {}
@@ -204,7 +205,7 @@ for node in nodes:
                                      connection=['Import'], carriers=['hydrogen'], nodes=[node])
     adopt.fill_carrier_pressure_data(input_data_path, pressure_value_bar=hydrogen_GenProd_pressure[node],
                                      connection=['Generic production'], carriers=['hydrogen'], nodes=[node])
-    adopt.fill_carrier_data(input_data_path, value_or_data=80, columns=['Import limit'], carriers=['electricity'],
+    adopt.fill_carrier_data(input_data_path, value_or_data=50, columns=['Import limit'], carriers=['electricity'],
                             nodes=[node])
     adopt.fill_carrier_data(input_data_path, value_or_data=electricity_prices[node], columns=['Import price'],
                             carriers=['electricity'], nodes=[node])
@@ -217,9 +218,9 @@ for node in nodes:
 for node in ["BIG1", "BIG2"]:
     adopt.fill_carrier_data(input_data_path, value_or_data=1000, columns=['Import limit'], carriers=['hydrogen'],
                             nodes=[node])
-    adopt.fill_carrier_data(input_data_path, value_or_data=150, columns=['Import price'], carriers=['hydrogen'],
+    adopt.fill_carrier_data(input_data_path, value_or_data=270, columns=['Import price'], carriers=['hydrogen'],
                             nodes=[node])
-    adopt.fill_carrier_data(input_data_path, value_or_data=5000, columns=['Import limit'], carriers=['electricity'],
+    adopt.fill_carrier_data(input_data_path, value_or_data=2000, columns=['Import limit'], carriers=['electricity'],
                             nodes=[node])
     # Use dynamic electricity prices for BIG nodes too
     adopt.fill_carrier_data(input_data_path, value_or_data=100, columns=['Import price'],
@@ -229,6 +230,7 @@ for node in ["BIG1", "BIG2"]:
 # adopt.load_climate_data_from_api(input_data_path)
 
 m = adopt.ModelHub()
+m.read_data(input_data_path)
 m.quick_solve()
 
 result_folder_path = m.last_solve_info["result_folder_path"]

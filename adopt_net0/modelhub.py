@@ -625,6 +625,8 @@ class ModelHub:
             self._optimize_costs_emissionslimit()
         elif objective == "supply_willingness_to_pay":
             self._optimize_costs_supply_willingness()
+        elif objective == "distance_willingness_to_pay":
+            self._optimize_network_distance_supply_willingness()
         else:
             raise Exception("objective in Configurations is incorrect")
 
@@ -729,7 +731,7 @@ class ModelHub:
         h2_demand = model.para_total_demand.value
 
         model.const_willingness_to_pay = pyo.Constraint(
-            expr=model.var_npv <= (h2_demand * 170)
+            expr=model.var_npv <= (h2_demand * 250)
         )
 
         model.objective = pyo.Objective(rule=init_objective, sense=pyo.minimize)
@@ -752,11 +754,11 @@ class ModelHub:
         h2_demand = model.para_total_demand.value
 
         model.const_willingness_to_pay = pyo.Constraint(
-            expr=model.var_npv <= (h2_demand * 170)
+            expr=model.var_npv <= (h2_demand * 280)
         )
 
         model.objective = pyo.Objective(rule=init_objective, sense=pyo.minimize)
-        log_msg = "Set objective on infrastructure due to willingness to pay"
+        log_msg = "Set objective on infrastructure distance due to willingness to pay"
         print(log_msg)
         log.info(log_msg)
         self._call_solver()

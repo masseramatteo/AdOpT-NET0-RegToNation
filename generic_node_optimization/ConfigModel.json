@@ -10,7 +10,7 @@
                 "costs_emissionlimit",
                 "pareto"
             ],
-            "value": "supply_willingness_to_pay"
+            "value": "distance_willingness_to_pay"
         },
         "emission_limit": {
             "description": "emission limit to be enforced if objective function is costs_emissionlimit",

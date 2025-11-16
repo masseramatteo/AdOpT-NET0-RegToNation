@@ -1021,7 +1021,7 @@ class Network(ModelComponent):
 
         def init_distance(const):
             return sum(
-                b_netw.arc_block[arc].distance * b_netw.arc_block[arc].var_size
+                (b_netw.arc_block[arc].distance**2) * b_netw.arc_block[arc].var_size
                 for arc in b_netw.set_arcs
             ) == b_netw.var_distance_weighted
 

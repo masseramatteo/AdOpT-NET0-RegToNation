@@ -1,0 +1,1 @@
+objective to distance^2 * size, one moenth

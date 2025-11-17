@@ -64,15 +64,16 @@ def calculate_distances_from_coordinates(input_data_path, scenario_to_use):
     
     return distance_matrix
 
-def define_nodes(input_data_path):
+def define_nodes(input_data_path, params):
     # Add required technologies for SMALL cluster nodes
     small_nodes = ["SMALL1", "SMALL2", "SMALL3", "SMALL4"]
+    small_new_tech_list = params["small_cluster_new_technologies"]
     
     for node in small_nodes:
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "r") as json_file:
             technologies = json.load(json_file)
 
-        technologies["new"] = ["Electrolyzer_small", "Storage_H2_lowP"]
+        technologies["new"] = small_new_tech_list
         technologies["existing"] = {}
 
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "w") as json_file:
@@ -80,12 +81,13 @@ def define_nodes(input_data_path):
 
     # Add required technologies for BIG cluster nodes
     big_nodes = ["BIG1", "BIG2"]
+    big_new_tech_list = params["big_cluster_new_technologies"]
     
     for node in big_nodes:
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "r") as json_file:
             technologies = json.load(json_file)
 
-        technologies["new"] = ["Electrolyzer_big", "Storage_H2_highP"]
+        technologies["new"] = big_new_tech_list
         technologies["existing"] = {}
 
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "w") as json_file:
@@ -95,8 +97,10 @@ def define_nodes(input_data_path):
     with open(input_data_path / "period1" / "node_data" / "STORAGE" / "Technologies.json", "r") as json_file:
         technologies = json.load(json_file)
 
+    storage_existing = params["existing_storage_technologies"]
+
     technologies["new"] = []
-    technologies["existing"] = {"Storage_H2_Cavern": 100000}
+    technologies["existing"] = storage_existing
 
     with open(input_data_path / "period1" / "node_data" / "STORAGE" / "Technologies.json", "w") as json_file:
         json.dump(technologies, json_file, indent=4)

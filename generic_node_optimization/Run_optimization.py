@@ -14,6 +14,7 @@ from define_components_spec import define_hydrogen_pipeline1
 from define_components_spec import define_hydrogen_pipeline2
 from define_components_spec import define_hydrogen_storage
 from define_components_spec import define_electrolyzers
+from Change_data_excel import define_excel_data
 
 import adopt_net0 as adopt
 
@@ -69,6 +70,24 @@ class OptimizationRunner:
         define_hydrogen_storage(input_data_path)
         define_electrolyzers(input_data_path)
 
+        # Load carrier data
+
+        self._load_carrier_data(input_data_path, nodes, params)
+
+        # Solve
+        print(f"   🔧 Costruzione e risoluzione modello...")
+        m = adopt.ModelHub()
+        m.read_data(input_data_path)
+        m.quick_solve()
+
+        # Extract results
+        result_info = self._extract_results(m, run_folder, params)
+
+        print(f"   ✅ Ottimizzazione completata!")
+        print(f"   📈 Objective: {result_info.get('objective_value', 'N/A')}")
+        print(f"   ⏱️  Time: {result_info.get('solve_time', 'N/A')}s")
+
+        return result_info
 
 
     def _configure_topology(self, input_data_path, nodes):
@@ -131,6 +150,13 @@ class OptimizationRunner:
         node_lat = {}
         node_alt = {}
 
+        for _, row in scenario_nodes.iterrows():
+            node_name = row['Node']
+            if node_name in nodes:  # Only use nodes that exist in our system
+                node_lon[node_name] = row['lon']
+                node_lat[node_name] = row['lat']
+                node_alt[node_name] = row['alt']
+
         # Load or create the main NodeLocations.csv
         node_location = pd.read_csv(input_data_path / "NodeLocations.csv", sep=';', index_col=0, header=0)
 
@@ -151,3 +177,69 @@ class OptimizationRunner:
         networks["new"] = network_list
         with open(input_data_path / "period1" / "Networks.json", "w") as f:
             json.dump(networks, f, indent=4)
+
+    def _load_carrier_data(self, input_data_path, nodes, params):
+        """Carica carrier data dai file Excel generati"""
+        n_timestep = 8760
+
+        data_folder = input_data_path/"data"
+        define_excel_data(data_folder, params)
+
+
+        for node in nodes:
+            # Load data
+            hourly_data = pd.read_excel(
+                input_data_path / f"data/data_network_{node}.xlsx",
+                header=0, nrows=n_timestep
+            )
+
+            connection_pressure_data = pd.read_excel(
+                input_data_path / f"data/data_pressure_connections_{node}.xlsx",
+                index_col=0
+            )
+
+            el_prices = pd.read_excel(
+                input_data_path / f"data/electricity_prices_{node}.xlsx",
+                header=0, nrows=n_timestep
+            )['Electricity_Price_EUR_MWh']
+
+            # Extract demands
+            hydrogen_demand = hourly_data.iloc[:, 0]
+            el_demand = hourly_data.iloc[:, 1]
+
+            # Pressures
+            h2_demand_pressure = float(connection_pressure_data.loc['demand', 'hydrogen'])
+            h2_export_pressure = float(connection_pressure_data.loc['export', 'hydrogen'])
+            h2_import_pressure = float(connection_pressure_data.loc['import', 'hydrogen'])
+            h2_genprod_pressure = float(connection_pressure_data.loc['generic_production', 'hydrogen'])
+
+            # Fill carrier data
+            adopt.fill_carrier_data(input_data_path, value_or_data=el_demand,
+                                  columns=['Demand'], carriers=['electricity'], nodes=[node])
+            adopt.fill_carrier_data(input_data_path, value_or_data=hydrogen_demand,
+                                  columns=['Demand'], carriers=['hydrogen'], nodes=[node])
+
+            # Pressures
+            adopt.fill_carrier_pressure_data(input_data_path, pressure_value_bar=h2_demand_pressure,
+                                           connection=['Demand'], carriers=['hydrogen'], nodes=[node])
+            adopt.fill_carrier_pressure_data(input_data_path, pressure_value_bar=h2_export_pressure,
+                                           connection=['Export'], carriers=['hydrogen'], nodes=[node])
+            adopt.fill_carrier_pressure_data(input_data_path, pressure_value_bar=h2_import_pressure,
+                                           connection=['Import'], carriers=['hydrogen'], nodes=[node])
+            adopt.fill_carrier_pressure_data(input_data_path, pressure_value_bar=h2_genprod_pressure,
+                                           connection=['Generic production'], carriers=['hydrogen'], nodes=[node])
+
+            # Electricity prices and limits
+            adopt.fill_carrier_data(input_data_path, value_or_data=el_prices,
+                                  columns=['Import price'], carriers=['electricity'], nodes=[node])
+            adopt.fill_carrier_data(input_data_path, value_or_data=params.get("el_import_limit", 50),
+                                  columns=['Import limit'], carriers=['electricity'], nodes=[node])
+
+        # BIG nodes - hydrogen import availability
+        for node in ["BIG1", "BIG2"]:
+            adopt.fill_carrier_data(input_data_path, value_or_data=params.get("h2_import_limit", 1000),
+                                  columns=['Import limit'], carriers=['hydrogen'], nodes=[node])
+            adopt.fill_carrier_data(input_data_path, value_or_data=params.get("hydrogen_import_price", 270),
+                                  columns=['Import price'], carriers=['hydrogen'], nodes=[node])
+            adopt.fill_carrier_data(input_data_path, value_or_data=2000,  # BIG nodes have 2000 MW
+                                  columns=['Import limit'], carriers=['electricity'], nodes=[node])

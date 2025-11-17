@@ -40,6 +40,16 @@ def main():
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
         "existing_storage_technologies": [{"Storage_H2_Cavern": 100000}],
 
+        "hydrogen_demand_small":    [{
+        "SMALL1": {"Hydrogen use (TWh)": 0.95, "Capacity (MW)": 174},
+        "SMALL2": {"Hydrogen use (TWh)": 0.64, "Capacity (MW)": 117},
+        "SMALL3": {"Hydrogen use (TWh)": 0.48, "Capacity (MW)": 87},
+        "SMALL4": {"Hydrogen use (TWh)": 0.18, "Capacity (MW)": 33}}],
+
+        "hydrogen_demand_big":[{
+        "BIG1": {"Hydrogen use (TWh)": 15},
+        "BIG2": {"Hydrogen use (TWh)": 5}}],
+
         # Solver parameters per test veloce
         "mipgap": [0.05],  # Gap più alto per velocità
         "time_limit": [50],  # Tempo limitato

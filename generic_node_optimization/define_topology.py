@@ -23,25 +23,25 @@ def calculate_distance_between_coordinates(lon1, lat1, lon2, lat2):
     
     return c * r
 
-def calculate_distances_from_coordinates(input_data_path, scenario_to_use):
+def calculate_distances_from_coordinates(input_data_path):
     """
     Calculate distances between all nodes based on their actual coordinates
     from the generated topology scenario.
     """
     # Read coordinates from the generated scenario file
-    scenario_file = input_data_path /"input_data"/"scenarios" / f"NodeLocations_{scenario_to_use}.csv"
+    scenario_file = input_data_path/ "NodeLocations.csv"
     
     if not scenario_file.exists():
         raise FileNotFoundError(f"Scenario file not found: {scenario_file}")
     
     # Load node coordinates
     node_coords = pd.read_csv(scenario_file, sep=';')
-    print(f"📍 Calculating distances from scenario {scenario_to_use} coordinates")
+    print(f"📍 Calculating distances from scenario coordinates")
     
     # Create coordinate dictionary
     coords = {}
     for _, row in node_coords.iterrows():
-        coords[row['Node']] = (row['lon'], row['lat'])
+        coords[row['index']] = (row['lon'], row['lat'])
     
     # Get all nodes
     all_nodes = list(coords.keys())
@@ -59,8 +59,6 @@ def calculate_distances_from_coordinates(input_data_path, scenario_to_use):
                 # Calculate distance using Haversine formula
                 distance = calculate_distance_between_coordinates(lon1, lat1, lon2, lat2)
                 distance_matrix.loc[node1, node2] = round(distance, 1)  # Round to 1 decimal place
-                
-                print(f"Distance {node1} -> {node2}: {distance:.1f} km")
     
     return distance_matrix
 
@@ -211,7 +209,7 @@ def add_new_network_H2(input_data_path, scenario_to_use):
 
     # Calculate real distances from topology coordinates
     try:
-        distance = calculate_distances_from_coordinates(input_data_path, scenario_to_use)
+        distance = calculate_distances_from_coordinates(input_data_path)
         print("✅ Using calculated distances from topology coordinates")
     except FileNotFoundError as e:
         print(f"⚠️ {e}")

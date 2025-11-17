@@ -128,15 +128,15 @@ def add_new_network_H2(input_data_path, scenario_to_use):
             if i != j:  # Don't connect node to itself
                 # Set arc size based on node types
                 if node1 in small_nodes and node2 in small_nodes:
-                    arc_size.loc[node1, node2] = 250  # Small to small
+                    arc_size.loc[node1, node2] = 1000  # Small to small
                 elif (node1 in big_nodes and node2 in small_nodes) or (node1 in small_nodes and node2 in big_nodes):
-                    arc_size.loc[node1, node2] = 250  # Big to small or small to big
+                    arc_size.loc[node1, node2] = 1000  # Big to small or small to big
                 elif node1 in big_nodes and node2 in big_nodes:
-                    arc_size.loc[node1, node2] = 250  # Big to big (EHB style)
+                    arc_size.loc[node1, node2] = 1000  # Big to big (EHB style)
                 elif node1 == "STORAGE" or node2 == "STORAGE":
-                    arc_size.loc[node1, node2] = 250  # Storage connections
+                    arc_size.loc[node1, node2] = 1000  # Storage connections
                 else:
-                    arc_size.loc[node1, node2] = 250  # Default
+                    arc_size.loc[node1, node2] = 1000  # Default
 
     arc_size.to_csv(
         input_data_path / "period1" / "network_topology" / "new" / "hydrogenPipelineOnshore_lowP" / "size_max_arcs.csv",

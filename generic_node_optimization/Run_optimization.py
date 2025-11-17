@@ -71,9 +71,8 @@ class OptimizationRunner:
 
 
 
-
     def _configure_topology(self, input_data_path, nodes):
-        """Configura Topology.json"""
+        """Configure Topology.json"""
         with open(input_data_path / "Topology.json", "r") as f:
             topology = json.load(f)
         # Nodes
@@ -86,7 +85,7 @@ class OptimizationRunner:
             json.dump(topology, f, indent=4)
 
     def _configure_model(self, input_data_path, results_data_path, params):
-        """Configura ConfigModel.json"""
+        """Configure ConfigModel.json"""
         with open(input_data_path / "ConfigModel.json", "r") as f:
             configuration = json.load(f)
 
@@ -119,7 +118,7 @@ class OptimizationRunner:
             json.dump(configuration, json_file, indent=4)
 
     def _load_scenario_nodes(self, input_data_path, nodes, scenario):
-        """Carica coordinate nodi da scenario"""
+        """Load coordinates for node from scenarios"""
         scenario_file = self.base_path / "input_data" / "scenarios" / f"NodeLocations_{scenario}.csv"
 
         if not scenario_file.exists():
@@ -145,7 +144,7 @@ class OptimizationRunner:
         node_location.to_csv(input_data_path / "NodeLocations.csv", sep=';', index=False)
 
     def _configure_networks(self, input_data_path, network_list):
-        """Configura Networks.json"""
+        """Configure Networks.json"""
         with open(input_data_path / "period1" / "Networks.json", "r") as f:
             networks = json.load(f)
         networks["existing"] = []

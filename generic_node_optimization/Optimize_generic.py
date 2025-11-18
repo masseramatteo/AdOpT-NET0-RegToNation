@@ -53,13 +53,14 @@ configuration["solveroptions"]["cuts"]["value"] = -1
 configuration["solveroptions"]["lpwarmstart"]["value"] = 0
 configuration["solveroptions"]["NoRelHeurTime"] = 0
 configuration["solveroptions"]["timelim"]["value"] = 50
-configuration["solveroptions"]["threads"]["value"] = 48
+# configuration["solveroptions"]["threads"]["value"] = 48
 
 configuration["reporting"]["save_path"]["value"] = str(results_data_path)
 configuration["reporting"]["save_summary_path"]["value"] = str(results_data_path)
 
 # configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
 configuration["optimization"]["objective"]["value"] = "distance_willingness_to_pay"
+configuration["optimization"]["willingness_to_pay"]["value"] = 350
 
 # Set pressure consideration
 configuration["performance"]["pressure"]["pressure_on"]["value"] = 1
@@ -149,7 +150,7 @@ define_hydrogen_pipeline2(input_data_path)
 define_hydrogen_storage(input_data_path)
 define_electrolyzers(input_data_path)
 
-n_timestep = 8760
+n_timestep = 1
 
 hourly_data = {}
 connection_pressure_data = {}

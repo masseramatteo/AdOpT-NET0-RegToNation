@@ -24,6 +24,10 @@ class OptimizationRunner:
         self.timesteps = None
         self.base_path = Path(base_path)
         self.wtp = None
+        self.electricity_average_price = None
+        self.electricity_availability_small = None
+        self.h2_import_limit = None
+        self.h2_import_price = None
 
     def run_optimization(self, run_id, params, results_base_folder):
         """Run an optimization with given data and parameters"""
@@ -47,10 +51,18 @@ class OptimizationRunner:
         nodes = ["BIG1", "BIG2", "SMALL1", "SMALL2", "SMALL3", "SMALL4", "STORAGE"]
 
         self.timesteps = 8760
-        self.wtp = 300
+        self.wtp = params["willingness_to_pay"]
+        self.electricity_average_price = params["electricity_price_avg"]
+        self.electricity_availability_small = params["electricity_availability_small"]
 
         #Define topology
         self._configure_topology(input_data_path, nodes)
+
+        # Calcola parametri derivati
+        derived_params = self._calculate_derived_parameters(params)
+        params.update(derived_params)
+        self.h2_import_limit = params["h2_import_limit"]
+        self.h2_import_price = params["hydrogen_import_price"]
 
         # Configure model
         self._configure_model(input_data_path, results_data_path, params)
@@ -95,8 +107,7 @@ class OptimizationRunner:
         # Extract results
         result_info = self._extract_results(m, run_folder, params)
 
-        return
-
+        return result_info
 
     def _configure_topology(self, input_data_path, nodes):
         """Configure Topology.json"""
@@ -241,17 +252,133 @@ class OptimizationRunner:
             # Electricity prices and limits
             adopt.fill_carrier_data(input_data_path, value_or_data=el_prices,
                                   columns=['Import price'], carriers=['electricity'], nodes=[node])
-            adopt.fill_carrier_data(input_data_path, value_or_data=params.get("el_import_limit", 5000),
+            adopt.fill_carrier_data(input_data_path, value_or_data=self.electricity_availability_small,
                                   columns=['Import limit'], carriers=['electricity'], nodes=[node])
 
         # BIG nodes - hydrogen import availability
         for node in ["BIG1", "BIG2"]:
-            adopt.fill_carrier_data(input_data_path, value_or_data=params.get("h2_import_limit", 10000),
+            import_for_node = self.h2_import_limit/2
+            adopt.fill_carrier_data(input_data_path, value_or_data=import_for_node,
                                   columns=['Import limit'], carriers=['hydrogen'], nodes=[node])
-            adopt.fill_carrier_data(input_data_path, value_or_data=params.get("hydrogen_import_price", 270),
+            adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_price,
                                   columns=['Import price'], carriers=['hydrogen'], nodes=[node])
-            adopt.fill_carrier_data(input_data_path, value_or_data=20000,  # BIG nodes have 2000 MW
+            adopt.fill_carrier_data(input_data_path, value_or_data=2000,  # BIG nodes have 2000 MW
                                   columns=['Import limit'], carriers=['electricity'], nodes=[node])
             # Use dynamic electricity prices for BIG nodes too
             adopt.fill_carrier_data(input_data_path, value_or_data=100, columns=['Import price'],
                                     carriers=['electricity'], nodes=[node])
+
+    def _calculate_derived_parameters(self, params):
+        """Calculate derived parameters based on input params"""
+
+        total_demand = params["total_demand_TWh"]
+        import_availability = params["import_availability_ratio"]
+        el_price = params["electricity_price_avg"]
+        import_multiplier = params["import_cost_multiplier"]
+
+        # H2 import limit (MW) based on total demand and availability
+        # Total demand in MW medio = TWh * 1e6 / 8760
+        average_demand_MW = total_demand * 1e6 / 8760
+        h2_import_limit = average_demand_MW * import_availability
+
+        # H2 import price: electricity price * ratio
+        h2_import_price = el_price * import_multiplier
+
+        return {
+            "h2_import_limit": h2_import_limit,
+            "hydrogen_import_price": h2_import_price,
+            "el_import_limit": params["electricity_availability_small"]
+        }
+
+    def _extract_results(self, m, run_folder, params):
+        """Extract results from the model after solving"""
+        import pyomo.environ as pyo
+
+        # Get the Pyomo model object from ModelHub
+        model = None
+        if hasattr(m, "model"):
+            if isinstance(m.model, dict):
+                model = m.model.get("full") or next(iter(m.model.values()))
+            else:
+                model = m.model
+
+        if model is None:
+            print("⚠️  Could not find Pyomo model object")
+            return {}
+
+        # Helper function to extract scalar values
+        def get_value(component_name, pyo_type):
+            try:
+                comp = getattr(model, component_name, None)
+                if comp is not None:
+                    val = getattr(comp, "value", None)
+                    if val is not None:
+                        return float(val)
+                    # If indexed, try first element
+                    try:
+                        first_idx = next(iter(comp))
+                        return float(comp[first_idx])
+                    except:
+                        pass
+            except Exception as e:
+                print(f"⚠️  Error extracting {component_name}: {e}")
+            return None
+
+        # Extract values
+        var_npv = get_value("var_npv", pyo.Var)
+        para_total_demand = get_value("para_total_demand", pyo.Param)
+
+        # Get WTP from params
+        wtp = params.get("willingness_to_pay")
+        if isinstance(wtp, (list, tuple)):
+            wtp = wtp[0] if len(wtp) > 0 else None
+        try:
+            wtp = float(wtp) if wtp is not None else None
+        except:
+            wtp = None
+
+        # Calculate derived metrics
+        npv_over_demand = None
+        if var_npv is not None and var_npv != 0 and para_total_demand is not None:
+            npv_over_demand =var_npv / para_total_demand
+
+        demand_times_wtp = None
+        if para_total_demand is not None and wtp is not None:
+            demand_times_wtp = para_total_demand * wtp
+
+        # Extract objective value
+        objective_value = None
+        try:
+            for obj in model.component_objects(pyo.Objective, active=True):
+                objective_value = pyo.value(obj)
+                break
+        except Exception as e:
+            print(f"⚠️  Error extracting objective: {e}")
+
+        # Prepare result dictionary
+        result_info = {
+            "var_npv": var_npv,
+            "para_total_demand": para_total_demand,
+            "npv_over_demand": npv_over_demand,
+            "demand_times_wtp": demand_times_wtp,
+            "willingness_to_pay": wtp,
+            "objective_value": objective_value,
+        }
+
+        # Print summary
+        print("\n" + "="*80)
+        print("RUN RESULTS SUMMARY")
+        print("="*80)
+        for key, val in result_info.items():
+            print(f"  {key}: {val}")
+        print("="*80 + "\n")
+
+        # Save to JSON file
+        result_folder_path = Path(m.last_solve_info["result_folder_path"])
+        result_file = result_folder_path / "optimization_results_summary.json"
+        with open(result_file, "w") as f:
+            json.dump(result_info, f, indent=4, default=str)
+
+        print(f"✅ Results saved to: {result_file}")
+
+        return result_info

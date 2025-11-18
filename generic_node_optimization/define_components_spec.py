@@ -134,7 +134,7 @@ def define_electrolyzers(input_data_path):
             electrolyzer_data = json.load(json_file)
 
         electrolyzer_data["size_min"] = 200
-        electrolyzer_data["size_max"] = 2500
+        electrolyzer_data["size_max"] = 3000
 
         with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Electrolyzer_big.json",
                   "w") as json_file:
@@ -145,7 +145,7 @@ def define_electrolyzers(input_data_path):
                   "r") as json_file:
             electrolyzer_data = json.load(json_file)
 
-        electrolyzer_data["size_max"] = 200
+        electrolyzer_data["size_max"] = 250
 
         with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Electrolyzer_small.json",
                   "w") as json_file:

@@ -16,6 +16,10 @@
             "description": "emission limit to be enforced if objective function is costs_emissionlimit",
             "value": 0
         },
+        "willingness_to_pay": {
+            "description": "price for hydrogen",
+            "value": 350
+        },
         "pareto_points": {
             "description": "Number of Pareto points.",
             "value": 5
@@ -71,7 +75,7 @@
         },
         "threads": {
             "description": "Value to define number of threads (default is maximum available).",
-            "value": 48
+            "value": 0
         },
         "mipfocus": {
             "description": "Modifies high level solution strategy.",
@@ -174,11 +178,11 @@
         },
         "save_summary_path": {
             "description": "Path to save the summary file path to.",
-            "value": "Z:\\AdOpT-NET0-RegToNation\\generic_node_optimization\\userData"
+            "value": "C:\\Users\\Masse007\\Documents\\Code\\AdOpT-NET0-RegToNation\\generic_node_optimization\\userData"
         },
         "save_path": {
             "description": "Option to define the save path.",
-            "value": "Z:\\AdOpT-NET0-RegToNation\\generic_node_optimization\\userData"
+            "value": "C:\\Users\\Masse007\\Documents\\Code\\AdOpT-NET0-RegToNation\\generic_node_optimization\\userData"
         },
         "case_name": {
             "description": "Option to define a case study name that is added to the results folder name.",

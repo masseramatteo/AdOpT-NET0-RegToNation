@@ -23,12 +23,13 @@ def main():
         "scenarios": ["1751"],
 
         # Pochi valori per test rapido
-        "demand_level_ratio": [10],
-        "total_demand_TWh": [20],
-        "import_availability_ratio": [0.5],
+        "demand_level_ratio": [10, 20],
+        "total_demand_TWh": [25, 50],
+        "import_availability_ratio": [0.5, 0.8],
         "import_cost_multiplier": [2],
-        "electricity_price_avg": [120, 300],
-        "electricity_availability_small": [100],
+        "electricity_price_avg": [80],
+        "electricity_availability_small": [80],
+        "willingness_to_pay": [250, 350],
 
         # Una sola configurazione network
         "networks": [
@@ -50,9 +51,9 @@ def main():
         "BIG1": {"Hydrogen use (TWh)": 15},
         "BIG2": {"Hydrogen use (TWh)": 5}}],
 
-        # Solver parameters per test veloce
-        "mipgap": [0.05],  # Gap più alto per velocità
-        "time_limit": [50],  # Tempo limitato
+        # Solver parameters
+        "mipgap": [0.01],
+        "time_limit": [50],
         "threads": [48]
     }
 
@@ -70,7 +71,7 @@ def main():
         print(f"  {key}: {val_list}")
 
     # Calcola tempo stimato
-    avg_solve_time = 60  # secondi
+    avg_solve_time = 10  # secondi
     total_time_min = (len(combinations) * avg_solve_time) / 60
     print(f"\n⏱️  Estimated time: {total_time_min:.1f} minutes")
 
@@ -104,10 +105,6 @@ def main():
         print(f"\n{'='*80}")
         print(f"TEST RUN {idx}/{len(combinations)}")
         print(f"{'='*80}")
-        for key, value in params.items():
-            if isinstance(value, list):
-                print(f"  {key}: {json.dumps(value, indent=2)}")
-        print(f"{'='*80}\n")
 
         try:
             result = runner.run_optimization(
@@ -115,6 +112,17 @@ def main():
                 params=params,
                 results_base_folder=results_folder
             )
+
+            # Guard: ensure result is a dict before using **result
+            if result is None:
+                print(f"⚠️  runner.run_optimization returned None for run {idx}; using empty result dict")
+                result = {}
+            elif not isinstance(result, dict):
+                try:
+                    result = dict(result)
+                except Exception:
+                    print(f"⚠️  Unexpected result type {type(result)} for run {idx}; using empty result dict")
+                    result = {}
 
             results_summary.append({
                 "run_id": f"test_run_{idx:04d}",

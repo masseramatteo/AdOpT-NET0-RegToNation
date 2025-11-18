@@ -722,6 +722,7 @@ class ModelHub:
         Minimize infrastructure cost, with willingness to pay constrain
         """
         model = self.model[self.info_solving_algorithms["aggregation_model"]]
+        config = self.data.model_config
 
         self._delete_objective()
 
@@ -730,8 +731,10 @@ class ModelHub:
 
         h2_demand = model.para_total_demand.value
 
+        willingness_to_pay = config["optimization"]["willingness_to_pay"]["value"]
+
         model.const_willingness_to_pay = pyo.Constraint(
-            expr=model.var_npv <= (h2_demand * 250)
+            expr=model.var_npv <= (h2_demand * willingness_to_pay)
         )
 
         model.objective = pyo.Objective(rule=init_objective, sense=pyo.minimize)
@@ -745,6 +748,7 @@ class ModelHub:
         Minimize infrastructure distance, with willingness to pay constrain
         """
         model = self.model[self.info_solving_algorithms["aggregation_model"]]
+        config = self.data.model_config
 
         self._delete_objective()
 
@@ -752,9 +756,10 @@ class ModelHub:
             return model.var_cost_networks
 
         h2_demand = model.para_total_demand.value
+        willingness_to_pay = config["optimization"]["willingness_to_pay"]["value"]
 
         model.const_willingness_to_pay = pyo.Constraint(
-            expr=model.var_npv <= (h2_demand * 280)
+            expr=model.var_npv <= (h2_demand * willingness_to_pay)
         )
 
         model.objective = pyo.Objective(rule=init_objective, sense=pyo.minimize)

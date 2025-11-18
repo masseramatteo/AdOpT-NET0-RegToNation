@@ -15,12 +15,15 @@ from define_components_spec import define_hydrogen_pipeline2
 from define_components_spec import define_hydrogen_storage
 from define_components_spec import define_electrolyzers
 from Change_data_excel import define_excel_data
+from create_electricity_prices import create_electricity_prices
 
 import adopt_net0 as adopt
 
 class OptimizationRunner:
     def __init__(self, base_path):
+        self.timesteps = None
         self.base_path = Path(base_path)
+        self.wtp = None
 
     def run_optimization(self, run_id, params, results_base_folder):
         """Run an optimization with given data and parameters"""
@@ -42,6 +45,9 @@ class OptimizationRunner:
         # Setup base
         adopt.create_optimization_templates(input_data_path)
         nodes = ["BIG1", "BIG2", "SMALL1", "SMALL2", "SMALL3", "SMALL4", "STORAGE"]
+
+        self.timesteps = 8760
+        self.wtp = 300
 
         #Define topology
         self._configure_topology(input_data_path, nodes)
@@ -75,19 +81,21 @@ class OptimizationRunner:
         self._load_carrier_data(input_data_path, nodes, params)
 
         # Solve
-        print(f"   🔧 Costruzione e risoluzione modello...")
         m = adopt.ModelHub()
-        m.read_data(input_data_path)
+        m.read_data(input_data_path, start_period=0, end_period=1)
         m.quick_solve()
+
+        result_folder_path = m.last_solve_info["result_folder_path"]
+        # serialize params to JSON (use default=str for non-JSON types)
+        text = json.dumps(params, indent=4, ensure_ascii=False, default=str)
+
+        # write to `optimization_model_info.txt`
+        (result_folder_path / "optimization_model_info.txt").write_text(text, encoding="utf-8")
 
         # Extract results
         result_info = self._extract_results(m, run_folder, params)
 
-        print(f"   ✅ Ottimizzazione completata!")
-        print(f"   📈 Objective: {result_info.get('objective_value', 'N/A')}")
-        print(f"   ⏱️  Time: {result_info.get('solve_time', 'N/A')}s")
-
-        return result_info
+        return
 
 
     def _configure_topology(self, input_data_path, nodes):
@@ -127,6 +135,7 @@ class OptimizationRunner:
 
         # configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
         configuration["optimization"]["objective"]["value"] = "distance_willingness_to_pay"
+        configuration["optimization"]["willingness_to_pay"]["value"] = self.wtp
 
         # Set pressure consideration
         configuration["performance"]["pressure"]["pressure_on"]["value"] = 1
@@ -180,11 +189,11 @@ class OptimizationRunner:
 
     def _load_carrier_data(self, input_data_path, nodes, params):
         """Carica carrier data dai file Excel generati"""
-        n_timestep = 8760
+        n_timestep = self.timesteps
 
         data_folder = input_data_path/"data"
         define_excel_data(data_folder, params)
-
+        create_electricity_prices(data_folder, nodes, params)
 
         for node in nodes:
             # Load data
@@ -232,14 +241,17 @@ class OptimizationRunner:
             # Electricity prices and limits
             adopt.fill_carrier_data(input_data_path, value_or_data=el_prices,
                                   columns=['Import price'], carriers=['electricity'], nodes=[node])
-            adopt.fill_carrier_data(input_data_path, value_or_data=params.get("el_import_limit", 50),
+            adopt.fill_carrier_data(input_data_path, value_or_data=params.get("el_import_limit", 5000),
                                   columns=['Import limit'], carriers=['electricity'], nodes=[node])
 
         # BIG nodes - hydrogen import availability
         for node in ["BIG1", "BIG2"]:
-            adopt.fill_carrier_data(input_data_path, value_or_data=params.get("h2_import_limit", 1000),
+            adopt.fill_carrier_data(input_data_path, value_or_data=params.get("h2_import_limit", 10000),
                                   columns=['Import limit'], carriers=['hydrogen'], nodes=[node])
             adopt.fill_carrier_data(input_data_path, value_or_data=params.get("hydrogen_import_price", 270),
                                   columns=['Import price'], carriers=['hydrogen'], nodes=[node])
-            adopt.fill_carrier_data(input_data_path, value_or_data=2000,  # BIG nodes have 2000 MW
+            adopt.fill_carrier_data(input_data_path, value_or_data=20000,  # BIG nodes have 2000 MW
                                   columns=['Import limit'], carriers=['electricity'], nodes=[node])
+            # Use dynamic electricity prices for BIG nodes too
+            adopt.fill_carrier_data(input_data_path, value_or_data=100, columns=['Import price'],
+                                    carriers=['electricity'], nodes=[node])

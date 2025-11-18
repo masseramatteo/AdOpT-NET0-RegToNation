@@ -311,6 +311,10 @@ def initialize_configuration_templates() -> dict:
                 "is costs_emissionlimit",
                 "value": 0,
             },
+            "willingness_to_pay": {
+                "description": "price for hydrogen",
+                "value": 0,
+            },
             "pareto_points": {"description": "Number of Pareto points.", "value": 5},
             "timestaging": {
                 "description": "Defines number of timesteps that are averaged (0 = off).",

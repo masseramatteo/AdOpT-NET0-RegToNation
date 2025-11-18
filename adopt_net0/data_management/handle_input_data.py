@@ -140,8 +140,6 @@ class DataHandle:
         self.topology["fraction_of_year_modelled"] = (
             new_number_timesteps / original_number_timesteps
         )
-        self.topology["fraction_of_year_modelled"] = 8760/8760
-
 
         # Resolution in hours
         self.topology["resolution_in_h"] = {}

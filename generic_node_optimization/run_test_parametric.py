@@ -23,11 +23,11 @@ def main():
         "scenarios": ["1751"],
 
         # Pochi valori per test rapido
-        "demand_level_ratio": [5, 10],
-        "total_demand_TWh": [20, 30],
-        "import_availability_ratio": [0.5, 0.7],
-        "import_cost_multiplier": [1, 2],
-        "electricity_price_avg": [100],
+        "demand_level_ratio": [10],
+        "total_demand_TWh": [20],
+        "import_availability_ratio": [0.5],
+        "import_cost_multiplier": [2],
+        "electricity_price_avg": [120, 300],
         "electricity_availability_small": [100],
 
         # Una sola configurazione network
@@ -88,10 +88,6 @@ def main():
 
     print(f"\n📁 Results folder: {results_folder}")
 
-    response = input("\n▶️  Press ENTER to start test, or 'q' to quit: ")
-    if response.lower() == 'q':
-        print("❌ Aborted by user")
-        return
 
     # =========================================================================
     # RUN OPTIMIZATIONS

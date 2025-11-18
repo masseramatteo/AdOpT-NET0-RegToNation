@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
-def create_electricity_prices(input_data_path, nodes):
+def create_electricity_prices(input_data_path, nodes, params):
     """
     Create electricity price data for each node with smooth, continuous variations
 
@@ -17,14 +17,16 @@ def create_electricity_prices(input_data_path, nodes):
         nodes: List of node names
     """
 
+    # Create data directory if it doesn't exist
+
     # Create hourly time series for full year (8760 hours)
     hours = np.arange(8760)
     days = hours // 24
     hour_of_day = hours % 24
 
     # Base prices
-    base_price_small = 200  # EUR/MWh for small nodes
-    base_price_big = 150    # EUR/MWh for big nodes (lower base due to better grid connection)
+    base_price_small = params["electricity_price_avg"]  # EUR/MWh for small nodes
+    base_price_big = params["electricity_price_avg"]    # EUR/MWh for big nodes (lower base due to better grid connection)
 
     for node in nodes:
         if node.startswith("SMALL"):
@@ -103,7 +105,7 @@ def create_electricity_prices(input_data_path, nodes):
         })
 
         # Save to Excel file
-        output_file = input_data_path / "data" / f"electricity_prices_{node}.xlsx"
+        output_file = input_data_path / f"electricity_prices_{node}.xlsx"
         price_data.to_excel(output_file, index=False)
 
         # Calculate price variation metrics
@@ -113,23 +115,3 @@ def create_electricity_prices(input_data_path, nodes):
 
         # Print statistics
         print(f"Created smooth electricity prices for {node}:")
-        print(f"  Average price: {electricity_prices_smooth.mean():.1f} EUR/MWh")
-        print(f"  Min price: {electricity_prices_smooth.min():.1f} EUR/MWh")
-        print(f"  Max price: {electricity_prices_smooth.max():.1f} EUR/MWh")
-        print(f"  Standard deviation: {electricity_prices_smooth.std():.1f} EUR/MWh")
-        print(f"  Max hourly change: {max_hourly_change:.1f} EUR/MWh")
-        print(f"  Avg hourly change: {avg_hourly_change:.1f} EUR/MWh")
-        print(f"  Saved to: {output_file}\n")
-
-if __name__ == "__main__":
-    # Define paths and nodes
-    input_data_path = Path(r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\FirstWork simulations\x_nodes_generation")
-    nodes = ["BIG1", "BIG2", "SMALL1", "SMALL2", "SMALL3", "SMALL4", "STORAGE"]
-
-    # Create data directory if it doesn't exist
-    (input_data_path / "data").mkdir(exist_ok=True)
-
-    # Create electricity price files
-    create_electricity_prices(input_data_path, nodes)
-
-    print("✅ All electricity price files created successfully!")

@@ -425,10 +425,10 @@ if __name__ == "__main__":
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     results_folder = base_path / "results" / f"parallel_test_{timestamp}"
 
-    # Run parallel optimization
+    # Oppure usa l'auto-detection (None)
     runner = ParallelOptimizationRunner(
         base_path=base_path,
-        max_workers=4  # Adjust based on your system
+        max_workers=None  # Rileva automaticamente
     )
 
     results_summary = runner.run_parallel_optimization(

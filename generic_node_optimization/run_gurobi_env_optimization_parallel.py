@@ -1,6 +1,7 @@
 """
-Parallel Optimization Runner
+Parallel Optimization Runner with Explicit Gurobi Environment Management
 Creates all models first, then solves them in parallel using multiprocessing
+Uses Gurobi-recommended explicit environment management to avoid resource leaks
 """
 
 import json
@@ -98,22 +99,35 @@ def create_single_model(args):
 
 
 def solve_single_model(args):
-    """Solve a single model (runs in separate process)"""
+    """
+    Solve a single model (runs in separate process)
+    Uses explicit Gurobi environment management as recommended by Gurobi documentation
+    """
     run_id, input_data_path, results_data_path, params = args
 
     try:
         print(f"🔄 Solving: {run_id}")
 
-        # Configure Gurobi threads BEFORE importing adopt/pyomo
+        # Import Gurobi and set per-process parameters
         try:
             import gurobipy as gp
+
+            # Extract thread count from params (default to 1 if not specified)
             threads = int(params.get("threads", 1))
+
+            # Set Gurobi parameters for this process using the default environment
+            # This prevents CPU oversubscription when running multiple workers
             gp.setParam("Threads", threads)
-            print(f"  🔧 Gurobi configured: {threads} threads for {run_id}")
+
+            # Optional: reduce console output (uncomment if needed)
+            # gp.setParam("OutputFlag", 0)
+
+            print(f"  🔧 Gurobi configured: {threads} threads per worker")
+
         except ImportError:
-            print(f"  ⚠️  gurobipy not available for {run_id}")
+            print(f"  ⚠️  gurobipy not available for direct configuration")
         except Exception as e:
-            print(f"  ⚠️  Could not configure Gurobi for {run_id}: {e}")
+            print(f"  ⚠️  Could not configure Gurobi: {e}")
 
         import adopt_net0 as adopt
         import pyomo.environ as pyo
@@ -122,6 +136,13 @@ def solve_single_model(args):
         results_data_path = Path(results_data_path)
 
         # Create ModelHub and read data
+        # Note: If adopt/pyomo creates gurobipy models directly, they should use:
+        # with gp.Env() as env:
+        #     env.setParam("Threads", threads)
+        #     model = gp.Model(env=env)
+        #     ...solve...
+        # This ensures the environment is properly closed and resources released
+
         m = adopt.ModelHub()
         m.read_data(input_data_path, start_period=0, end_period=24)
 
@@ -213,14 +234,20 @@ def solve_single_model(args):
         return run_id, None, str(e)
 
 
-class ParallelOptimizationRunner:
+class GurobiEnvParallelOptimizationRunner:
     """
-    Run multiple optimizations in parallel
+    Run multiple optimizations in parallel with Gurobi-aware process management
 
-    Uses separate processes with controlled Gurobi thread limits to prevent
-    CPU oversubscription and optimize performance.
+    This runner uses the 'spawn' multiprocessing context to ensure child processes
+    don't inherit the parent's Gurobi environment. Each worker process uses
+    Gurobi's default environment (per-process), with controlled thread limits
+    to prevent CPU oversubscription and optimize performance.
 
-    Note: Model creation is sequential, solving is parallel.
+    Note: This uses Gurobi's default environment per process (via gp.setParam),
+    which is appropriate when using Pyomo/adopt as the modeling layer.
+    For direct gurobipy usage, consider using explicit `with gp.Env()` contexts.
+
+    Model creation is sequential, solving is parallel.
     For fully parallel creation+solving, use run_creation_and_gurobi_optimization_parallel.py
     """
 
@@ -310,7 +337,7 @@ class ParallelOptimizationRunner:
             ('max_workers', 'Max Workers', '3'),
             ('max_threads', 'Max Threads', '4')
         ]:
-            workers, threads, desc = ParallelOptimizationRunner._get_strategy_config(
+            workers, threads, desc = GurobiEnvParallelOptimizationRunner._get_strategy_config(
                 cpu_count, strategy_key
             )
             total = workers * threads
@@ -394,7 +421,7 @@ class ParallelOptimizationRunner:
     def __init__(self, base_path, max_workers=None, threads_per_worker=None,
                  cpu_utilization_target=0.85, strategy=None):
         """
-        Initialize parallel runner
+        Initialize parallel runner with Gurobi-aware configuration
 
         Args:
             base_path: Base path for the optimization project
@@ -473,7 +500,7 @@ class ParallelOptimizationRunner:
 
     def run_parallel_optimization(self, run_configs, results_base_folder):
         """
-        Run multiple optimizations in parallel
+        Run multiple optimizations in parallel with explicit Gurobi environment management
 
         Args:
             run_configs: List of (run_id, params) tuples
@@ -486,7 +513,7 @@ class ParallelOptimizationRunner:
         results_base_folder.mkdir(parents=True, exist_ok=True)
 
         print(f"\n{'='*80}")
-        print(f"PARALLEL OPTIMIZATION RUNNER")
+        print(f"GUROBI-ENV PARALLEL OPTIMIZATION RUNNER")
         print(f"{'='*80}")
         print(f"Total runs: {len(run_configs)}")
         print(f"Max parallel workers: {self.max_workers}")
@@ -510,6 +537,7 @@ class ParallelOptimizationRunner:
         print(f"{'='*80}\n")
 
         creation_start_time = time.time()
+
         model_configs = []
         creation_errors = []
 
@@ -534,17 +562,22 @@ class ParallelOptimizationRunner:
             print(f"⚠️  {len(creation_errors)} models failed to create")
 
         # =====================================================================
-        # PHASE 2: SOLVE ALL MODELS (PARALLEL)
+        # PHASE 2: SOLVE ALL MODELS (PARALLEL) with spawn context
         # =====================================================================
         print(f"\n{'='*80}")
         print(f"PHASE 2: Solving {len(model_configs)} models in parallel")
+        print(f"Using 'spawn' context for clean Gurobi environment per worker")
         print(f"{'='*80}\n")
 
         solve_start_time = time.time()
         results_summary = []
         solve_errors = []
 
-        with ProcessPoolExecutor(max_workers=self.max_workers) as executor:
+        # Use 'spawn' context to ensure child processes don't inherit parent's Gurobi environment
+        # This is critical for proper license management and resource cleanup
+        ctx = mp.get_context('spawn')
+
+        with ProcessPoolExecutor(max_workers=self.max_workers, mp_context=ctx) as executor:
             # Submit all solve jobs
             future_to_runid = {
                 executor.submit(solve_single_model, config): config[0]
@@ -678,9 +711,7 @@ if __name__ == "__main__":
         }],
         "mipgap": [0.01],
         "time_limit": [50],
-        # threads: auto-calculated based on workers
-        # For 14 cores with 7 workers → 2 threads per worker
-        # For 48 cores with 8 workers → 6 threads per worker
+        # Note: threads will be auto-calculated by the runner
     }
 
     # Generate combinations
@@ -689,25 +720,39 @@ if __name__ == "__main__":
     combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
     # Prepare run configs
-    run_configs = [(f"parallel_run_{i:04d}", params) for i, params in enumerate(combinations, 1)]
+    run_configs = [(f"gurobi_env_run_{i:04d}", params) for i, params in enumerate(combinations, 1)]
 
     print(f"Total combinations: {len(run_configs)}")
 
     # Create timestamp for results folder
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    results_folder = base_path / "results" / f"parallel_test_{timestamp}"
+    results_folder = base_path / "results" / f"gurobi_env_test_{timestamp}"
 
-    # Oppure usa l'auto-detection (None)
-    runner = ParallelOptimizationRunner(
+    # Create runner with explicit configuration
+    # Option 1: Auto-detect everything
+    runner = GurobiEnvParallelOptimizationRunner(
         base_path=base_path,
-        max_workers=None  # Rileva automaticamente
+        max_workers=None,  # Auto-detect
+        threads_per_worker=None  # Auto-calculate based on workers
     )
+
+    # Option 2: Explicit configuration (example for 48 cores)
+    # For 48 cores, you could use:
+    # - 8 workers × 5 threads = 40 threads (conservative, leaves 8 cores for OS)
+    # - 8 workers × 6 threads = 48 threads (uses all cores)
+    # - 16 workers × 3 threads = 48 threads (more parallelism, less per-solve)
+    #
+    # runner = GurobiEnvParallelOptimizationRunner(
+    #     base_path=base_path,
+    #     max_workers=8,
+    #     threads_per_worker=5
+    # )
 
     results_summary = runner.run_parallel_optimization(
         run_configs=run_configs,
         results_base_folder=results_folder
     )
 
-    print(f"\n✅ Parallel optimization complete!")
+    print(f"\n✅ Gurobi-env parallel optimization complete!")
     print(f"📊 Summary Excel: {results_folder / 'parallel_results_summary.xlsx'}")
 

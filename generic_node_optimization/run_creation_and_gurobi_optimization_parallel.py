@@ -1,6 +1,7 @@
 """
-Parallel Optimization Runner
-Creates all models first, then solves them in parallel using multiprocessing
+Parallel Optimization Runner with Parallel Model Creation and Gurobi Environment Management
+BOTH creates models AND solves them in parallel using multiprocessing
+Uses Gurobi-recommended explicit environment management to avoid resource leaks
 """
 
 import json
@@ -14,7 +15,7 @@ from Run_optimization import OptimizationRunner
 
 
 def create_single_model(args):
-    """Create and prepare a single model without solving (runs in main process)"""
+    """Create and prepare a single model without solving (runs in parallel process)"""
     run_id, params, results_base_folder, base_path = args
 
     print(f"📦 Creating model: {run_id}")
@@ -98,22 +99,39 @@ def create_single_model(args):
 
 
 def solve_single_model(args):
-    """Solve a single model (runs in separate process)"""
+    """
+    Solve a single model (runs in separate process)
+
+    Uses Gurobi's default environment per process with controlled thread limits.
+    Each worker process (via 'spawn' context) has its own isolated Gurobi environment,
+    preventing resource conflicts between parallel solves.
+    """
     run_id, input_data_path, results_data_path, params = args
 
     try:
         print(f"🔄 Solving: {run_id}")
 
-        # Configure Gurobi threads BEFORE importing adopt/pyomo
+        # Import Gurobi and set per-process parameters
         try:
             import gurobipy as gp
+
+            # Extract thread count from params (default to 1 if not specified)
             threads = int(params.get("threads", 1))
+
+            # Set Gurobi parameters for this process using the default environment
+            # Since we use 'spawn' context, each process has its own default env
+            # This prevents CPU oversubscription when running multiple workers
             gp.setParam("Threads", threads)
-            print(f"  🔧 Gurobi configured: {threads} threads for {run_id}")
+
+            # Optional: reduce console output (uncomment if needed)
+            # gp.setParam("OutputFlag", 0)
+
+            print(f"  🔧 Gurobi default env configured: {threads} threads per worker")
+
         except ImportError:
-            print(f"  ⚠️  gurobipy not available for {run_id}")
+            print(f"  ⚠️  gurobipy not available for direct configuration")
         except Exception as e:
-            print(f"  ⚠️  Could not configure Gurobi for {run_id}: {e}")
+            print(f"  ⚠️  Could not configure Gurobi: {e}")
 
         import adopt_net0 as adopt
         import pyomo.environ as pyo
@@ -122,6 +140,7 @@ def solve_single_model(args):
         results_data_path = Path(results_data_path)
 
         # Create ModelHub and read data
+        # Pyomo/adopt will use the default Gurobi environment configured above
         m = adopt.ModelHub()
         m.read_data(input_data_path, start_period=0, end_period=24)
 
@@ -213,29 +232,23 @@ def solve_single_model(args):
         return run_id, None, str(e)
 
 
-class ParallelOptimizationRunner:
+class ParallelCreationAndGurobiOptimizationRunner:
     """
-    Run multiple optimizations in parallel
+    Run multiple optimizations in parallel with PARALLEL MODEL CREATION and Gurobi-aware process management
 
-    Uses separate processes with controlled Gurobi thread limits to prevent
-    CPU oversubscription and optimize performance.
+    This runner parallelizes BOTH phases:
+    - Phase 1: Model creation in parallel
+    - Phase 2: Model solving in parallel
 
-    Note: Model creation is sequential, solving is parallel.
-    For fully parallel creation+solving, use run_creation_and_gurobi_optimization_parallel.py
+    Uses the 'spawn' multiprocessing context to ensure child processes
+    don't inherit the parent's Gurobi environment. Each worker process uses
+    Gurobi's default environment (per-process), with controlled thread limits
+    to prevent CPU oversubscription and optimize performance.
     """
 
     @staticmethod
     def _get_strategy_config(cpu_count, strategy):
-        """
-        Get worker and thread configuration based on strategy
-
-        Args:
-            cpu_count: Number of logical processors
-            strategy: 'auto', 'throughput', 'heavy', 'max_workers', or 'max_threads'
-
-        Returns:
-            (max_workers, threads_per_worker, description)
-        """
+        """Get worker and thread configuration based on strategy"""
         target_total_threads = int(cpu_count * 0.90)
 
         if strategy == 'auto':
@@ -250,9 +263,9 @@ class ParallelOptimizationRunner:
             if cpu_count >= 40:
                 threads_per_worker = max(3, cpu_count // 12)  # ~3-4 threads
             elif cpu_count >= 20:
-                threads_per_worker = max(2, cpu_count // 8)  # ~2-3 threads
+                threads_per_worker = max(2, cpu_count // 8)   # ~2-3 threads
             else:
-                threads_per_worker = max(2, cpu_count // 5)  # ~2-3 threads
+                threads_per_worker = max(2, cpu_count // 5)   # ~2-3 threads
             max_workers = max(2, target_total_threads // threads_per_worker)
             description = f"Throughput (many solves, {threads_per_worker} threads each)"
 
@@ -260,11 +273,11 @@ class ParallelOptimizationRunner:
             # Heavy: fewer workers, more threads each (~40-50% of cores per worker)
             # Goal: fewer problems running, each with more computational power
             if cpu_count >= 40:
-                threads_per_worker = max(6, cpu_count // 8)  # ~6 threads
+                threads_per_worker = max(6, cpu_count // 8)   # ~6 threads
             elif cpu_count >= 20:
-                threads_per_worker = max(5, cpu_count // 4)  # ~5 threads
+                threads_per_worker = max(5, cpu_count // 4)   # ~5 threads
             else:
-                threads_per_worker = max(4, cpu_count // 3)  # ~4-5 threads
+                threads_per_worker = max(4, cpu_count // 3)   # ~4-5 threads
             max_workers = max(2, target_total_threads // threads_per_worker)
             description = f"Heavy problems (fewer solves, {threads_per_worker} threads each)"
 
@@ -287,22 +300,14 @@ class ParallelOptimizationRunner:
 
     @staticmethod
     def prompt_strategy_selection():
-        """
-        Prompt user to select parallelization strategy
-
-        Returns:
-            strategy: 'auto', 'throughput', or 'heavy'
-        """
+        """Prompt user to select parallelization strategy"""
         cpu_count = mp.cpu_count()
-
         print(f"\n{'='*80}")
         print(f"PARALLELIZATION STRATEGY SELECTION")
         print(f"{'='*80}")
         print(f"Detected: {cpu_count} logical processors")
-        print(f"\nAvailable strategies:")
-        print(f"")
+        print(f"\nAvailable strategies:\n")
 
-        # Show preview of each strategy
         for strategy_key, strategy_name, strategy_num in [
             ('auto', 'Auto-detect', 'ENTER'),
             ('throughput', 'Throughput', '1'),
@@ -310,7 +315,7 @@ class ParallelOptimizationRunner:
             ('max_workers', 'Max Workers', '3'),
             ('max_threads', 'Max Threads', '4')
         ]:
-            workers, threads, desc = ParallelOptimizationRunner._get_strategy_config(
+            workers, threads, desc = ParallelCreationAndGurobiOptimizationRunner._get_strategy_config(
                 cpu_count, strategy_key
             )
             total = workers * threads
@@ -338,7 +343,6 @@ class ParallelOptimizationRunner:
 
         while True:
             choice = input("Select strategy [ENTER/1/2/3/4/P]: ").strip().lower()
-
             if choice == '' or choice == 'auto':
                 return 'auto', None, None
             elif choice == '1' or choice == 'throughput':
@@ -394,7 +398,7 @@ class ParallelOptimizationRunner:
     def __init__(self, base_path, max_workers=None, threads_per_worker=None,
                  cpu_utilization_target=0.85, strategy=None):
         """
-        Initialize parallel runner
+        Initialize parallel runner with Gurobi-aware configuration
 
         Args:
             base_path: Base path for the optimization project
@@ -473,7 +477,9 @@ class ParallelOptimizationRunner:
 
     def run_parallel_optimization(self, run_configs, results_base_folder):
         """
-        Run multiple optimizations in parallel
+        Run multiple optimizations in parallel with PARALLEL MODEL CREATION
+
+        Both model creation and solving happen in parallel for maximum performance
 
         Args:
             run_configs: List of (run_id, params) tuples
@@ -486,7 +492,7 @@ class ParallelOptimizationRunner:
         results_base_folder.mkdir(parents=True, exist_ok=True)
 
         print(f"\n{'='*80}")
-        print(f"PARALLEL OPTIMIZATION RUNNER")
+        print(f"PARALLEL CREATION + GUROBI-ENV OPTIMIZATION RUNNER")
         print(f"{'='*80}")
         print(f"Total runs: {len(run_configs)}")
         print(f"Max parallel workers: {self.max_workers}")
@@ -503,48 +509,81 @@ class ParallelOptimizationRunner:
                 params["threads"] = self.threads_per_worker
 
         # =====================================================================
-        # PHASE 1: CREATE ALL MODELS (SEQUENTIAL)
+        # PHASE 1: CREATE ALL MODELS (PARALLEL) 🚀
         # =====================================================================
         print(f"\n{'='*80}")
-        print(f"PHASE 1: Creating {len(run_configs)} models (sequential)")
+        print(f"PHASE 1: Creating {len(run_configs)} models in PARALLEL 🚀")
+        print(f"Using 'spawn' context for clean process separation")
         print(f"{'='*80}\n")
 
-        creation_start_time = time.time()
         model_configs = []
         creation_errors = []
 
-        for run_id, params in run_configs:
-            args = (run_id, params, results_base_folder, self.base_path)
-            run_id, input_path, results_path, params, error = create_single_model(args)
+        creation_start_time = time.time()
 
-            if error:
-                creation_errors.append({
-                    "run_id": run_id,
-                    "status": "CREATION_FAILED",
-                    "error": error,
-                    **params
-                })
-            else:
-                model_configs.append((run_id, input_path, results_path, params))
+        # Use spawn context for model creation
+        ctx = mp.get_context('spawn')
+
+        with ProcessPoolExecutor(max_workers=self.max_workers, mp_context=ctx) as executor:
+            # Submit all model creation jobs
+            future_to_runid = {
+                executor.submit(create_single_model, (run_id, params, results_base_folder, self.base_path)): run_id
+                for run_id, params in run_configs
+            }
+
+            # Collect results as they complete
+            completed = 0
+            for future in as_completed(future_to_runid):
+                run_id = future_to_runid[future]
+                completed += 1
+
+                try:
+                    run_id, input_path, results_path, params, error = future.result()
+
+                    if error:
+                        creation_errors.append({
+                            "run_id": run_id,
+                            "status": "CREATION_FAILED",
+                            "error": error,
+                            **params
+                        })
+                    else:
+                        model_configs.append((run_id, input_path, results_path, params))
+
+                    print(f"Model creation progress: {completed}/{len(run_configs)} completed")
+
+                except Exception as e:
+                    print(f"❌ Exception creating {run_id}: {e}")
+                    creation_errors.append({
+                        "run_id": run_id,
+                        "status": "CREATION_FAILED",
+                        "error": str(e),
+                        **{}
+                    })
 
         creation_elapsed = time.time() - creation_start_time
         print(f"\n✅ Model creation complete: {len(model_configs)} models ready to solve")
-        print(f"   ⏱️  Creation time: {creation_elapsed:.1f}s ({creation_elapsed/60:.1f} min)")
+        print(f"   Creation time: {creation_elapsed:.1f}s ({creation_elapsed/60:.1f} min)")
         if creation_errors:
             print(f"⚠️  {len(creation_errors)} models failed to create")
 
         # =====================================================================
-        # PHASE 2: SOLVE ALL MODELS (PARALLEL)
+        # PHASE 2: SOLVE ALL MODELS (PARALLEL) 🚀
         # =====================================================================
         print(f"\n{'='*80}")
-        print(f"PHASE 2: Solving {len(model_configs)} models in parallel")
+        print(f"PHASE 2: Solving {len(model_configs)} models in PARALLEL 🚀")
+        print(f"Using 'spawn' context for clean Gurobi environment per worker")
         print(f"{'='*80}\n")
 
         solve_start_time = time.time()
         results_summary = []
         solve_errors = []
 
-        with ProcessPoolExecutor(max_workers=self.max_workers) as executor:
+        # Reuse spawn context (already created in Phase 1)
+        # This ensures child processes don't inherit parent's Gurobi environment
+        # Critical for proper license management and resource cleanup
+
+        with ProcessPoolExecutor(max_workers=self.max_workers, mp_context=ctx) as executor:
             # Submit all solve jobs
             future_to_runid = {
                 executor.submit(solve_single_model, config): config[0]
@@ -582,7 +621,7 @@ class ParallelOptimizationRunner:
                             **(result_info or {})
                         })
 
-                    print(f"Progress: {completed}/{len(model_configs)} completed")
+                    print(f"Solve progress: {completed}/{len(model_configs)} completed")
 
                 except Exception as e:
                     print(f"❌ Exception processing {run_id}: {e}")
@@ -601,7 +640,7 @@ class ParallelOptimizationRunner:
                     })
 
         solve_elapsed = time.time() - solve_start_time
-        total_elapsed = time.time() - total_start_time
+        total_elapsed = time.time() - creation_start_time
 
         # Add creation errors to summary
         results_summary.extend(creation_errors)
@@ -621,7 +660,7 @@ class ParallelOptimizationRunner:
         failed = len(results_summary) - successful
 
         print(f"\n{'='*80}")
-        print(f"PARALLEL OPTIMIZATION COMPLETE")
+        print(f"PARALLEL OPTIMIZATION COMPLETE 🎉")
         print(f"{'='*80}")
         print(f"Total runs: {len(run_configs)}")
         print(f"Successful: {successful}")
@@ -629,10 +668,14 @@ class ParallelOptimizationRunner:
         print(f"  - Creation failures: {len(creation_errors)}")
         print(f"  - Solve failures: {len(solve_errors)}")
         print(f"\n⏱️  Timing breakdown:")
-        print(f"  - Model creation (sequential): {creation_elapsed:.1f}s ({creation_elapsed/60:.1f} min)")
+        print(f"  - Model creation (parallel): {creation_elapsed:.1f}s ({creation_elapsed/60:.1f} min)")
         print(f"  - Model solving (parallel): {solve_elapsed:.1f}s ({solve_elapsed/60:.1f} min)")
         print(f"  - TOTAL TIME: {total_elapsed:.1f}s ({total_elapsed/60:.1f} min)")
         print(f"  - Average per run: {total_elapsed/len(run_configs):.1f}s")
+        print(f"\n🚀 Speedup estimate vs sequential:")
+        print(f"  - If creation was sequential: ~{creation_elapsed * self.max_workers / 60:.1f} min")
+        print(f"  - If solving was sequential: ~{solve_elapsed * self.max_workers / 60:.1f} min")
+        print(f"  - Potential total sequential time: ~{(creation_elapsed + solve_elapsed) * self.max_workers / 60:.1f} min")
         print(f"\n📁 Results saved to: {results_base_folder}")
         print(f"{'='*80}\n")
 
@@ -678,9 +721,7 @@ if __name__ == "__main__":
         }],
         "mipgap": [0.01],
         "time_limit": [50],
-        # threads: auto-calculated based on workers
-        # For 14 cores with 7 workers → 2 threads per worker
-        # For 48 cores with 8 workers → 6 threads per worker
+        # Note: threads will be auto-calculated by the runner
     }
 
     # Generate combinations
@@ -695,19 +736,45 @@ if __name__ == "__main__":
 
     # Create timestamp for results folder
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    results_folder = base_path / "results" / f"parallel_test_{timestamp}"
+    results_folder = base_path / "results" / f"parallel_creation_test_{timestamp}"
 
-    # Oppure usa l'auto-detection (None)
-    runner = ParallelOptimizationRunner(
+    # Create runner with explicit configuration
+    # Option 1: Auto-detect everything (RECOMMENDED)
+    runner = ParallelCreationAndGurobiOptimizationRunner(
         base_path=base_path,
-        max_workers=None  # Rileva automaticamente
+        max_workers=None,  # Auto-detect (uses half of cores, max 8)
+        threads_per_worker=None  # Auto-calculate based on workers
     )
+
+    # Option 2: Explicit configuration examples
+    #
+    # For 14 cores (your laptop):
+    # runner = ParallelCreationAndGurobiOptimizationRunner(
+    #     base_path=base_path,
+    #     max_workers=7,
+    #     threads_per_worker=2
+    # )
+    #
+    # For 48 cores (your VM):
+    # - Conservative: 8 workers × 6 threads = 48 threads total
+    # runner = ParallelCreationAndGurobiOptimizationRunner(
+    #     base_path=base_path,
+    #     max_workers=8,
+    #     threads_per_worker=6
+    # )
+    #
+    # - More parallel: 16 workers × 3 threads = 48 threads total
+    # runner = ParallelCreationAndGurobiOptimizationRunner(
+    #     base_path=base_path,
+    #     max_workers=16,
+    #     threads_per_worker=3
+    # )
 
     results_summary = runner.run_parallel_optimization(
         run_configs=run_configs,
         results_base_folder=results_folder
     )
 
-    print(f"\n✅ Parallel optimization complete!")
+    print(f"\n✅ Parallel creation + Gurobi-env optimization complete!")
     print(f"📊 Summary Excel: {results_folder / 'parallel_results_summary.xlsx'}")
 

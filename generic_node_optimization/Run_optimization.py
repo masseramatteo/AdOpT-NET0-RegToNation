@@ -139,7 +139,10 @@ class OptimizationRunner:
         configuration["solveroptions"]["lpwarmstart"]["value"] = 0
         configuration["solveroptions"]["NoRelHeurTime"] = 0
         configuration["solveroptions"]["timelim"]["value"] = 50
-        #configuration["solveroptions"]["threads"]["value"] = 48
+        
+        # Set threads from params (important for parallel execution to avoid CPU oversubscription)
+        threads = params.get("threads", 1)
+        configuration["solveroptions"]["threads"]["value"] = threads
 
         configuration["reporting"]["save_path"]["value"] = str(results_data_path)
         configuration["reporting"]["save_summary_path"]["value"] = str(results_data_path)

@@ -645,6 +645,158 @@ class ParallelOptimizationRunner:
 
 
 # ============================================================================
+# PARAMETER SAMPLING UTILITIES
+# ============================================================================
+
+def latin_hypercube_sampling(param_grid, n_samples=100, seed=None):
+    """
+    Generate parameter combinations using Latin Hypercube Sampling
+
+    Args:
+        param_grid: Dictionary with parameter names as keys and lists of values
+        n_samples: Maximum number of samples to generate
+        seed: Random seed for reproducibility
+
+    Returns:
+        List of parameter dictionaries
+    """
+    import numpy as np
+
+    if seed is not None:
+        np.random.seed(seed)
+
+    # Separate numeric and non-numeric parameters
+    numeric_params = {}
+    non_numeric_params = {}
+
+    for key, values in param_grid.items():
+        # Check if all values are numeric (int or float)
+        if len(values) > 0 and all(isinstance(v, (int, float)) for v in values):
+            numeric_params[key] = values
+        else:
+            non_numeric_params[key] = values
+
+    # For numeric parameters, use LHS
+    n_numeric = len(numeric_params)
+    if n_numeric > 0:
+        # Generate LHS samples in [0, 1]^n_numeric
+        intervals = np.linspace(0, 1, n_samples + 1)
+        lhs_samples = np.zeros((n_samples, n_numeric))
+
+        for i in range(n_numeric):
+            # Random permutation of intervals
+            perm = np.random.permutation(n_samples)
+            # Sample uniformly within each interval
+            lhs_samples[:, i] = np.random.uniform(intervals[perm], intervals[perm + 1])
+
+        # Map LHS samples to actual parameter values
+        numeric_keys = list(numeric_params.keys())
+        sampled_numeric = []
+
+        for sample in lhs_samples:
+            param_dict = {}
+            for i, key in enumerate(numeric_keys):
+                values = sorted(numeric_params[key])
+                # Map [0, 1] to parameter range using interpolation
+                idx_float = sample[i] * (len(values) - 1)
+                idx_low = int(np.floor(idx_float))
+                idx_high = min(idx_low + 1, len(values) - 1)
+
+                # If very close to a discrete value, use it; otherwise interpolate
+                if idx_low == idx_high:
+                    param_dict[key] = values[idx_low]
+                else:
+                    # Linear interpolation
+                    weight = idx_float - idx_low
+                    param_dict[key] = values[idx_low] * (1 - weight) + values[idx_high] * weight
+
+            sampled_numeric.append(param_dict)
+    else:
+        sampled_numeric = [{}] * n_samples
+
+    # For non-numeric parameters, sample randomly or use all combinations if few
+    if non_numeric_params:
+        # Calculate total non-numeric combinations
+        import itertools
+        non_numeric_combinations = list(itertools.product(*non_numeric_params.values()))
+
+        if len(non_numeric_combinations) <= n_samples:
+            # Use all combinations
+            sampled_non_numeric = [
+                dict(zip(non_numeric_params.keys(), combo))
+                for combo in non_numeric_combinations
+            ]
+        else:
+            # Random sample without replacement
+            indices = np.random.choice(len(non_numeric_combinations), n_samples, replace=False)
+            sampled_non_numeric = [
+                dict(zip(non_numeric_params.keys(), non_numeric_combinations[idx]))
+                for idx in indices
+            ]
+    else:
+        sampled_non_numeric = [{}] * n_samples
+
+    # Combine numeric and non-numeric samples
+    # If different lengths, cycle or truncate
+    max_len = max(len(sampled_numeric), len(sampled_non_numeric))
+    combinations = []
+
+    for i in range(min(n_samples, max_len)):
+        combined = {}
+        if sampled_numeric:
+            combined.update(sampled_numeric[i % len(sampled_numeric)])
+        if sampled_non_numeric:
+            combined.update(sampled_non_numeric[i % len(sampled_non_numeric)])
+        combinations.append(combined)
+
+    return combinations[:n_samples]
+
+
+def generate_parameter_combinations(param_grid, method='full', max_samples=100, seed=42):
+    """
+    Generate parameter combinations using different methods
+
+    Args:
+        param_grid: Dictionary with parameter names as keys and lists of values
+        method: 'full' for full grid, 'lhs' for Latin Hypercube Sampling
+        max_samples: Maximum number of samples (only for LHS)
+        seed: Random seed for reproducibility (only for LHS)
+
+    Returns:
+        List of parameter dictionaries
+    """
+    import itertools
+
+    if method == 'full':
+        # Full grid search (Cartesian product)
+        keys = list(param_grid.keys())
+        values = list(param_grid.values())
+        combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+        print(f"📊 Method: FULL GRID")
+        print(f"   Total combinations: {len(combinations)}")
+        return combinations
+
+    elif method == 'lhs':
+        # Latin Hypercube Sampling
+        # Calculate potential full grid size
+        full_size = 1
+        for values in param_grid.values():
+            full_size *= len(values)
+
+        actual_samples = min(max_samples, full_size)
+        combinations = latin_hypercube_sampling(param_grid, n_samples=actual_samples, seed=seed)
+
+        print(f"📊 Method: LATIN HYPERCUBE SAMPLING")
+        print(f"   Full grid would be: {full_size} combinations")
+        print(f"   LHS samples: {len(combinations)}")
+        print(f"   Reduction: {(1 - len(combinations)/full_size)*100:.1f}%")
+        return combinations
+
+    else:
+        raise ValueError(f"Unknown method: {method}. Use 'full' or 'lhs'")
+
+
+# ============================================================================
 # EXAMPLE USAGE
 # ============================================================================
 if __name__ == "__main__":
@@ -683,15 +835,26 @@ if __name__ == "__main__":
         # For 48 cores with 8 workers → 6 threads per worker
     }
 
-    # Generate combinations
-    keys = list(param_grid.keys())
-    values = list(param_grid.values())
-    combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+    # ========================================================================
+    # CHOOSE SAMPLING METHOD
+    # ========================================================================
+    # Option 1: Use Latin Hypercube Sampling (RECOMMENDED for large grids)
+    # Limits to max_samples (e.g., 100) using smart sampling
+    combinations = generate_parameter_combinations(
+        param_grid,
+        method='lhs',       # 'lhs' or 'full'
+        max_samples=100,    # Maximum number of samples
+        seed=42             # For reproducibility
+    )
+
+    # Option 2: Use full grid (all combinations)
+    # Uncomment this to use all possible combinations
+    # combinations = generate_parameter_combinations(param_grid, method='full')
 
     # Prepare run configs
     run_configs = [(f"parallel_run_{i:04d}", params) for i, params in enumerate(combinations, 1)]
 
-    print(f"Total combinations: {len(run_configs)}")
+    print(f"\n✅ Total runs to execute: {len(run_configs)}")
 
     # Create timestamp for results folder
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

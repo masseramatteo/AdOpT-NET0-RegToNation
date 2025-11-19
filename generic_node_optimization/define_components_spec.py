@@ -65,7 +65,7 @@ def define_hydrogen_pipeline2(input_data_path):
         network_data = json.load(json_file)
 
     network_data["size_min"] = 0
-    network_data["size_max"] = 600
+    network_data["size_max"] = 1000
 
     network_data["Economics"]["gamma1"] = 200000
     network_data["Economics"]["gamma3"] = 0
@@ -145,7 +145,7 @@ def define_electrolyzers(input_data_path):
                   "r") as json_file:
             electrolyzer_data = json.load(json_file)
 
-        electrolyzer_data["size_max"] = 250
+        electrolyzer_data["size_max"] = 400
 
         with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Electrolyzer_small.json",
                   "w") as json_file:

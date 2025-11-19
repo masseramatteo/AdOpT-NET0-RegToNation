@@ -18,7 +18,7 @@ def create_single_model(args):
     """Create and prepare a single model without solving (runs in parallel process)"""
     run_id, params, results_base_folder, base_path = args
 
-    print(f"📦 Creating model: {run_id}")
+    print(f"[CREATE] Creating model: {run_id}")
 
     try:
         runner = OptimizationRunner(base_path)
@@ -88,11 +88,11 @@ def create_single_model(args):
         # Load carrier data
         runner._load_carrier_data(input_data_path, nodes, params)
 
-        print(f"✅ Model created: {run_id}")
+        print(f"[SUCCESS] Model created: {run_id}")
         return run_id, str(input_data_path), str(results_data_path), params, None
 
     except Exception as e:
-        print(f"❌ Error creating model {run_id}: {e}")
+        print(f"[ERROR] Error creating model {run_id}: {e}")
         import traceback
         traceback.print_exc()
         return run_id, None, None, params, str(e)
@@ -109,7 +109,7 @@ def solve_single_model(args):
     run_id, input_data_path, results_data_path, params = args
 
     try:
-        print(f"🔄 Solving: {run_id}")
+        print(f"[SOLVING] {run_id}")
 
         # Import Gurobi and set per-process parameters
         try:
@@ -126,12 +126,12 @@ def solve_single_model(args):
             # Optional: reduce console output (uncomment if needed)
             # gp.setParam("OutputFlag", 0)
 
-            print(f"  🔧 Gurobi default env configured: {threads} threads per worker")
+            print(f"  [CONFIG] Gurobi default env configured: {threads} threads per worker")
 
         except ImportError:
-            print(f"  ⚠️  gurobipy not available for direct configuration")
+            print(f"  [WARNING] gurobipy not available for direct configuration")
         except Exception as e:
-            print(f"  ⚠️  Could not configure Gurobi: {e}")
+            print(f"  [WARNING] Could not configure Gurobi: {e}")
 
         import adopt_net0 as adopt
         import pyomo.environ as pyo
@@ -142,7 +142,7 @@ def solve_single_model(args):
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
         m = adopt.ModelHub()
-        m.read_data(input_data_path, start_period=0, end_period=24)
+        m.read_data(input_data_path, start_period=0, end_period=1)
 
         # Solve
         m.quick_solve()
@@ -222,11 +222,11 @@ def solve_single_model(args):
             with open(result_file, "w") as f:
                 json.dump(result_info, f, indent=4, default=str)
 
-        print(f"✅ Solved: {run_id}")
+        print(f"[SUCCESS] Solved: {run_id}")
         return run_id, result_info, None
 
     except Exception as e:
-        print(f"❌ Error solving {run_id}: {e}")
+        print(f"[ERROR] Error solving {run_id}: {e}")
         import traceback
         traceback.print_exc()
         return run_id, None, str(e)
@@ -385,11 +385,11 @@ class ParallelCreationAndGurobiOptimizationRunner:
                 total = manual_workers * manual_threads
                 pct = (total / cpu_count) * 100
 
-                print(f"\n✅ Manual configuration:")
-                print(f"   → {manual_workers} workers × {manual_threads} threads = {total} total ({pct:.0f}% CPU)")
+                print(f"\n[OK] Manual configuration:")
+                print(f"   -> {manual_workers} workers × {manual_threads} threads = {total} total ({pct:.0f}% CPU)")
 
                 if total > cpu_count * 1.2:
-                    print(f"   ⚠️  WARNING: High CPU oversubscription ({pct:.0f}%)!")
+                    print(f"   [WARNING] High CPU oversubscription ({pct:.0f}%)!")
 
                 return 'manual', manual_workers, manual_threads
             else:
@@ -458,7 +458,7 @@ class ParallelCreationAndGurobiOptimizationRunner:
         actual_total_threads = self.max_workers * self.threads_per_worker
         actual_utilization_pct = (actual_total_threads / cpu_count) * 100
 
-        print(f"\n💡 System configuration:")
+        print(f"\n[CONFIG] System configuration:")
         print(f"   - Strategy: {strategy_description}")
         print(f"   - Total logical processors: {cpu_count}")
         print(f"   - Parallel workers: {self.max_workers}")
@@ -467,13 +467,13 @@ class ParallelCreationAndGurobiOptimizationRunner:
         print(f"   - CPU utilization: {actual_utilization_pct:.1f}%")
 
         if actual_total_threads > cpu_count:
-            print(f"   ⚠️  WARNING: CPU oversubscription ({actual_utilization_pct:.1f}%)!")
+            print(f"   [WARNING] CPU oversubscription ({actual_utilization_pct:.1f}%)!")
             print(f"       Consider reducing workers or threads_per_worker")
         elif actual_utilization_pct < 70:
-            print(f"   💡 INFO: Conservative CPU usage ({actual_utilization_pct:.1f}%)")
+            print(f"   [INFO] Conservative CPU usage ({actual_utilization_pct:.1f}%)")
             print(f"       Consider increasing workers or threads_per_worker for better performance")
         else:
-            print(f"   ✅ Good CPU utilization balance")
+            print(f"   [OK] Good CPU utilization balance")
 
     def run_parallel_optimization(self, run_configs, results_base_folder):
         """
@@ -509,10 +509,10 @@ class ParallelCreationAndGurobiOptimizationRunner:
                 params["threads"] = self.threads_per_worker
 
         # =====================================================================
-        # PHASE 1: CREATE ALL MODELS (PARALLEL) 🚀
+        # PHASE 1: CREATE ALL MODELS (PARALLEL)
         # =====================================================================
         print(f"\n{'='*80}")
-        print(f"PHASE 1: Creating {len(run_configs)} models in PARALLEL 🚀")
+        print(f"PHASE 1: Creating {len(run_configs)} models in PARALLEL")
         print(f"Using 'spawn' context for clean process separation")
         print(f"{'='*80}\n")
 
@@ -553,7 +553,7 @@ class ParallelCreationAndGurobiOptimizationRunner:
                     print(f"Model creation progress: {completed}/{len(run_configs)} completed")
 
                 except Exception as e:
-                    print(f"❌ Exception creating {run_id}: {e}")
+                    print(f"[ERROR] Exception creating {run_id}: {e}")
                     creation_errors.append({
                         "run_id": run_id,
                         "status": "CREATION_FAILED",
@@ -562,16 +562,16 @@ class ParallelCreationAndGurobiOptimizationRunner:
                     })
 
         creation_elapsed = time.time() - creation_start_time
-        print(f"\n✅ Model creation complete: {len(model_configs)} models ready to solve")
+        print(f"\n[COMPLETE] Model creation complete: {len(model_configs)} models ready to solve")
         print(f"   Creation time: {creation_elapsed:.1f}s ({creation_elapsed/60:.1f} min)")
         if creation_errors:
-            print(f"⚠️  {len(creation_errors)} models failed to create")
+            print(f"[WARNING] {len(creation_errors)} models failed to create")
 
         # =====================================================================
-        # PHASE 2: SOLVE ALL MODELS (PARALLEL) 🚀
+        # PHASE 2: SOLVE ALL MODELS (PARALLEL)
         # =====================================================================
         print(f"\n{'='*80}")
-        print(f"PHASE 2: Solving {len(model_configs)} models in PARALLEL 🚀")
+        print(f"PHASE 2: Solving {len(model_configs)} models in PARALLEL")
         print(f"Using 'spawn' context for clean Gurobi environment per worker")
         print(f"{'='*80}\n")
 
@@ -624,7 +624,7 @@ class ParallelCreationAndGurobiOptimizationRunner:
                     print(f"Solve progress: {completed}/{len(model_configs)} completed")
 
                 except Exception as e:
-                    print(f"❌ Exception processing {run_id}: {e}")
+                    print(f"[ERROR] Exception processing {run_id}: {e}")
                     # Find original params
                     params = None
                     for config in model_configs:
@@ -660,27 +660,27 @@ class ParallelCreationAndGurobiOptimizationRunner:
         failed = len(results_summary) - successful
 
         print(f"\n{'='*80}")
-        print(f"PARALLEL OPTIMIZATION COMPLETE 🎉")
+        print(f"PARALLEL OPTIMIZATION COMPLETE")
         print(f"{'='*80}")
         print(f"Total runs: {len(run_configs)}")
         print(f"Successful: {successful}")
         print(f"Failed: {failed}")
         print(f"  - Creation failures: {len(creation_errors)}")
         print(f"  - Solve failures: {len(solve_errors)}")
-        print(f"\n⏱️  Timing breakdown:")
+        print(f"\n[TIMING] Timing breakdown:")
         print(f"  - Model creation (parallel): {creation_elapsed:.1f}s ({creation_elapsed/60:.1f} min)")
         print(f"  - Model solving (parallel): {solve_elapsed:.1f}s ({solve_elapsed/60:.1f} min)")
         print(f"  - TOTAL TIME: {total_elapsed:.1f}s ({total_elapsed/60:.1f} min)")
         print(f"  - Average per run: {total_elapsed/len(run_configs):.1f}s")
-        print(f"\n🚀 Speedup estimate vs sequential:")
+        print(f"\n[SPEEDUP] Speedup estimate vs sequential:")
         print(f"  - If creation was sequential: ~{creation_elapsed * self.max_workers / 60:.1f} min")
         print(f"  - If solving was sequential: ~{solve_elapsed * self.max_workers / 60:.1f} min")
         print(f"  - Potential total sequential time: ~{(creation_elapsed + solve_elapsed) * self.max_workers / 60:.1f} min")
-        print(f"\n📁 Results saved to: {results_base_folder}")
+        print(f"\n[RESULTS] Results saved to: {results_base_folder}")
         print(f"{'='*80}\n")
 
         if failed > 0:
-            print("⚠️  Failed runs:")
+            print("[WARNING] Failed runs:")
             for item in (creation_errors + solve_errors):
                 print(f"  {item['run_id']}: {item.get('error', 'Unknown error')}")
 
@@ -688,23 +688,174 @@ class ParallelCreationAndGurobiOptimizationRunner:
 
 
 # ============================================================================
+# PARAMETER SAMPLING UTILITIES
+# ============================================================================
+
+def latin_hypercube_sampling(param_grid, n_samples=100, seed=None):
+    """
+    Generate parameter combinations using Latin Hypercube Sampling
+
+    Args:
+        param_grid: Dictionary with parameter names as keys and lists of values
+        n_samples: Maximum number of samples to generate
+        seed: Random seed for reproducibility
+
+    Returns:
+        List of parameter dictionaries
+    """
+    if seed is not None:
+        np.random.seed(seed)
+
+    # Separate numeric and non-numeric parameters
+    numeric_params = {}
+    non_numeric_params = {}
+
+    for key, values in param_grid.items():
+        # Check if all values are numeric (int or float)
+        if len(values) > 0 and all(isinstance(v, (int, float)) for v in values):
+            numeric_params[key] = values
+        else:
+            non_numeric_params[key] = values
+
+    # For numeric parameters, use LHS
+    n_numeric = len(numeric_params)
+    if n_numeric > 0:
+        # Generate LHS samples in [0, 1]^n_numeric
+        intervals = np.linspace(0, 1, n_samples + 1)
+        lhs_samples = np.zeros((n_samples, n_numeric))
+
+        for i in range(n_numeric):
+            # Random permutation of intervals
+            perm = np.random.permutation(n_samples)
+            # Sample uniformly within each interval
+            lhs_samples[:, i] = np.random.uniform(intervals[perm], intervals[perm + 1])
+
+        # Map LHS samples to actual parameter values
+        numeric_keys = list(numeric_params.keys())
+        sampled_numeric = []
+
+        for sample in lhs_samples:
+            param_dict = {}
+            for i, key in enumerate(numeric_keys):
+                values = sorted(numeric_params[key])
+                # Map [0, 1] to parameter range using interpolation
+                idx_float = sample[i] * (len(values) - 1)
+                idx_low = int(np.floor(idx_float))
+                idx_high = min(idx_low + 1, len(values) - 1)
+
+                # If very close to a discrete value, use it; otherwise interpolate
+                if idx_low == idx_high:
+                    param_dict[key] = values[idx_low]
+                else:
+                    # Linear interpolation
+                    weight = idx_float - idx_low
+                    param_dict[key] = values[idx_low] * (1 - weight) + values[idx_high] * weight
+
+            sampled_numeric.append(param_dict)
+    else:
+        sampled_numeric = [{}] * n_samples
+
+    # For non-numeric parameters, sample randomly or use all combinations if few
+    if non_numeric_params:
+        # Calculate total non-numeric combinations
+        import itertools
+        non_numeric_combinations = list(itertools.product(*non_numeric_params.values()))
+
+        if len(non_numeric_combinations) <= n_samples:
+            # Use all combinations
+            sampled_non_numeric = [
+                dict(zip(non_numeric_params.keys(), combo))
+                for combo in non_numeric_combinations
+            ]
+        else:
+            # Random sample without replacement
+            indices = np.random.choice(len(non_numeric_combinations), n_samples, replace=False)
+            sampled_non_numeric = [
+                dict(zip(non_numeric_params.keys(), non_numeric_combinations[idx]))
+                for idx in indices
+            ]
+    else:
+        sampled_non_numeric = [{}] * n_samples
+
+    # Combine numeric and non-numeric samples
+    # If different lengths, cycle or truncate
+    max_len = max(len(sampled_numeric), len(sampled_non_numeric))
+    combinations = []
+
+    for i in range(min(n_samples, max_len)):
+        combined = {}
+        if sampled_numeric:
+            combined.update(sampled_numeric[i % len(sampled_numeric)])
+        if sampled_non_numeric:
+            combined.update(sampled_non_numeric[i % len(sampled_non_numeric)])
+        combinations.append(combined)
+
+    return combinations[:n_samples]
+
+
+def generate_parameter_combinations(param_grid, method='full', max_samples=100, seed=42):
+    """
+    Generate parameter combinations using different methods
+
+    Args:
+        param_grid: Dictionary with parameter names as keys and lists of values
+        method: 'full' for full grid, 'lhs' for Latin Hypercube Sampling
+        max_samples: Maximum number of samples (only for LHS)
+        seed: Random seed for reproducibility (only for LHS)
+
+    Returns:
+        List of parameter dictionaries
+    """
+    import itertools
+
+    if method == 'full':
+        # Full grid search (Cartesian product)
+        keys = list(param_grid.keys())
+        values = list(param_grid.values())
+        combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+        print(f"[SAMPLING] Method: FULL GRID")
+        print(f"   Total combinations: {len(combinations)}")
+        return combinations
+
+    elif method == 'lhs':
+        # Latin Hypercube Sampling
+        # Calculate potential full grid size
+        full_size = 1
+        for values in param_grid.values():
+            full_size *= len(values)
+
+        actual_samples = min(max_samples, full_size)
+        combinations = latin_hypercube_sampling(param_grid, n_samples=actual_samples, seed=seed)
+
+        print(f"[SAMPLING] Method: LATIN HYPERCUBE SAMPLING")
+        print(f"   Full grid would be: {full_size} combinations")
+        print(f"   LHS samples: {len(combinations)}")
+        print(f"   Reduction: {(1 - len(combinations)/full_size)*100:.1f}%")
+        return combinations
+
+    else:
+        raise ValueError(f"Unknown method: {method}. Use 'full' or 'lhs'")
+
+
+# ============================================================================
 # EXAMPLE USAGE
 # ============================================================================
 if __name__ == "__main__":
     import itertools
+    import numpy as np
 
     base_path = Path(__file__).parent
 
     # Example parameter grid (small test)
     param_grid = {
         "scenarios": ["1751"],
-        "demand_level_ratio": [10, 30],
-        "total_demand_TWh": [25, 50],
-        "import_availability_ratio": [0.7],
-        "import_cost_multiplier": [2],
-        "electricity_price_avg": [100],
-        "electricity_availability_small": [80, 120],
-        "willingness_to_pay": [350],
+        "demand_level_ratio": [3, 5, 10, 15, 20],
+        "total_demand_TWh": [3, 10, 20, 50],
+        "import_availability_ratio": [0.4, 0.6, 0.8],
+        "import_cost_multiplier": [1, 1.5, 2, 3],
+        "electricity_price_avg": [50, 100, 150],
+        "electricity_availability_small": [80, 120, 150],
+        "willingness_to_pay": [300, 350, 400],
         "networks": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
@@ -724,15 +875,26 @@ if __name__ == "__main__":
         # Note: threads will be auto-calculated by the runner
     }
 
-    # Generate combinations
-    keys = list(param_grid.keys())
-    values = list(param_grid.values())
-    combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+    # ========================================================================
+    # CHOOSE SAMPLING METHOD
+    # ========================================================================
+    # Option 1: Use Latin Hypercube Sampling (RECOMMENDED for large grids)
+    # Limits to max_samples (e.g., 100) using smart sampling
+    combinations = generate_parameter_combinations(
+        param_grid,
+        method='lhs',       # 'lhs' or 'full'
+        max_samples=100,    # Maximum number of samples
+        seed=42             # For reproducibility
+    )
+
+    # Option 2: Use full grid (all combinations)
+    # Uncomment this to use all possible combinations
+    # combinations = generate_parameter_combinations(param_grid, method='full')
 
     # Prepare run configs
     run_configs = [(f"parallel_run_{i:04d}", params) for i, params in enumerate(combinations, 1)]
 
-    print(f"Total combinations: {len(run_configs)}")
+    print(f"\n[OK] Total runs to execute: {len(run_configs)}")
 
     # Create timestamp for results folder
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -775,6 +937,6 @@ if __name__ == "__main__":
         results_base_folder=results_folder
     )
 
-    print(f"\n✅ Parallel creation + Gurobi-env optimization complete!")
-    print(f"📊 Summary Excel: {results_folder / 'parallel_results_summary.xlsx'}")
+    print(f"\n[OK] Parallel creation + Gurobi-env optimization complete!")
+    print(f"[RESULTS] Summary Excel: {results_folder / 'parallel_results_summary.xlsx'}")
 

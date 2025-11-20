@@ -1180,8 +1180,17 @@ def construct_global_balance(model, data):
     model.const_network = pyo.Constraint(rule=init_network_cost)
 
     def init_netw_distance_weighted(const):
+        def _weight_for(netw_name: str) -> float:
+            if "highP" in netw_name:
+                return 2
+            if "lowP" in netw_name:
+                return 1.0
+            return 1.0
+
         return (
-                sum(model.periods[period].network_block[netw].var_distance_weighted
+                sum(
+                    _weight_for(netw)
+                    * model.periods[period].network_block[netw].var_distance_weighted
                     for period in model.set_periods
                     for netw in model.periods[period].set_networks
                     )

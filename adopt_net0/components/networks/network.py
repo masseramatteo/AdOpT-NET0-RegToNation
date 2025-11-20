@@ -720,37 +720,52 @@ class Network(ModelComponent):
 
         def init_capex(const):
             return (
-                b_arc.var_capex_aux
-                == b_arc.para_capex_gamma1
-                + b_arc.para_capex_gamma2 * b_arc.var_size
-                + b_arc.para_capex_gamma3 * b_arc.distance
-                + b_arc.para_capex_gamma4 * b_arc.var_size * b_arc.distance
+                    b_arc.var_capex_aux
+                    == b_arc.para_capex_gamma1
+                    + b_arc.para_capex_gamma2 * b_arc.var_size
+                    + b_arc.para_capex_gamma3 * b_arc.distance
+                    + b_arc.para_capex_gamma4 * b_arc.var_size * b_arc.distance
             )
 
         # CAPEX aux:
         if self.existing and self.decommission == "impossible":
             b_arc.const_capex_aux = pyo.Constraint(rule=init_capex)
-        elif (b_arc.para_capex_gamma1.value == 0) and (
-                b_arc.para_capex_gamma3.value == 0
-        ):
+        elif (b_arc.para_capex_gamma1.value == 0) and (b_arc.para_capex_gamma3.value == 0):
             b_arc.const_capex_aux = pyo.Constraint(rule=init_capex)
         else:
-            b_arc.big_m_transformation_required = 1
+            # Try to reuse size-installation disjunction if it was created in _define_size_arc
             s_indicators = range(0, 2)
+            if hasattr(b_arc, "dis_size_installation"):
+                # attach CAPEX constraints to the existing size disjuncts
+                for ind in s_indicators:
+                    dis = b_arc.dis_size_installation[ind]
+                    if ind == 0:
+                        # not installed -> capex_aux == 0
+                        dis.const_capex_aux = pyo.Constraint(expr=b_arc.var_capex_aux == 0)
+                        # note: size disjunct already contains size==0 constraint
+                    else:
+                        # installed -> capex formula holds
+                        dis.const_capex_aux = pyo.Constraint(rule=init_capex)
+                # ensure the model knows a big-M/GDP transformation is required
+                b_arc.big_m_transformation_required = 1
+                # no new disjunction created; reuse existing one
+            else:
+                # Fall back to creating separate installation disjunction (old behavior)
+                b_arc.big_m_transformation_required = 1
 
-            def init_installation(dis, ind):
-                if ind == 0:  # network not installed
-                    dis.const_capex_aux = pyo.Constraint(expr=b_arc.var_capex_aux == 0)
-                    dis.const_not_installed = pyo.Constraint(expr=b_arc.var_size == 0)
-                else:  # network installed
-                    dis.const_capex_aux = pyo.Constraint(rule=init_capex)
+                def init_installation(dis, ind):
+                    if ind == 0:  # network not installed
+                        dis.const_capex_aux = pyo.Constraint(expr=b_arc.var_capex_aux == 0)
+                        dis.const_not_installed = pyo.Constraint(expr=b_arc.var_size == 0)
+                    else:  # network installed
+                        dis.const_capex_aux = pyo.Constraint(rule=init_capex)
 
-            b_arc.dis_installation = gdp.Disjunct(s_indicators, rule=init_installation)
+                b_arc.dis_installation = gdp.Disjunct(s_indicators, rule=init_installation)
 
-            def bind_disjunctions(dis):
-                return [b_arc.dis_installation[i] for i in s_indicators]
+                def bind_disjunctions(dis):
+                    return [b_arc.dis_installation[i] for i in s_indicators]
 
-            b_arc.disjunction_installation = gdp.Disjunction(rule=bind_disjunctions)
+                b_arc.disjunction_installation = gdp.Disjunction(rule=bind_disjunctions)
 
         # CAPEX and CAPEX aux
         if self.existing:
@@ -763,9 +778,7 @@ class Network(ModelComponent):
                          * b_arc.para_decommissioning_cost_annual
                 )
         else:
-            b_arc.const_capex = pyo.Constraint(
-                expr=b_arc.var_capex == b_arc.var_capex_aux
-            )
+            b_arc.const_capex = pyo.Constraint(expr=b_arc.var_capex == b_arc.var_capex_aux)
 
         return b_arc
 
@@ -1020,10 +1033,21 @@ class Network(ModelComponent):
         b_netw.var_distance_weighted = pyo.Var()
 
         def init_distance(const):
-            return sum(
-                (b_netw.arc_block[arc].distance**2) * b_netw.arc_block[arc].var_size
-                for arc in b_netw.set_arcs
-            ) == b_netw.var_distance_weighted
+            distance_sum = 0
+            for arc in b_netw.set_arcs:
+                b_arc = b_netw.arc_block[arc]
+                # Use binary indicator variable if it exists (from size or capex disjunction)
+                if hasattr(b_arc, 'dis_size_installation'):
+                    # Binary variable: 1 if arc is installed (dis_size_installation[1] is active)
+                    binary_var = b_arc.dis_size_installation[1].binary_indicator_var
+                    distance_sum += b_arc.distance * binary_var
+                elif hasattr(b_arc, 'dis_installation'):
+                    # Binary variable from capex disjunction
+                    binary_var = b_arc.dis_installation[1].binary_indicator_var
+                    distance_sum += b_arc.distance * binary_var
+                # else: No disjunction exists, arc not counted (not installed)
+
+            return distance_sum == b_netw.var_distance_weighted
 
         b_netw.const_distance = pyo.Constraint(rule=init_distance)
 

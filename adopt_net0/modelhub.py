@@ -753,7 +753,7 @@ class ModelHub:
         self._delete_objective()
 
         def init_objective(obj):
-            return model.var_cost_networks
+            return model.var_netws_distance_weighted
 
         h2_demand = model.para_total_demand.value
         willingness_to_pay = config["optimization"]["willingness_to_pay"]["value"]

@@ -142,7 +142,7 @@ def solve_single_model(args):
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
         m = adopt.ModelHub()
-        m.read_data(input_data_path, start_period=0, end_period=1)
+        m.read_data(input_data_path, start_period=0, end_period=24)
 
         # Solve
         m.quick_solve()
@@ -849,13 +849,13 @@ if __name__ == "__main__":
     # Example parameter grid (small test)
     param_grid = {
         "scenarios": ["1751"],
-        "demand_level_ratio": [3, 5, 10, 15, 20],
-        "total_demand_TWh": [3, 10, 20, 50],
-        "import_availability_ratio": [0.4, 0.6, 0.8],
-        "import_cost_multiplier": [1, 1.5, 2, 3],
-        "electricity_price_avg": [50, 100, 150],
-        "electricity_availability_small": [80, 120, 150],
-        "willingness_to_pay": [300, 350, 400],
+        "demand_level_ratio": [5, 15],
+        "total_demand_TWh": [10, 20],
+        "import_availability_ratio": [0.4, 0.8],
+        #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
+        "electricity_price_avg": [100, 150],
+        "electricity_availability_small": [100],
+        "willingness_to_pay": [350],
         "networks": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],

@@ -79,7 +79,7 @@ class OptimizationRunner:
         adopt.copy_technology_data(input_data_path)
         adopt.copy_compressor_data(input_data_path)
 
-        # Networks congiguration
+        # Networks configuration
         self._configure_networks(input_data_path, params["networks"])
         adopt.copy_network_data(input_data_path)
         add_new_network_H2(input_data_path, params["scenarios"])
@@ -285,7 +285,7 @@ class OptimizationRunner:
         h2_import_limit = average_demand_MW * import_availability
 
         # H2 import price: electricity price * ratio
-        h2_import_price = el_price * import_multiplier
+        h2_import_price = self.wtp
 
         return {
             "h2_import_limit": h2_import_limit,

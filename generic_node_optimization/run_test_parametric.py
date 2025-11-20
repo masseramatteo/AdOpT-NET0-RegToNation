@@ -23,13 +23,13 @@ def main():
         "scenarios": ["1751"],
 
         # Pochi valori per test rapido
-        "demand_level_ratio": [10, 20],
-        "total_demand_TWh": [25, 50],
-        "import_availability_ratio": [0.5, 0.8],
+        "demand_level_ratio": [10],
+        "total_demand_TWh": [25],
+        "import_availability_ratio": [0.6],
         "import_cost_multiplier": [2],
         "electricity_price_avg": [80],
         "electricity_availability_small": [80],
-        "willingness_to_pay": [250, 350],
+        "willingness_to_pay": [350],
 
         # Una sola configurazione network
         "networks": [
@@ -54,7 +54,7 @@ def main():
         # Solver parameters
         "mipgap": [0.01],
         "time_limit": [50],
-        "threads": [48]
+        "threads": [10]
     }
 
     # Genera combinazioni

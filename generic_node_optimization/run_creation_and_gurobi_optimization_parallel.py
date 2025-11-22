@@ -849,13 +849,13 @@ if __name__ == "__main__":
     # Example parameter grid (small test)
     param_grid = {
         "scenarios": ["1751"],
-        "demand_level_ratio": [5, 15],
-        "total_demand_TWh": [10, 20],
-        "import_availability_ratio": [0.4, 0.8],
+        "demand_level_ratio": [5, 15, 20],
+        "total_demand_TWh": [10, 20, 50],
+        "import_availability_ratio": [0.3, 0.8],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
-        "electricity_price_avg": [100, 150],
-        "electricity_availability_small": [100],
-        "willingness_to_pay": [350],
+        "electricity_price_avg": [50, 100, 150, 200],
+        "electricity_availability_small": [50, 100, 150],
+        "willingness_to_pay": [200, 250, 300, 350, 400],
         "networks": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
@@ -870,7 +870,7 @@ if __name__ == "__main__":
             "BIG1": {"Hydrogen use (TWh)": 15},
             "BIG2": {"Hydrogen use (TWh)": 5}
         }],
-        "mipgap": [0.01],
+        "mipgap": [0.005],
         "time_limit": [50],
         # Note: threads will be auto-calculated by the runner
     }
@@ -883,7 +883,7 @@ if __name__ == "__main__":
     combinations = generate_parameter_combinations(
         param_grid,
         method='lhs',       # 'lhs' or 'full'
-        max_samples=100,    # Maximum number of samples
+        max_samples=50,    # Maximum number of samples
         seed=42             # For reproducibility
     )
 

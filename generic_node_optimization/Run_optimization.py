@@ -268,7 +268,7 @@ class OptimizationRunner:
             adopt.fill_carrier_data(input_data_path, value_or_data=2000,  # BIG nodes have 2000 MW
                                   columns=['Import limit'], carriers=['electricity'], nodes=[node])
             # Use dynamic electricity prices for BIG nodes too
-            adopt.fill_carrier_data(input_data_path, value_or_data=100, columns=['Import price'],
+            adopt.fill_carrier_data(input_data_path, value_or_data=self.electricity_average_price, columns=['Import price'],
                                     carriers=['electricity'], nodes=[node])
 
     def _calculate_derived_parameters(self, params):

@@ -843,8 +843,30 @@ def generate_parameter_combinations(param_grid, method='full', max_samples=100, 
 if __name__ == "__main__":
     import itertools
     import numpy as np
+    import os
 
     base_path = Path(__file__).parent
+
+    # =======================================================
+    # 1) Leggi quanti core hai davvero a disposizione
+    #    (su Genoa, se nel job.sh hai --cpus-per-task=192, qui vedi 192)
+    # =======================================================
+    slurm_cpus = os.environ.get("SLURM_CPUS_PER_TASK")
+    if slurm_cpus is not None:
+        cpu_total = int(slurm_cpus)
+    else:
+        cpu_total = mp.cpu_count()
+
+    print(f"[SLURM] Detected CPU total: {cpu_total}")
+
+    # =======================================================
+    # 2) Scegli configurazione per Genoa full node
+    #    Esempio: 24 worker × 8 thread = 192 core
+    # =======================================================
+    max_workers = 24
+    threads_per_worker = max(1, cpu_total // max_workers)  # con 192 -> 8
+
+    print(f"[CONFIG] Using {max_workers} workers × {threads_per_worker} threads")
 
     # Example parameter grid (small test)
     param_grid = {
@@ -852,7 +874,6 @@ if __name__ == "__main__":
         "demand_level_ratio": [5, 15, 20],
         "total_demand_TWh": [10, 20, 50],
         "import_availability_ratio": [0.2, 0.7],
-        #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
         "electricity_price_avg": [50, 100, 150, 200],
         "electricity_availability_small": [50, 100, 150],
         "willingness_to_pay": [200, 250, 300, 350, 400],
@@ -875,62 +896,31 @@ if __name__ == "__main__":
         # Note: threads will be auto-calculated by the runner
     }
 
-    # ========================================================================
-    # CHOOSE SAMPLING METHOD
-    # ========================================================================
-    # Option 1: Use Latin Hypercube Sampling (RECOMMENDED for large grids)
-    # Limits to max_samples (e.g., 100) using smart sampling
+    # Sampling (LHS)
     combinations = generate_parameter_combinations(
         param_grid,
-        method='lhs',       # 'lhs' or 'full'
-        max_samples=50,    # Maximum number of samples
-        seed=42             # For reproducibility
+        method='lhs',       # 'lhs' o 'full'
+        max_samples=50,
+        seed=42
     )
 
-    # Option 2: Use full grid (all combinations)
-    # Uncomment this to use all possible combinations
-    # combinations = generate_parameter_combinations(param_grid, method='full')
-
-    # Prepare run configs
     run_configs = [(f"parallel_run_{i:04d}", params) for i, params in enumerate(combinations, 1)]
-
     print(f"\n[OK] Total runs to execute: {len(run_configs)}")
 
     # Create timestamp for results folder
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     results_folder = base_path / "results" / f"parallel_creation_test_{timestamp}"
 
-    # Create runner with explicit configuration
-    # Option 1: Auto-detect everything (RECOMMENDED)
+    # =======================================================
+    # 3) QUI: niente prompt, passiamo direttamente i parametri
+    # =======================================================
     runner = ParallelCreationAndGurobiOptimizationRunner(
         base_path=base_path,
-        max_workers=None,  # Auto-detect (uses half of cores, max 8)
-        threads_per_worker=None  # Auto-calculate based on workers
+        max_workers=max_workers,
+        threads_per_worker=threads_per_worker,
+        # strategy opzionale; se lasci None, viene ignorato perché
+        # max_workers e threads_per_worker sono già definiti
     )
-
-    # Option 2: Explicit configuration examples
-    #
-    # For 14 cores (your laptop):
-    # runner = ParallelCreationAndGurobiOptimizationRunner(
-    #     base_path=base_path,
-    #     max_workers=7,
-    #     threads_per_worker=2
-    # )
-    #
-    # For 48 cores (your VM):
-    # - Conservative: 8 workers × 6 threads = 48 threads total
-    # runner = ParallelCreationAndGurobiOptimizationRunner(
-    #     base_path=base_path,
-    #     max_workers=8,
-    #     threads_per_worker=6
-    # )
-    #
-    # - More parallel: 16 workers × 3 threads = 48 threads total
-    # runner = ParallelCreationAndGurobiOptimizationRunner(
-    #     base_path=base_path,
-    #     max_workers=16,
-    #     threads_per_worker=3
-    # )
 
     results_summary = runner.run_parallel_optimization(
         run_configs=run_configs,

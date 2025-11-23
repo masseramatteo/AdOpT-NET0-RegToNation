@@ -862,8 +862,8 @@ if __name__ == "__main__":
     # 2) Configurazione per nodo GENOA intero
     #    Esempio: 24 worker × 8 thread = 192 core
     # =======================================================
-    max_workers = 24
-    threads_per_worker = max(1, cpu_total // max_workers)  # con 192 -> 8
+    max_workers = 8
+    threads_per_worker = 5  # con 192 -> 8
 
     print(f"[CONFIG] Using {max_workers} workers × {threads_per_worker} threads "
           f"(total {max_workers * threads_per_worker} threads)")

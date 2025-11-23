@@ -848,8 +848,7 @@ if __name__ == "__main__":
     base_path = Path(__file__).parent
 
     # =======================================================
-    # 1) Leggi quanti core hai davvero a disposizione
-    #    (su Genoa, se nel job.sh hai --cpus-per-task=192, qui vedi 192)
+    # 1) Leggi quanti core hai davvero (da SLURM se c'è)
     # =======================================================
     slurm_cpus = os.environ.get("SLURM_CPUS_PER_TASK")
     if slurm_cpus is not None:
@@ -860,15 +859,18 @@ if __name__ == "__main__":
     print(f"[SLURM] Detected CPU total: {cpu_total}")
 
     # =======================================================
-    # 2) Scegli configurazione per Genoa full node
+    # 2) Configurazione per nodo GENOA intero
     #    Esempio: 24 worker × 8 thread = 192 core
     # =======================================================
     max_workers = 24
     threads_per_worker = max(1, cpu_total // max_workers)  # con 192 -> 8
 
-    print(f"[CONFIG] Using {max_workers} workers × {threads_per_worker} threads")
+    print(f"[CONFIG] Using {max_workers} workers × {threads_per_worker} threads "
+          f"(total {max_workers * threads_per_worker} threads)")
 
-    # Example parameter grid (small test)
+    # =======================================================
+    # 3) Definisci la griglia di parametri
+    # =======================================================
     param_grid = {
         "scenarios": ["1751"],
         "demand_level_ratio": [5, 15, 20],
@@ -893,10 +895,12 @@ if __name__ == "__main__":
         }],
         "mipgap": [0.01],
         "time_limit": [50],
-        # Note: threads will be auto-calculated by the runner
+        # "threads" viene aggiunto dal runner
     }
 
-    # Sampling (LHS)
+    # =======================================================
+    # 4) Genera combinazioni (LHS o full)
+    # =======================================================
     combinations = generate_parameter_combinations(
         param_grid,
         method='lhs',       # 'lhs' o 'full'
@@ -907,19 +911,21 @@ if __name__ == "__main__":
     run_configs = [(f"parallel_run_{i:04d}", params) for i, params in enumerate(combinations, 1)]
     print(f"\n[OK] Total runs to execute: {len(run_configs)}")
 
-    # Create timestamp for results folder
+    # =======================================================
+    # 5) Cartella risultati (sotto la repo)
+    #    Se vuoi, qui possiamo puntare a /scratch-shared più avanti
+    # =======================================================
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     results_folder = base_path / "results" / f"parallel_creation_test_{timestamp}"
 
     # =======================================================
-    # 3) QUI: niente prompt, passiamo direttamente i parametri
+    # 6) Crea runner SENZA prompt interattivo
     # =======================================================
     runner = ParallelCreationAndGurobiOptimizationRunner(
         base_path=base_path,
         max_workers=max_workers,
         threads_per_worker=threads_per_worker,
-        # strategy opzionale; se lasci None, viene ignorato perché
-        # max_workers e threads_per_worker sono già definiti
+        strategy="auto",   # solo descrittivo, non fa prompt se max_workers è settato
     )
 
     results_summary = runner.run_parallel_optimization(
@@ -929,4 +935,3 @@ if __name__ == "__main__":
 
     print(f"\n[OK] Parallel creation + Gurobi-env optimization complete!")
     print(f"[RESULTS] Summary Excel: {results_folder / 'parallel_results_summary.xlsx'}")
-

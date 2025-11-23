@@ -5,6 +5,7 @@ Esegue un numero ridotto di combinazioni per testare il sistema
 
 import json
 import itertools
+import time
 from pathlib import Path
 import pandas as pd
 from datetime import datetime
@@ -98,6 +99,7 @@ def main():
     print(f"STARTING TEST")
     print(f"{'='*80}\n")
 
+    start_time = time.time()
     runner = OptimizationRunner(base_path)
     results_summary = []
 
@@ -144,6 +146,8 @@ def main():
                 **params
             })
 
+    elapsed = time.time() - start_time
+
     # =========================================================================
     # SAVE RESULTS
     # =========================================================================
@@ -162,6 +166,8 @@ TEST PARAMETRIC STUDY SUMMARY
 Total Test Runs: {len(results_summary)}
 Successful: {successful}
 Failed: {len(results_summary) - successful}
+print(f"Time elapsed: {elapsed:.1f}s ({elapsed/60:.1f} min)")
+print(f"Average time per run: {elapsed/len(combinations):.1f}s")
 
 Results folder: {results_folder}
 

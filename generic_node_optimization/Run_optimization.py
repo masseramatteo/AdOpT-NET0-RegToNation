@@ -133,7 +133,8 @@ class OptimizationRunner:
         # Set MILP gap
         configuration["solveroptions"]["mipgap"]["value"] = 0.01
         configuration["solveroptions"]["mipfocus"]["value"] = 0
-        configuration["solveroptions"]["presolve"]["value"] = -1
+        # configuration["solveroptions"]["presolve"]["value"] = -1
+        configuration["solveroptions"]["presolve"]["value"] = 1
         configuration["solveroptions"]["heuristics"]["value"] = 0.05
         configuration["solveroptions"]["cuts"]["value"] = -1
         configuration["solveroptions"]["lpwarmstart"]["value"] = 0
@@ -147,8 +148,8 @@ class OptimizationRunner:
         configuration["reporting"]["save_path"]["value"] = str(results_data_path)
         configuration["reporting"]["save_summary_path"]["value"] = str(results_data_path)
 
-        # configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
-        configuration["optimization"]["objective"]["value"] = "distance_willingness_to_pay"
+        configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
+        #configuration["optimization"]["objective"]["value"] = "distance_willingness_to_pay"
         configuration["optimization"]["willingness_to_pay"]["value"] = self.wtp
 
         # Set pressure consideration
@@ -277,7 +278,7 @@ class OptimizationRunner:
         total_demand = params["total_demand_TWh"]
         import_availability = params["import_availability_ratio"]
         el_price = params["electricity_price_avg"]
-        import_multiplier = params["import_cost_multiplier"]
+        #import_multiplier = params["import_cost_multiplier"]
 
         # H2 import limit (MW) based on total demand and availability
         # Total demand in MW medio = TWh * 1e6 / 8760

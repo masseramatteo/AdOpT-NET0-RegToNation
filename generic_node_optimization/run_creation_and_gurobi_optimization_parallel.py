@@ -142,7 +142,7 @@ def solve_single_model(args):
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
         m = adopt.ModelHub()
-        m.read_data(input_data_path, start_period=0, end_period=24)
+        m.read_data(input_data_path, start_period=0, end_period=8760)
 
         # Solve
         m.quick_solve()
@@ -851,7 +851,7 @@ if __name__ == "__main__":
         "scenarios": ["1751"],
         "demand_level_ratio": [5, 15, 20],
         "total_demand_TWh": [10, 20, 50],
-        "import_availability_ratio": [0.3, 0.8],
+        "import_availability_ratio": [0.2, 0.7],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
         "electricity_price_avg": [50, 100, 150, 200],
         "electricity_availability_small": [50, 100, 150],
@@ -870,7 +870,7 @@ if __name__ == "__main__":
             "BIG1": {"Hydrogen use (TWh)": 15},
             "BIG2": {"Hydrogen use (TWh)": 5}
         }],
-        "mipgap": [0.005],
+        "mipgap": [0.01],
         "time_limit": [50],
         # Note: threads will be auto-calculated by the runner
     }

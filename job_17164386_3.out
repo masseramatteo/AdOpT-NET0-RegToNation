@@ -1,0 +1,968 @@
+===========================
+Running on node: tcn874
+Array job index: 3
+Started: Thu Dec  4 14:02:26 CET 2025
+===========================
+Python module loaded.
+Activated virtual environment.
+Configured Gurobi runtime paths.
+Working directory: /home/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization
+[SLURM] Detected CPU total: 192
+[CONFIG] Using 4 workers × 12 threads (total 48 threads)
+[SAMPLING] Method: LATIN HYPERCUBe SAMPLING
+   Full grid would be: 1080 combinations
+   LHS samples: 50
+   Reduction: 95.4%
+
+[OK] Total combinations: 50
+[ARRAY] SLURM_ARRAY_TASK_ID=3, SLURM_ARRAY_TASK_COUNT=4
+[ARRAY] This job is chunk index 3 of 4
+[ARRAY] This job will run 12 combinations out of 50
+[OK] Total runs to execute in THIS JOB: 12
+
+[CONFIG] System configuration:
+   - Strategy: Manual configuration
+   - Total logical processors: 192
+   - Parallel workers: 4
+   - Threads per worker: 12
+   - Total thread usage: 48 (of 192)
+   - CPU utilization: 25.0%
+   [INFO] Conservative CPU usage (25.0%)
+       Consider increasing workers or threads_per_worker for better performance
+
+================================================================================
+PARALLEL CREATION + GUROBI-ENV OPTIMIZATION RUNNER
+================================================================================
+Total runs: 12
+Max parallel workers: 4
+Threads per worker: 12
+Results folder: /gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251204_140236/task_003
+================================================================================
+
+
+================================================================================
+PHASE 1: Creating 12 models in PARALLEL
+Using 'spawn' context for clean process separation
+================================================================================
+
+[CREATE] Creating model: t003_parallel_run_0004
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0004
+[CREATE] Creating model: t003_parallel_run_0008
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0008
+[CREATE] Creating model: t003_parallel_run_0012
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0012
+[CREATE] Creating model: t003_parallel_run_0001
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0001
+[CREATE] Creating model: t003_parallel_run_0006
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0006
+[CREATE] Creating model: t003_parallel_run_0010
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0010
+[CREATE] Creating model: t003_parallel_run_0002
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0002
+[CREATE] Creating model: t003_parallel_run_0005
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0005
+[CREATE] Creating model: t003_parallel_run_0009
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0009
+[CREATE] Creating model: t003_parallel_run_0003
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0003
+[CREATE] Creating model: t003_parallel_run_0007
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0007
+[CREATE] Creating model: t003_parallel_run_0011
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t003_parallel_run_0011
+Model creation progress: 1/12 completed
+Model creation progress: 2/12 completed
+Model creation progress: 3/12 completed
+Model creation progress: 4/12 completed
+Model creation progress: 5/12 completed
+Model creation progress: 6/12 completed
+Model creation progress: 7/12 completed
+Model creation progress: 8/12 completed
+Model creation progress: 9/12 completed
+Model creation progress: 10/12 completed
+Model creation progress: 11/12 completed
+Model creation progress: 12/12 completed
+
+[COMPLETE] Model creation complete: 12 models ready to solve
+   Creation time: 27.4s (0.5 min)
+
+================================================================================
+PHASE 2: Solving 12 models in PARALLEL
+Using 'spawn' context for clean Gurobi environment per worker
+================================================================================
+
+[SOLVING] t003_parallel_run_0002
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+[SOLVING] t003_parallel_run_0001
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+[SOLVING] t003_parallel_run_0003
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+[SOLVING] t003_parallel_run_0004
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+Academic license 2729390 - for non-commercial use only - registered to m.___@uu.nl
+Set parameter Threads to value 12
+Academic license 2729390 - for non-commercial use only - registered to m.___@uu.nl
+Set parameter Threads to value 12
+Academic license 2729390 - for non-commercial use only - registered to m.___@uu.nl
+Set parameter Threads to value 12
+Academic license 2729390 - for non-commercial use only - registered to m.___@uu.nl
+Set parameter Threads to value 12
+  [CONFIG] Gurobi default env configured: 12 threads per worker
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+Constructing Investment Period period1
+Constructing Investment Period period1 completed
+	 - Constructing Network hydrogenPipelineOnshore_lowP
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - SMALL4 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - SMALL4 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - SMALL4 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - SMALL4 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - SMALL4 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - SMALL4 completed
+	 - Constructing Network hydrogenPipelineOnshore_lowP completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 77 s
+	 - Constructing Network hydrogenPipelineOnshore_highP
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - SMALL4 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG1 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - SMALL4 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc BIG2 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - SMALL4 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL1 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - SMALL4 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL2 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - SMALL4 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL3 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc SMALL4 - STORAGE completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - BIG1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - BIG2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - SMALL1 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - SMALL2 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - SMALL3 completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+		 - Constructing Arc STORAGE - SMALL4 completed
+	 - Constructing Network hydrogenPipelineOnshore_highP completed
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 77 s
+	 - Adding Technology Electrolyzer_big
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+	 - Adding Technology Storage_H2_highP
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 4 s
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Storage_H2_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Demand
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Storage_H2_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Demand
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_big_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_big_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_big_Storage_H2_highP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_big_Demand
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_highP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_highP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_highP_Storage_H2_highP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_highP_Demand
+	 - Adding Compressor hydrogen_Compressor_Import_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Import_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Import_Storage_H2_highP
+	 - Adding Compressor hydrogen_Compressor_Import_Demand_existing
+	 - Adding Technology Electrolyzer_big
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 0 s
+	 - Adding Technology Storage_H2_highP
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 4 s
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Storage_H2_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Demand
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Storage_H2_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Demand
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_big_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_big_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_big_Storage_H2_highP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_big_Demand
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_highP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_highP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_highP_Storage_H2_highP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_highP_Demand
+	 - Adding Compressor hydrogen_Compressor_Import_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Import_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Import_Storage_H2_highP
+	 - Adding Compressor hydrogen_Compressor_Import_Demand_existing
+	 - Adding Technology Electrolyzer_small
+	 - Adding Technology Storage_H2_lowP
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 4 s
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Demand
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Demand
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_Demand
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_Demand
+	 - Adding Technology Electrolyzer_small
+	 - Adding Technology Storage_H2_lowP
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 4 s
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Demand
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Demand
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_Demand
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_Demand
+	 - Adding Technology Electrolyzer_small
+	 - Adding Technology Storage_H2_lowP
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 4 s
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Demand
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Demand
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_Demand
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_Demand
+	 - Adding Technology Electrolyzer_small
+	 - Adding Technology Storage_H2_lowP
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 4 s
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Demand
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Demand
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_Electrolyzer_small_Demand
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_Storage_H2_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_lowP_Demand
+	 - Adding Technology Storage_H2_Cavern_existing
+			gdp.bigm Transformation...
+			gdp.bigm Transformation completed in 4 s
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_lowP_Storage_H2_Cavern_existing
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_hydrogenPipelineOnshore_highP_Storage_H2_Cavern_existing
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_Cavern_existing_hydrogenPipelineOnshore_lowP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_Cavern_existing_hydrogenPipelineOnshore_highP
+	 - Adding Compressor hydrogen_Compressor_Storage_H2_Cavern_existing_Storage_H2_Cavern_existing_existing
+Constructing model completed in 437s
+Constructing balances...
+Constructing balances completed in 17s
+Set objective on infrastructure due to willingness to pay
+Set parameter OutputFlag to value 1
+Set parameter LogFile to value "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251204_140236/task_003/t003_parallel_run_0002/userData/20251204141042-1/solver_log.txt"
+Solver log file: /gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251204_140236/task_003/t003_parallel_run_0002/userData/20251204141042-1/solver_log.txt
+Set parameter TimeLimit to value 180000
+Set parameter MIPGap to value 0.01
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 12
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value 1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0

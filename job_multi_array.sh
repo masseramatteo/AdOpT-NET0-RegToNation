@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=192           # full Genoa fat node
 #SBATCH --partition=genoa
 #SBATCH --time=7:00:00
-#SBATCH --array=0-3                   # 🔥 4 nodi in parallelo (modifica qui per più nodi)
+#SBATCH --array=0-1                   # 🔥 4 nodi in parallelo (modifica qui per più nodi)
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=m.massera@uu.nl
 #SBATCH --output=job_%A_%a.out        # output separato per array

@@ -1,0 +1,536 @@
+===========================
+Running on node: tcn873
+Array job index: 2
+Started: Thu Dec  4 14:02:27 CET 2025
+===========================
+Python module loaded.
+Activated virtual environment.
+Configured Gurobi runtime paths.
+Working directory: /home/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization
+[SLURM] Detected CPU total: 192
+[CONFIG] Using 4 workers × 12 threads (total 48 threads)
+[SAMPLING] Method: LATIN HYPERCUBe SAMPLING
+   Full grid would be: 1080 combinations
+   LHS samples: 50
+   Reduction: 95.4%
+
+[OK] Total combinations: 50
+[ARRAY] SLURM_ARRAY_TASK_ID=2, SLURM_ARRAY_TASK_COUNT=4
+[ARRAY] This job is chunk index 2 of 4
+[ARRAY] This job will run 12 combinations out of 50
+[OK] Total runs to execute in THIS JOB: 12
+
+[CONFIG] System configuration:
+   - Strategy: Manual configuration
+   - Total logical processors: 192
+   - Parallel workers: 4
+   - Threads per worker: 12
+   - Total thread usage: 48 (of 192)
+   - CPU utilization: 25.0%
+   [INFO] Conservative CPU usage (25.0%)
+       Consider increasing workers or threads_per_worker for better performance
+
+================================================================================
+PARALLEL CREATION + GUROBI-ENV OPTIMIZATION RUNNER
+================================================================================
+Total runs: 12
+Max parallel workers: 4
+Threads per worker: 12
+Results folder: /gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251204_140236/task_002
+================================================================================
+
+
+================================================================================
+PHASE 1: Creating 12 models in PARALLEL
+Using 'spawn' context for clean process separation
+================================================================================
+
+[CREATE] Creating model: t002_parallel_run_0002
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0002
+[CREATE] Creating model: t002_parallel_run_0005
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0005
+[CREATE] Creating model: t002_parallel_run_0009
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0009
+[CREATE] Creating model: t002_parallel_run_0004
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0004
+[CREATE] Creating model: t002_parallel_run_0007
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0007
+[CREATE] Creating model: t002_parallel_run_0011
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0011
+[CREATE] Creating model: t002_parallel_run_0003
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0003
+[CREATE] Creating model: t002_parallel_run_0008
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0008
+[CREATE] Creating model: t002_parallel_run_0012
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0012
+[CREATE] Creating model: t002_parallel_run_0001
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0001
+[CREATE] Creating model: t002_parallel_run_0006
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0006
+[CREATE] Creating model: t002_parallel_run_0010
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t002_parallel_run_0010
+Model creation progress: 1/12 completed
+Model creation progress: 2/12 completed
+Model creation progress: 3/12 completed
+Model creation progress: 4/12 completed
+Model creation progress: 5/12 completed
+Model creation progress: 6/12 completed
+Model creation progress: 7/12 completed
+Model creation progress: 8/12 completed
+Model creation progress: 9/12 completed
+Model creation progress: 10/12 completed
+Model creation progress: 11/12 completed
+Model creation progress: 12/12 completed
+
+[COMPLETE] Model creation complete: 12 models ready to solve
+   Creation time: 27.4s (0.5 min)
+
+================================================================================
+PHASE 2: Solving 12 models in PARALLEL
+Using 'spawn' context for clean Gurobi environment per worker
+================================================================================
+
+[SOLVING] t002_parallel_run_0002
+Set parameter WLSAccessID
+[SOLVING] t002_parallel_run_0001
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+[SOLVING] t002_parallel_run_0004
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+[SOLVING] t002_parallel_run_0003
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+Academic license 2729390 - for non-commercial use only - registered to m.___@uu.nl
+Academic license 2729390 - for non-commercial use only - registered to m.___@uu.nl
+Set parameter Threads to value 12
+Set parameter Threads to value 12
+Academic license 2729390 - for non-commercial use only - registered to m.___@uu.nl
+Set parameter Threads to value 12
+Academic license 2729390 - for non-commercial use only - registered to m.___@uu.nl
+Set parameter Threads to value 12

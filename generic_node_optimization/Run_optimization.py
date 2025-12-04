@@ -132,14 +132,16 @@ class OptimizationRunner:
         configuration["optimization"]["typicaldays"]["method"]["value"] = 1
         # Set MILP gap
         configuration["solveroptions"]["mipgap"]["value"] = 0.01
-        configuration["solveroptions"]["mipfocus"]["value"] = 0
-        # configuration["solveroptions"]["presolve"]["value"] = -1
-        configuration["solveroptions"]["presolve"]["value"] = 1
+        configuration["solveroptions"]["mipfocus"]["value"] = 3
+        #configuration["solveroptions"]["presolve"]["value"] = -1
+        configuration["solveroptions"]["presolve"]["value"] = 2
         configuration["solveroptions"]["heuristics"]["value"] = 0.05
         configuration["solveroptions"]["cuts"]["value"] = -1
         configuration["solveroptions"]["lpwarmstart"]["value"] = 0
         configuration["solveroptions"]["NoRelHeurTime"] = 0
         configuration["solveroptions"]["timelim"]["value"] = 50
+        # configuration["solveroptions"]["ConcurrentMethod"]["value"] = 3
+        configuration["solveroptions"]["method"]["value"] = 1
         
         # Set threads from params (important for parallel execution to avoid CPU oversubscription)
         threads = params.get("threads", 1)
@@ -193,12 +195,12 @@ class OptimizationRunner:
         node_location = node_location.reset_index()
         node_location.to_csv(input_data_path / "NodeLocations.csv", sep=';', index=False)
 
-    def _configure_networks(self, input_data_path, network_list):
+    def _configure_networks(self, input_data_path, network_list_existing, network_list_new):
         """Configure Networks.json"""
         with open(input_data_path / "period1" / "Networks.json", "r") as f:
             networks = json.load(f)
-        networks["existing"] = []
-        networks["new"] = network_list
+        networks["existing"] = network_list_existing
+        networks["new"] = network_list_new
         with open(input_data_path / "period1" / "Networks.json", "w") as f:
             json.dump(networks, f, indent=4)
 

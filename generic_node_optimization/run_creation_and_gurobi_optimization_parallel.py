@@ -70,7 +70,7 @@ def create_single_model(args):
         adopt.copy_compressor_data(input_data_path)
 
         # Networks configuration
-        runner._configure_networks(input_data_path, params["networks"])
+        runner._configure_networks(input_data_path, params["networks_existing"], params["networks_new"])
         adopt.copy_network_data(input_data_path)
 
         from define_topology import add_new_network_H2
@@ -856,7 +856,8 @@ if __name__ == "__main__":
         "electricity_price_avg": [150],
         "electricity_availability_small": [100],
         "willingness_to_pay": [250],
-        "networks": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
+        "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
+        "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
         "existing_storage_technologies": [{"Storage_H2_Cavern": 100000}],
@@ -883,7 +884,7 @@ if __name__ == "__main__":
     combinations = generate_parameter_combinations(
         param_grid,
         method='lhs',       # 'lhs' or 'full'
-        max_samples=50,    # Maximum number of samples
+        max_samples=1,    # Maximum number of samples
         seed=42             # For reproducibility
     )
 

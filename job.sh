@@ -3,8 +3,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=192
-#SBATCH --partition=fat_genoa
-#SBATCH --time=05:00:00
+#SBATCH --partition=genoa
+#SBATCH --time=24:00:00
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=m.massera@uu.nl
 #SBATCH --output=job_%j.out

@@ -1,0 +1,561 @@
+
+Gurobi 13.0.0 (linux64) logging started Mon Nov 24 00:42:07 2025
+
+Set parameter LogFile to value "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251124_002357/task_003/t003_parallel_run_0002/userData/20251124003212-1/solver_log.txt"
+Set parameter TimeLimit to value 180000
+Set parameter MIPGap to value 0.01
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 12
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value 1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Gurobi Optimizer version 13.0.0 build v13.0.0rc1 (linux64 - "Red Hat Enterprise Linux 9.4 (Plow)")
+
+CPU model: AMD EPYC 9654 96-Core Processor, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 192 physical cores, 192 logical processors, using up to 12 threads
+
+Non-default parameters:
+TimeLimit  180000
+MIPGap  0.01
+LPWarmStart  0
+NodefileStart  60
+Presolve  1
+Threads  12
+
+Academic license 2729390 - for non-commercial use only - registered to m.___@uu.nl
+Optimize a model with 9050179 rows, 6728544 columns and 21385595 nonzeros (Min)
+Model fingerprint: 0x9c5a2488
+Model has 1 linear objective coefficients
+Variable types: 5869892 continuous, 858652 integer (858652 binary)
+Coefficient statistics:
+  Matrix range     [2e-03, 2e+08]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [5e-02, 6e+08]
+  RHS range        [1e+00, 7e+09]
+Warning: Model contains large matrix coefficients
+Warning: Model contains large rhs
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 5361748 rows and 3924941 columns (presolve time = 5s)...
+Presolve removed 5528318 rows and 4082751 columns (presolve time = 10s)...
+Presolve removed 5528318 rows and 4082751 columns (presolve time = 15s)...
+Presolve removed 5528318 rows and 4082751 columns (presolve time = 20s)...
+Presolve removed 5528318 rows and 4082751 columns (presolve time = 26s)...
+Presolve removed 5545984 rows and 4161642 columns (presolve time = 30s)...
+Presolve removed 5554859 rows and 4161684 columns (presolve time = 35s)...
+Presolve removed 5554859 rows and 4161684 columns (presolve time = 40s)...
+Presolve removed 5554859 rows and 4161684 columns
+Presolve time: 42.08s
+Presolved: 3495320 rows, 2566860 columns, 11519758 nonzeros
+Variable types: 2137576 continuous, 429284 integer (429284 binary)
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Ordering time: 2.94s
+
+Barrier statistics:
+ Dense cols : 103
+ AA' NZ     : 1.544e+07
+ Factor NZ  : 6.646e+07 (roughly 2.7 GB of memory)
+ Factor Ops : 4.437e+09 (less than 1 second per iteration)
+ Threads    : 9
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0   1.99015186e+10 -2.57544921e+11  7.35e+09 1.30e+01  1.27e+08    86s
+   1   2.12272528e+10 -4.22159431e+11  7.12e+09 6.72e+01  1.15e+08    87s
+   2   1.37068567e+10 -3.96492605e+11  4.26e+09 3.73e+00  7.00e+07    90s
+   3   5.08914413e+09 -3.75051239e+11  9.08e+08 1.68e-06  1.55e+07    93s
+   4   3.04178427e+09 -3.24829967e+11  3.30e+07 3.26e-07  6.08e+05    95s
+   5   3.01842941e+09 -2.67629726e+11  1.10e+07 1.70e-07  2.23e+05    97s
+   6   3.01816204e+09 -2.65410886e+11  1.07e+07 1.66e-07  2.16e+05    98s
+   7   3.01784750e+09 -2.57715140e+11  1.02e+07 1.55e-07  2.07e+05   100s
+   8   3.01673061e+09 -2.43591715e+11  9.45e+06 1.47e-07  1.90e+05   102s
+   9   2.99447814e+09 -1.69297951e+11  5.37e+06 2.31e-07  1.09e+05   106s
+  10   2.42269601e+09 -1.46638563e+11  4.06e+06 1.58e-07  8.44e+04   108s
+  11   1.99653694e+09 -8.17484961e+10  3.51e+06 3.56e-07  6.63e+04   111s
+  12   8.70060674e+08 -6.32197551e+10  1.49e+06 2.23e-07  3.29e+04   113s
+  13   3.61540939e+08 -3.07559542e+10  6.07e+05 3.66e-08  1.46e+04   115s
+  14   1.63637000e+08 -2.37983229e+10  2.36e+05 3.40e-08  7.47e+03   118s
+  15   1.36826234e+08 -1.69025934e+10  1.88e+05 1.54e-07  5.57e+03   119s
+  16   1.32622683e+08 -1.41312187e+10  1.80e+05 4.07e-07  5.01e+03   121s
+  17   1.22241412e+08 -1.11365157e+10  1.58e+05 3.06e-07  4.30e+03   122s
+  18   1.07533776e+08 -8.66402116e+09  1.28e+05 3.82e-07  3.52e+03   124s
+  19   1.04005046e+08 -4.60963411e+09  1.20e+05 7.11e-07  3.02e+03   126s
+  20   9.37910804e+07 -2.29732302e+09  9.74e+04 4.06e-07  2.41e+03   129s
+  21   9.09751536e+07 -8.61452374e+08  9.09e+04 3.44e-07  2.23e+03   133s
+  22   8.91503611e+07  1.21136222e+09  8.66e+04 3.38e-07  2.14e+03   135s
+  23   8.87366023e+07  3.58668758e+09  8.23e+04 2.98e-07  2.09e+03   139s
+  24   8.84116211e+07  7.33759935e+09  7.66e+04 2.87e-07  1.96e+03   141s
+  25   8.82105419e+07  1.26637200e+10  7.28e+04 3.88e-07  1.95e+03   145s
+  26   8.80241030e+07  1.79428366e+10  6.80e+04 3.71e-07  1.81e+03   148s
+  27   8.77281837e+07  3.20566518e+10  6.58e+04 1.19e-07  1.98e+03   150s
+  28   8.75889299e+07  3.96469640e+10  6.46e+04 1.37e-07  2.01e+03   152s
+  29   8.74568779e+07  5.31856419e+10  6.27e+04 3.09e-07  1.97e+03   155s
+  30   8.73794041e+07  6.08831363e+10  6.17e+04 1.79e-07  1.89e+03   157s
+  31   8.73379524e+07  6.98889397e+10  6.06e+04 2.72e-07  1.78e+03   159s
+  32   8.73179359e+07  7.58917752e+10  6.03e+04 2.38e-07  1.77e+03   161s
+  33   8.75023256e+07  7.88910924e+10  6.03e+04 2.73e-07  1.77e+03   164s
+  34   8.74203033e+07  8.90616980e+10  5.97e+04 2.38e-07  1.71e+03   166s
+  35   8.73186096e+07  1.19260291e+11  5.90e+04 5.08e-07  1.70e+03   170s
+  36   8.71775520e+07  1.42368873e+11  5.86e+04 6.05e-07  1.69e+03   174s
+  37   8.69412728e+07  1.62639966e+11  5.81e+04 9.15e-07  1.66e+03   177s
+  38   8.64685439e+07  2.59587662e+11  5.75e+04 1.12e-06  1.81e+03   181s
+  39   8.61787441e+07  3.11009671e+11  5.71e+04 1.19e-06  1.86e+03   184s
+  40   8.59823499e+07  3.96888488e+11  5.69e+04 2.03e-06  2.01e+03   186s
+  41   8.56372376e+07  4.66263860e+11  5.64e+04 2.24e-06  2.04e+03   189s
+  42   8.53106968e+07  5.58036106e+11  5.61e+04 2.35e-06  2.15e+03   191s
+  43   8.49192240e+07  5.98208907e+11  5.56e+04 2.99e-06  2.13e+03   193s
+  44   8.46611357e+07  6.54561342e+11  5.53e+04 2.93e-06  2.19e+03   196s
+  45   8.43702897e+07  7.53973444e+11  5.50e+04 2.43e-06  2.27e+03   199s
+  46   8.38505857e+07  8.27306995e+11  5.45e+04 3.81e-06  2.25e+03   203s
+  47   8.36167253e+07  8.58645548e+11  5.42e+04 2.53e-06  2.24e+03   206s
+  48   8.32341158e+07  9.20754296e+11  5.38e+04 3.26e-06  2.26e+03   213s
+  49   8.26785481e+07  9.65821789e+11  5.32e+04 2.10e-06  2.19e+03   215s
+  50   8.25994841e+07  9.81108565e+11  5.31e+04 1.91e-06  2.20e+03   218s
+  51   8.21818010e+07  1.03346483e+12  5.27e+04 3.81e-06  2.17e+03   221s
+  52   8.18387400e+07  1.06794838e+12  5.23e+04 1.81e-06  2.14e+03   223s
+  53   8.14915879e+07  1.10757371e+12  5.20e+04 4.44e-06  2.12e+03   225s
+  54   8.11159154e+07  1.17297343e+12  5.16e+04 1.16e-05  2.12e+03   229s
+  55   8.07524977e+07  1.23233268e+12  5.12e+04 1.30e-05  2.12e+03   231s
+  56   8.05983816e+07  1.25264520e+12  5.11e+04 3.81e-06  2.11e+03   233s
+  57   8.05371149e+07  1.31334847e+12  5.10e+04 9.65e-06  2.15e+03   234s
+  58   8.02898715e+07  1.32087162e+12  5.07e+04 7.63e-06  2.12e+03   238s
+  59   1.99015186e+10 -2.57544921e+11  7.35e+09 1.30e+01  1.27e+08   241s
+  60   1.51488233e+09 -2.26724371e+10  6.41e+08 7.28e+00  1.04e+06   250s
+  61   3.59679593e+08 -2.85907735e+09  1.54e+08 1.40e+00  3.65e+04   258s
+  62   3.99802383e+07 -3.82819352e+08  1.79e+07 2.65e-01  9.59e+02   261s
+  63   1.04856956e+07 -1.11024125e+08  4.82e+06 1.62e-01  1.31e+02   267s
+  64   1.22177906e+06 -1.65267373e+07  5.57e+05 3.48e-02  9.56e+00   270s
+  65   6.66361933e+05 -6.42307730e+06  3.01e+05 1.44e-02  4.04e+00   274s
+  66   6.15774738e+05 -4.26937281e+06  2.78e+05 9.45e-03  3.34e+00   276s
+  67   5.99646438e+05 -4.59388287e+06  2.71e+05 9.04e-03  4.66e+00   278s
+  68   5.63147321e+05 -4.32583887e+06  2.39e+05 6.86e-03  6.70e+00   280s
+  69   5.64946713e+05 -4.22425830e+06  2.39e+05 5.12e-03  8.97e+00   282s
+  70   5.76524691e+05 -4.12111851e+06  2.37e+05 1.29e-08  1.54e+01   285s
+  71   5.93266047e+05 -4.08379557e+06  2.37e+05 5.27e-09  1.96e+01   287s
+  72   8.71843349e+05 -3.87963371e+06  2.37e+05 2.00e-08  3.67e+01   288s
+  73   3.18275110e+06 -3.79668220e+06  2.35e+05 4.86e-09  3.69e+01   290s
+  74   6.80394197e+06  5.37758854e+05  2.25e+05 4.66e-09  3.42e+01   292s
+  75   3.28477578e+07  9.79951809e+06  1.51e+05 4.27e-09  2.62e+01   294s
+  76   3.81816933e+07  2.84315004e+07  1.36e+05 2.61e-08  2.36e+01   296s
+  77   3.92450358e+07  3.21053920e+07  1.33e+05 1.65e-08  2.32e+01   298s
+  78   4.01819479e+07  3.60266360e+07  1.31e+05 2.75e-09  2.29e+01   300s
+  79   4.10282823e+07  4.01117724e+07  1.29e+05 7.67e-08  2.28e+01   302s
+  80   4.41085178e+07  4.52109691e+07  1.23e+05 3.08e-09  2.33e+01   303s
+  81   4.62439922e+07  4.98418868e+07  1.19e+05 2.97e-08  2.38e+01   306s
+  82   5.12483598e+07  5.61502353e+07  1.11e+05 1.38e-07  2.69e+01   307s
+  83   5.66248983e+07  6.12106397e+07  1.03e+05 6.40e-08  3.08e+01   310s
+  84   5.85441929e+07  6.31818325e+07  1.00e+05 5.91e-09  3.27e+01   311s
+  85   5.99507996e+07  6.41282528e+07  9.83e+04 1.96e-08  3.38e+01   313s
+  86   6.05862105e+07  6.51413287e+07  9.76e+04 2.72e-09  3.53e+01   315s
+  87   6.09544784e+07  6.54266584e+07  9.72e+04 7.45e-09  3.58e+01   316s
+  88   6.17264498e+07  6.58925491e+07  9.66e+04 9.66e-09  3.66e+01   318s
+  89   6.16729490e+07  6.65820015e+07  9.66e+04 3.39e-09  3.81e+01   320s
+  90   6.45596808e+07  6.98612530e+07  9.45e+04 9.78e-09  4.57e+01   322s
+  91   6.91766287e+07  7.80858194e+07  9.09e+04 5.78e-08  7.96e+01   324s
+  92   7.11317803e+07  7.89156965e+07  9.00e+04 5.92e-08  1.21e+02   325s
+  93   7.28977647e+07  9.81758192e+08  8.96e+04 2.19e-03  9.81e+04   328s
+  94*  7.46777776e+07  3.08313325e+12  1.41e+01 1.97e-01  2.42e+03   329s
+  95*  7.52020111e+07  5.28094479e+16  5.62e-04 1.58e+00  3.76e+00   331s
+  96*  6.56938681e+07  8.52662719e+16  1.99e-04 6.93e+01  1.26e+01   333s
+  97*  6.43494410e+07  2.15316081e+17  3.79e-05 6.04e+01  4.36e+00   335s
+  98*  5.21495661e+07  9.70446394e+18  6.31e-07 2.54e+02  1.10e-01   337s
+  99*  6.91138316e+07  3.38632704e+20  2.86e-08 2.28e+02  3.02e-03   339s
+ 100*  8.88234990e+07  2.92853126e+23  4.00e-11 1.92e+02  4.39e-06   342s
+ 101*  8.88320024e+07  2.42857556e+28  4.00e-16 1.70e+02  4.39e-11   345s
+ 102*  8.88320024e+07  2.42193058e+33  4.00e-21 9.92e+01  4.39e-16   347s
+ 103*  8.89037542e+07  5.00429847e+37  5.49e-26 4.92e-01  3.44e-21   349s
+ 104*  8.90216641e+07  4.07816926e+38  3.54e-26 7.06e-01  3.86e-21   350s
+ 105*  8.91687905e+07  1.89987518e+39  2.57e-26 5.69e-01  4.93e-21   353s
+ 106*  8.91687905e+07  4.27909887e+40  2.57e-26 4.64e+00  2.93e-20   354s
+ 107*  8.91687905e+07  2.50061326e+41  2.57e-26 1.94e+02  6.57e-19   356s
+
+Barrier performed 107 iterations in 356.04 seconds (265.68 work units)
+Numerical trouble encountered
+
+Waiting for other threads to finish...         420s
+Waiting for other threads to finish...         483s
+Waiting for other threads to finish...         546s
+Waiting for other threads to finish...         610s
+Waiting for other threads to finish...         673s
+Waiting for other threads to finish...         736s
+Waiting for other threads to finish...         799s
+Waiting for other threads to finish...         862s
+Waiting for other threads to finish...         925s
+Waiting for other threads to finish...         989s
+Waiting for other threads to finish...        1052s
+Waiting for other threads to finish...        1115s
+Waiting for other threads to finish...        1178s
+Waiting for other threads to finish...        1242s
+Waiting for other threads to finish...        1305s
+Waiting for other threads to finish...        1368s
+Waiting for other threads to finish...        1431s
+Waiting for other threads to finish...        1494s
+Waiting for other threads to finish...        1557s
+Waiting for other threads to finish...        1621s
+Waiting for other threads to finish...        1684s
+Waiting for other threads to finish...        1747s
+Waiting for other threads to finish...        1810s
+Waiting for other threads to finish...        1873s
+Waiting for other threads to finish...        1936s
+Waiting for other threads to finish...        2000s
+Waiting for other threads to finish...        2063s
+Waiting for other threads to finish...        2126s
+Waiting for other threads to finish...        2189s
+Waiting for other threads to finish...        2252s
+Waiting for other threads to finish...        2315s
+Waiting for other threads to finish...        2379s
+Waiting for other threads to finish...        2442s
+Waiting for other threads to finish...        2505s
+Waiting for other threads to finish...        2568s
+Waiting for other threads to finish...        2631s
+Waiting for other threads to finish...        2695s
+Waiting for other threads to finish...        2758s
+Waiting for other threads to finish...        2821s
+Waiting for other threads to finish...        2884s
+Waiting for other threads to finish...        2947s
+Waiting for other threads to finish...        3010s
+Waiting for other threads to finish...        3074s
+Waiting for other threads to finish...        3137s
+Waiting for other threads to finish...        3200s
+Waiting for other threads to finish...        3263s
+Waiting for other threads to finish...        3326s
+Waiting for other threads to finish...        3389s
+Waiting for other threads to finish...        3453s
+Waiting for other threads to finish...        3516s
+Waiting for other threads to finish...        3579s
+Waiting for other threads to finish...        3642s
+Waiting for other threads to finish...        3705s
+Waiting for other threads to finish...        3768s
+Waiting for other threads to finish...        3832s
+Waiting for other threads to finish...        3895s
+Waiting for other threads to finish...        3958s
+Waiting for other threads to finish...        4021s
+Waiting for other threads to finish...        4084s
+Waiting for other threads to finish...        4147s
+Waiting for other threads to finish...        4211s
+Waiting for other threads to finish...        4274s
+Waiting for other threads to finish...        4337s
+Waiting for other threads to finish...        4400s
+Waiting for other threads to finish...        4463s
+Waiting for other threads to finish...        4526s
+Waiting for other threads to finish...        4590s
+Waiting for other threads to finish...        4653s
+Waiting for other threads to finish...        4716s
+Waiting for other threads to finish...        4779s
+Waiting for other threads to finish...        4842s
+Waiting for other threads to finish...        4905s
+Waiting for other threads to finish...        4969s
+Waiting for other threads to finish...        5032s
+Waiting for other threads to finish...        5095s
+Waiting for other threads to finish...        5158s
+Waiting for other threads to finish...        5221s
+Waiting for other threads to finish...        5284s
+Waiting for other threads to finish...        5348s
+Waiting for other threads to finish...        5411s
+Waiting for other threads to finish...        5474s
+Waiting for other threads to finish...        5537s
+Waiting for other threads to finish...        5600s
+Waiting for other threads to finish...        5663s
+Waiting for other threads to finish...        5727s
+Waiting for other threads to finish...        5790s
+Waiting for other threads to finish...        5853s
+Waiting for other threads to finish...        5916s
+Waiting for other threads to finish...        5979s
+Waiting for other threads to finish...        6042s
+Waiting for other threads to finish...        6106s
+Waiting for other threads to finish...        6169s
+Waiting for other threads to finish...        6232s
+Waiting for other threads to finish...        6295s
+Waiting for other threads to finish...        6358s
+Waiting for other threads to finish...        6421s
+Waiting for other threads to finish...        6485s
+Waiting for other threads to finish...        6548s
+Waiting for other threads to finish...        6611s
+Waiting for other threads to finish...        6674s
+Waiting for other threads to finish...        6737s
+Waiting for other threads to finish...        6800s
+Waiting for other threads to finish...        6864s
+Waiting for other threads to finish...        6927s
+Waiting for other threads to finish...        6990s
+Waiting for other threads to finish...        7053s
+Waiting for other threads to finish...        7116s
+Waiting for other threads to finish...        7179s
+Waiting for other threads to finish...        7242s
+Waiting for other threads to finish...        7306s
+Waiting for other threads to finish...        7369s
+Waiting for other threads to finish...        7432s
+Waiting for other threads to finish...        7495s
+Waiting for other threads to finish...        7558s
+Waiting for other threads to finish...        7621s
+Waiting for other threads to finish...        7685s
+Waiting for other threads to finish...        7748s
+Waiting for other threads to finish...        7811s
+Waiting for other threads to finish...        7874s
+Waiting for other threads to finish...        7937s
+Waiting for other threads to finish...        8000s
+Waiting for other threads to finish...        8064s
+Waiting for other threads to finish...        8127s
+Waiting for other threads to finish...        8190s
+Waiting for other threads to finish...        8253s
+Waiting for other threads to finish...        8316s
+Waiting for other threads to finish...        8379s
+Waiting for other threads to finish...        8443s
+Waiting for other threads to finish...        8506s
+Waiting for other threads to finish...        8569s
+Waiting for other threads to finish...        8632s
+Waiting for other threads to finish...        8695s
+Waiting for other threads to finish...        8758s
+Waiting for other threads to finish...        8822s
+Waiting for other threads to finish...        8885s
+Waiting for other threads to finish...        8948s
+Waiting for other threads to finish...        9011s
+Waiting for other threads to finish...        9074s
+Waiting for other threads to finish...        9137s
+Waiting for other threads to finish...        9201s
+Waiting for other threads to finish...        9264s
+Waiting for other threads to finish...        9327s
+Waiting for other threads to finish...        9390s
+Waiting for other threads to finish...        9453s
+Waiting for other threads to finish...        9516s
+Waiting for other threads to finish...        9580s
+Waiting for other threads to finish...        9643s
+Waiting for other threads to finish...        9706s
+Waiting for other threads to finish...        9769s
+Waiting for other threads to finish...        9832s
+Waiting for other threads to finish...        9895s
+Waiting for other threads to finish...        9959s
+Waiting for other threads to finish...       10022s
+Waiting for other threads to finish...       10085s
+Waiting for other threads to finish...       10148s
+Waiting for other threads to finish...       10211s
+Waiting for other threads to finish...       10275s
+Waiting for other threads to finish...       10338s
+Waiting for other threads to finish...       10401s
+Waiting for other threads to finish...       10464s
+Waiting for other threads to finish...       10527s
+Waiting for other threads to finish...       10590s
+Waiting for other threads to finish...       10654s
+Waiting for other threads to finish...       10717s
+Waiting for other threads to finish...       10780s
+Waiting for other threads to finish...       10843s
+Waiting for other threads to finish...       10906s
+Waiting for other threads to finish...       10970s
+Waiting for other threads to finish...       11033s
+Waiting for other threads to finish...       11096s
+Waiting for other threads to finish...       11159s
+Waiting for other threads to finish...       11222s
+Waiting for other threads to finish...       11285s
+Waiting for other threads to finish...       11349s
+Waiting for other threads to finish...       11412s
+Waiting for other threads to finish...       11475s
+Waiting for other threads to finish...       11538s
+Waiting for other threads to finish...       11601s
+Waiting for other threads to finish...       11664s
+Waiting for other threads to finish...       11728s
+Waiting for other threads to finish...       11791s
+Waiting for other threads to finish...       11854s
+Waiting for other threads to finish...       11917s
+Waiting for other threads to finish...       11980s
+Waiting for other threads to finish...       12043s
+Waiting for other threads to finish...       12107s
+Waiting for other threads to finish...       12170s
+Waiting for other threads to finish...       12233s
+Waiting for other threads to finish...       12296s
+Waiting for other threads to finish...       12359s
+Waiting for other threads to finish...       12422s
+Waiting for other threads to finish...       12486s
+Waiting for other threads to finish...       12549s
+Waiting for other threads to finish...       12612s
+Waiting for other threads to finish...       12675s
+Waiting for other threads to finish...       12738s
+Waiting for other threads to finish...       12801s
+Waiting for other threads to finish...       12865s
+Waiting for other threads to finish...       12928s
+Waiting for other threads to finish...       12991s
+Waiting for other threads to finish...       13054s
+Waiting for other threads to finish...       13117s
+Waiting for other threads to finish...       13180s
+Waiting for other threads to finish...       13244s
+Waiting for other threads to finish...       13307s
+Waiting for other threads to finish...       13370s
+Waiting for other threads to finish...       13433s
+Waiting for other threads to finish...       13496s
+Waiting for other threads to finish...       13559s
+Waiting for other threads to finish...       13623s
+Waiting for other threads to finish...       13686s
+Waiting for other threads to finish...       13749s
+Waiting for other threads to finish...       13812s
+Waiting for other threads to finish...       13875s
+Waiting for other threads to finish...       13938s
+Waiting for other threads to finish...       14002s
+Waiting for other threads to finish...       14065s
+Waiting for other threads to finish...       14128s
+Waiting for other threads to finish...       14191s
+Waiting for other threads to finish...       14254s
+Waiting for other threads to finish...       14317s
+Waiting for other threads to finish...       14381s
+Waiting for other threads to finish...       14444s
+Waiting for other threads to finish...       14507s
+Waiting for other threads to finish...       14570s
+Waiting for other threads to finish...       14633s
+Waiting for other threads to finish...       14696s
+Waiting for other threads to finish...       14760s
+Waiting for other threads to finish...       14823s
+Waiting for other threads to finish...       14886s
+Waiting for other threads to finish...       14949s
+Waiting for other threads to finish...       15012s
+Waiting for other threads to finish...       15075s
+Waiting for other threads to finish...       15139s
+Waiting for other threads to finish...       15202s
+Waiting for other threads to finish...       15265s
+Waiting for other threads to finish...       15328s
+Waiting for other threads to finish...       15391s
+Waiting for other threads to finish...       15455s
+Waiting for other threads to finish...       15518s
+Waiting for other threads to finish...       15581s
+Waiting for other threads to finish...       15644s
+Waiting for other threads to finish...       15707s
+Waiting for other threads to finish...       15770s
+Waiting for other threads to finish...       15834s
+Waiting for other threads to finish...       15897s
+Waiting for other threads to finish...       15960s
+Waiting for other threads to finish...       16023s
+Waiting for other threads to finish...       16086s
+Waiting for other threads to finish...       16149s
+Waiting for other threads to finish...       16213s
+Waiting for other threads to finish...       16276s
+Waiting for other threads to finish...       16339s
+Waiting for other threads to finish...       16402s
+Waiting for other threads to finish...       16465s
+Waiting for other threads to finish...       16528s
+Waiting for other threads to finish...       16592s
+Waiting for other threads to finish...       16655s
+Waiting for other threads to finish...       16718s
+Waiting for other threads to finish...       16781s
+Waiting for other threads to finish...       16844s
+Waiting for other threads to finish...       16907s
+Waiting for other threads to finish...       16971s
+Waiting for other threads to finish...       17034s
+Waiting for other threads to finish...       17097s
+Waiting for other threads to finish...       17160s
+Waiting for other threads to finish...       17223s
+Waiting for other threads to finish...       17287s
+Waiting for other threads to finish...       17350s
+Waiting for other threads to finish...       17413s
+Waiting for other threads to finish...       17476s
+Waiting for other threads to finish...       17539s
+Waiting for other threads to finish...       17602s
+Waiting for other threads to finish...       17666s
+Waiting for other threads to finish...       17729s
+Waiting for other threads to finish...       17792s
+Waiting for other threads to finish...       17855s
+Waiting for other threads to finish...       17918s
+Waiting for other threads to finish...       17981s
+Waiting for other threads to finish...       18045s
+Waiting for other threads to finish...       18108s
+Waiting for other threads to finish...       18171s
+Waiting for other threads to finish...       18234s
+Waiting for other threads to finish...       18297s
+Waiting for other threads to finish...       18360s
+Waiting for other threads to finish...       18424s
+Waiting for other threads to finish...       18487s
+Waiting for other threads to finish...       18550s
+Waiting for other threads to finish...       18613s
+Waiting for other threads to finish...       18676s
+Waiting for other threads to finish...       18740s
+Waiting for other threads to finish...       18803s
+Waiting for other threads to finish...       18866s
+Waiting for other threads to finish...       18929s
+Waiting for other threads to finish...       18992s
+Waiting for other threads to finish...       19055s
+Waiting for other threads to finish...       19119s
+Waiting for other threads to finish...       19182s
+Waiting for other threads to finish...       19245s
+Waiting for other threads to finish...       19308s
+Waiting for other threads to finish...       19371s
+Waiting for other threads to finish...       19434s
+Waiting for other threads to finish...       19498s
+Waiting for other threads to finish...       19561s
+Waiting for other threads to finish...       19624s
+Waiting for other threads to finish...       19687s
+Waiting for other threads to finish...       19750s
+Waiting for other threads to finish...       19813s
+Waiting for other threads to finish...       19877s
+Waiting for other threads to finish...       19940s
+Waiting for other threads to finish...       20003s
+Waiting for other threads to finish...       20066s
+Waiting for other threads to finish...       20129s
+Waiting for other threads to finish...       20192s
+Waiting for other threads to finish...       20256s
+Waiting for other threads to finish...       20319s
+Waiting for other threads to finish...       20382s
+Waiting for other threads to finish...       20445s
+Waiting for other threads to finish...       20508s
+Waiting for other threads to finish...       20572s
+Waiting for other threads to finish...       20635s
+Waiting for other threads to finish...       20698s
+Waiting for other threads to finish...       20761s
+Waiting for other threads to finish...       20824s
+Waiting for other threads to finish...       20887s
+Waiting for other threads to finish...       20951s
+Waiting for other threads to finish...       21014s
+Waiting for other threads to finish...       21077s
+Waiting for other threads to finish...       21140s
+Waiting for other threads to finish...       21203s
+Waiting for other threads to finish...       21266s
+Waiting for other threads to finish...       21330s
+Waiting for other threads to finish...       21393s
+Waiting for other threads to finish...       21456s
+Waiting for other threads to finish...       21519s
+Waiting for other threads to finish...       21582s
+Waiting for other threads to finish...       21645s
+Waiting for other threads to finish...       21709s
+Waiting for other threads to finish...       21772s
+Waiting for other threads to finish...       21835s
+Waiting for other threads to finish...       21898s
+Waiting for other threads to finish...       21961s
+Waiting for other threads to finish...       22024s
+Waiting for other threads to finish...       22088s
+Waiting for other threads to finish...       22151s
+Waiting for other threads to finish...       22214s
+Waiting for other threads to finish...       22277s
+Waiting for other threads to finish...       22340s
+Waiting for other threads to finish...       22404s
+Waiting for other threads to finish...       22467s
+Waiting for other threads to finish...       22530s
+Waiting for other threads to finish...       22593s
+Waiting for other threads to finish...       22656s
+Waiting for other threads to finish...       22719s
+Waiting for other threads to finish...       22783s
+Waiting for other threads to finish...       22846s
+Waiting for other threads to finish...       22909s
+Waiting for other threads to finish...       22972s
+Waiting for other threads to finish...       23035s
+Waiting for other threads to finish...       23098s
+Waiting for other threads to finish...       23162s
+Waiting for other threads to finish...       23225s
+Waiting for other threads to finish...       23288s
+Waiting for other threads to finish...       23351s
+Waiting for other threads to finish...       23414s
+Waiting for other threads to finish...       23477s
+Waiting for other threads to finish...       23541s
+Waiting for other threads to finish...       23604s
+Waiting for other threads to finish...       23667s
+Waiting for other threads to finish...       23730s
+Waiting for other threads to finish...       23793s
+Waiting for other threads to finish...       23856s
+Waiting for other threads to finish...       23920s
+Waiting for other threads to finish...       23983s
+Waiting for other threads to finish...       24046s
+Waiting for other threads to finish...       24109s

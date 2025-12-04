@@ -1,0 +1,86 @@
+
+Gurobi 13.0.0 (linux64) logging started Sun Nov 23 22:14:39 2025
+
+Set parameter LogFile to value "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251123_215646/task_002/t002_parallel_run_0006/userData/20251123220446-1/solver_log.txt"
+Set parameter TimeLimit to value 180000
+Set parameter MIPGap to value 0.01
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 8
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value 1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Gurobi Optimizer version 13.0.0 build v13.0.0rc1 (linux64 - "Red Hat Enterprise Linux 9.4 (Plow)")
+
+CPU model: AMD EPYC 9654 96-Core Processor, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 192 physical cores, 192 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  180000
+MIPGap  0.01
+LPWarmStart  0
+NodefileStart  60
+Presolve  1
+Threads  8
+
+Academic license 2729390 - for non-commercial use only - registered to m.___@uu.nl
+Optimize a model with 9050179 rows, 6728544 columns and 21385595 nonzeros (Min)
+Model fingerprint: 0x9bc6cfab
+Model has 1 linear objective coefficients
+Variable types: 5869892 continuous, 858652 integer (858652 binary)
+Coefficient statistics:
+  Matrix range     [2e-03, 2e+08]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [5e-02, 6e+08]
+  RHS range        [1e+00, 5e+09]
+Warning: Model contains large matrix coefficients
+Warning: Model contains large rhs
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 5361748 rows and 3924941 columns (presolve time = 5s)...
+Presolve removed 5528318 rows and 4082751 columns (presolve time = 10s)...
+Presolve removed 5528318 rows and 4082751 columns (presolve time = 15s)...
+Presolve removed 5528318 rows and 4082751 columns (presolve time = 20s)...
+Presolve removed 5528318 rows and 4082751 columns (presolve time = 26s)...
+Presolve removed 5545992 rows and 4161654 columns (presolve time = 30s)...
+Presolve removed 5554871 rows and 4161696 columns (presolve time = 35s)...
+Presolve removed 5554871 rows and 4161696 columns (presolve time = 40s)...
+Presolve removed 5554871 rows and 4161696 columns
+Presolve time: 42.35s
+Presolved: 3495308 rows, 2566848 columns, 11519714 nonzeros
+Variable types: 2137564 continuous, 429284 integer (429284 binary)
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Ordering time: 5.22s
+
+Barrier statistics:
+ Dense cols : 103
+ AA' NZ     : 1.544e+07
+ Factor NZ  : 6.624e+07 (roughly 2.6 GB of memory)
+ Factor Ops : 4.369e+09 (less than 1 second per iteration)
+ Threads    : 5
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0   1.58675747e+10 -2.55076780e+11  5.37e+09 1.16e+01  9.85e+07   190s
+   1   1.69364478e+10 -5.71508490e+11  5.20e+09 5.14e+01  9.37e+07   193s
+   2   1.07663230e+10 -4.87300037e+11  3.02e+09 1.21e+00  5.52e+07   195s
+   3   4.51694936e+09 -4.34812544e+11  7.34e+08 9.92e-06  1.35e+07   198s
+   4   2.91088945e+09 -3.43241507e+11  1.73e+07 3.33e-06  3.68e+05   202s
+   5   2.91259112e+09 -3.22689173e+11  1.63e+07 3.35e-06  3.45e+05   204s
+   6   2.91188794e+09 -1.69666097e+11  1.13e+07 2.48e-06  2.13e+05   206s
+   7   2.32555200e+09 -1.29245314e+11  6.00e+06 3.14e-06  1.17e+05   209s
+   8   1.82158041e+09 -1.07490142e+11  4.51e+06 5.34e-06  8.86e+04   211s
+   9   1.40849713e+09 -6.83442136e+10  2.78e+06 8.39e-07  5.27e+04   214s
+  10   7.45842482e+08 -6.08776618e+10  3.93e+05 8.15e-07  1.52e+04   217s
+  11   6.37432406e+08 -2.76562962e+10  6.59e+04 4.12e-05  5.02e+03   220s
+  12   6.09759215e+08 -7.49129385e+09  1.03e+04 2.78e-04  1.29e+03   223s

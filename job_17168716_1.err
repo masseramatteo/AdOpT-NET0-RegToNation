@@ -1,0 +1,674 @@
+Lmod has detected the following error: These module(s) or extension(s) exist
+but cannot be loaded as requested: "Python/3.13.1-GCCcore-14.2.0"
+   Try: "module spider Python/3.13.1-GCCcore-14.2.0" to see how to load the
+module(s).
+
+
+
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Constructing Investment Period period1 completed
+Constructing Investment Period period1 completed
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Constructing Investment Period period1 completed
+Constructing Investment Period period1 completed
+Constructing Investment Period period1 completed
+Constructing Investment Period period1 completed
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Constructing Investment Period period1 completed
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Constructing Investment Period period1 completed
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 35 minutes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 35 minutes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 35 minutes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 35 minutes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 35 minutes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 35 minutes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 35 minutes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 35 minutes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 35 minutes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Maximum number of failing server authorization attempts reached
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Maximum number of failing server authorization attempts reached
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Maximum number of failing server authorization attempts reached
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Maximum number of failing server authorization attempts reached
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Maximum number of failing server authorization attempts reached
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Maximum number of failing server authorization attempts reached
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Maximum number of failing server authorization attempts reached
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 103, in _perform_preprocessing_checks
+    solver.solve(mock_model)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Maximum number of failing server authorization attempts reached
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 434, in quick_solve
+    self.construct_model()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 228, in construct_model
+    self._perform_preprocessing_checks()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 105, in _perform_preprocessing_checks
+    raise Exception(
+    ...<6 lines>...
+    )
+Exception: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 436, in quick_solve
+    self.solve()
+    ~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 423, in solve
+    self._optimize(objective)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 627, in _optimize
+    self._optimize_costs_supply_willingness()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 744, in _optimize_costs_supply_willingness
+    self._call_solver()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 980, in _call_solver
+    self.solution = self.solver.solve(
+                    ~~~~~~~~~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<3 lines>...
+        keepfiles=True,
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 47 minutes
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 153, in solve_single_model
+    m.quick_solve()
+    ~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 436, in quick_solve
+    self.solve()
+    ~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 423, in solve
+    self._optimize(objective)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 627, in _optimize
+    self._optimize_costs_supply_willingness()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 744, in _optimize_costs_supply_willingness
+    self._call_solver()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/modelhub.py", line 980, in _call_solver
+    self.solution = self.solver.solve(
+                    ~~~~~~~~~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<3 lines>...
+        keepfiles=True,
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/direct_solver.py", line 142, in solve
+    _status = self._apply_solver()
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/venv/lib/python3.13/site-packages/pyomo/solvers/plugins/solvers/gurobi_direct.py", line 268, in _apply_solver
+    self._solver_model.optimize(self._callback)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
+gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 52 minutes

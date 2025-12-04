@@ -849,13 +849,13 @@ if __name__ == "__main__":
     # Example parameter grid (small test)
     param_grid = {
         "scenarios": ["1751"],
-        "demand_level_ratio": [5, 15, 20],
-        "total_demand_TWh": [10, 20, 50],
-        "import_availability_ratio": [0.2, 0.7],
+        "demand_level_ratio": [15],
+        "total_demand_TWh": [20],
+        "import_availability_ratio": [0.4],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
-        "electricity_price_avg": [50, 100, 150, 200],
-        "electricity_availability_small": [50, 100, 150],
-        "willingness_to_pay": [200, 250, 300, 350, 400],
+        "electricity_price_avg": [150],
+        "electricity_availability_small": [100],
+        "willingness_to_pay": [250],
         "networks": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],

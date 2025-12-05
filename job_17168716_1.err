@@ -672,3 +672,4 @@ Traceback (most recent call last):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
   File "src/gurobipy/_model.pyx", line 926, in gurobipy._model.Model.optimize
 gurobipy._exception.GurobiError: Overage for too long, 3 active sessions and over the baseline for 52 minutes
+[2025-12-04T21:32:24.053] error: *** JOB 17168716 ON tcn911 CANCELLED AT 2025-12-04T21:32:24 DUE TO TIME LIMIT ***

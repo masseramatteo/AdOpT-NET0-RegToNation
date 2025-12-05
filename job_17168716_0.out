@@ -5662,3 +5662,191 @@ Threads  12
   438868    1.1835911e+08   0.000000e+00   9.536416e+04   2910s
   439698    1.1835911e+08   0.000000e+00   1.203114e+05   2980s
   440528    1.1835911e+08   0.000000e+00   1.624187e+05   3049s
+  441358    1.1835911e+08   0.000000e+00   7.593147e+04   3118s
+  442088    1.1835911e+08   0.000000e+00   6.915588e+04   3196s
+  442918    1.1835911e+08   0.000000e+00   4.734340e+04   3275s
+  443748    1.1835911e+08   0.000000e+00   3.985635e+04   3348s
+  444578    1.1835911e+08   0.000000e+00   4.151352e+04   3421s
+  445388    1.1835911e+08   0.000000e+00   3.285611e+04   3489s
+  446218    1.1835911e+08   0.000000e+00   2.953409e+04   3555s
+  446948    1.1835911e+08   0.000000e+00   3.634151e+05   3626s
+  447778    1.1835911e+08   0.000000e+00   3.503665e+07   3690s
+  448548    1.1835911e+08   0.000000e+00   1.743060e+06   3752s
+  449378    1.1835911e+08   0.000000e+00   1.748391e+06   3821s
+  450208    1.1835911e+08   0.000000e+00   1.757591e+06   3886s
+  451038    1.1835911e+08   0.000000e+00   1.766306e+06   3949s
+  451868    1.1835911e+08   0.000000e+00   1.771229e+06   4014s
+  452698    1.1835911e+08   0.000000e+00   7.946142e+04   4085s
+  453528    1.1835910e+08   0.000000e+00   3.500111e+04   4154s
+  454358    1.1835910e+08   0.000000e+00   3.579631e+04   4202s
+  455188    1.1835910e+08   0.000000e+00   3.446483e+04   4269s
+  456018    1.1835910e+08   0.000000e+00   3.256786e+04   4318s
+  456848    1.1835910e+08   0.000000e+00   2.821642e+04   4363s
+  457678    1.1835910e+08   0.000000e+00   2.824932e+04   4411s
+  458508    1.1835910e+08   0.000000e+00   3.249859e+04   4455s
+  459168    1.1835910e+08   0.000000e+00   3.076324e+04   4515s
+  459998    1.1835910e+08   0.000000e+00   2.805243e+04   4580s
+  460828    1.1835910e+08   0.000000e+00   6.539819e+03   4653s
+  461658    1.1835909e+08   0.000000e+00   1.508335e+06   4723s
+  462488    1.1835909e+08   0.000000e+00   1.507868e+06   4787s
+  463318    1.1835909e+08   0.000000e+00   5.542197e+03   4854s
+  464148    1.1835908e+08   0.000000e+00   5.441101e+03   4920s
+  464979    1.1835908e+08   0.000000e+00   4.644278e+03   4985s
+  465809    1.1835907e+08   0.000000e+00   3.732528e+03   5031s
+  466639    1.1835907e+08   0.000000e+00   3.446903e+03   5078s
+  467469    1.1835907e+08   0.000000e+00   3.263193e+03   5145s
+  468299    1.1835907e+08   0.000000e+00   3.865038e+03   5212s
+  469129    1.1835906e+08   0.000000e+00   2.300218e+03   5277s
+  469959    1.1835906e+08   0.000000e+00   3.064546e+03   5323s
+  470789    1.1835906e+08   0.000000e+00   1.805488e+03   5391s
+  471619    1.1835906e+08   0.000000e+00   1.570032e+03   5457s
+  472449    1.1835906e+08   0.000000e+00   1.577198e+03   5502s
+  473259    1.1835906e+08   0.000000e+00   1.370333e+03   5568s
+  474089    1.1835906e+08   0.000000e+00   1.336836e+03   5632s
+  474919    1.1835906e+08   0.000000e+00   1.268904e+03   5677s
+  475749    1.1835906e+08   0.000000e+00   1.026479e+03   5722s
+  476579    1.1835906e+08   0.000000e+00   9.442977e+02   5767s
+  477409    1.1835906e+08   0.000000e+00   1.193516e+03   5834s
+  478239    1.1835906e+08   0.000000e+00   6.386057e+02   5901s
+  479069    1.1835906e+08   0.000000e+00   2.055673e+07   5943s
+  479899    1.1835905e+08   0.000000e+00   4.862251e+02   5993s
+  480579    1.1835904e+08   0.000000e+00   4.035303e+02   6050s
+  481409    1.1835903e+08   0.000000e+00   2.760517e+02   6119s
+  482239    1.1835903e+08   0.000000e+00   1.757348e+07   6181s
+  483009    1.1835903e+08   0.000000e+00   1.361954e+04   6241s
+  483779    1.1835903e+08   0.000000e+00   1.536318e+04   6307s
+  484569    1.1835903e+08   0.000000e+00   1.599025e+04   6373s
+  485399    1.1835903e+08   0.000000e+00   1.605829e+04   6418s
+  486229    1.1835903e+08   0.000000e+00   1.599293e+04   6464s
+  486959    1.1835903e+08   0.000000e+00   2.047004e+01   6508s
+  487689    1.1835903e+08   0.000000e+00   1.101645e+01   6567s
+  488439    1.1835903e+08   0.000000e+00   8.750314e+00   6625s
+  489159    1.1835903e+08   0.000000e+00   6.744091e+00   6681s
+  489899    1.1835903e+08   0.000000e+00   5.532687e+00   6738s
+  490649    1.1835903e+08   0.000000e+00   2.966187e+00   6797s
+  491409    1.1835903e+08   0.000000e+00   1.686361e+00   6856s
+  492159    1.1835903e+08   0.000000e+00   9.639047e-01   6916s
+  492949    1.1835903e+08   0.000000e+00   3.560281e-01   6979s
+  493495    1.1835911e+08   2.176637e+03   0.000000e+00   7023s
+  494325    1.1835912e+08   3.728390e+02   0.000000e+00   7054s
+  495155    1.1835912e+08   2.076632e+03   0.000000e+00   7124s
+  495948    1.1835912e+08   0.000000e+00   0.000000e+00   7200s
+Crossover time: 6756.41 seconds (7450.90 work units)
+Waiting for other threads to finish...        7268s
+Waiting for other threads to finish...        7331s
+Waiting for other threads to finish...        7394s
+Waiting for other threads to finish...        7457s
+Waiting for other threads to finish...        7520s
+Waiting for other threads to finish...        7583s
+Waiting for other threads to finish...        7647s
+Waiting for other threads to finish...        7710s
+Waiting for other threads to finish...        7773s
+Waiting for other threads to finish...        7836s
+Waiting for other threads to finish...        7899s
+Waiting for other threads to finish...        7962s
+Waiting for other threads to finish...        8026s
+Waiting for other threads to finish...        8089s
+Waiting for other threads to finish...        8152s
+Waiting for other threads to finish...        8215s
+Waiting for other threads to finish...        8278s
+Waiting for other threads to finish...        8341s
+Waiting for other threads to finish...        8405s
+Waiting for other threads to finish...        8468s
+Waiting for other threads to finish...        8531s
+Waiting for other threads to finish...        8594s
+Waiting for other threads to finish...        8657s
+Waiting for other threads to finish...        8720s
+Waiting for other threads to finish...        8784s
+Waiting for other threads to finish...        8847s
+Waiting for other threads to finish...        8910s
+Waiting for other threads to finish...        8973s
+Waiting for other threads to finish...        9036s
+Waiting for other threads to finish...        9099s
+Waiting for other threads to finish...        9163s
+Waiting for other threads to finish...        9226s
+Waiting for other threads to finish...        9289s
+Waiting for other threads to finish...        9352s
+Waiting for other threads to finish...        9415s
+Waiting for other threads to finish...        9478s
+Waiting for other threads to finish...        9542s
+Waiting for other threads to finish...        9605s
+Waiting for other threads to finish...        9668s
+Waiting for other threads to finish...        9731s
+Waiting for other threads to finish...        9794s
+Waiting for other threads to finish...        9857s
+Waiting for other threads to finish...        9921s
+Waiting for other threads to finish...        9984s
+Waiting for other threads to finish...       10047s
+Waiting for other threads to finish...       10110s
+Waiting for other threads to finish...       10173s
+Waiting for other threads to finish...       10236s
+Waiting for other threads to finish...       10300s
+Waiting for other threads to finish...       10363s
+Waiting for other threads to finish...       10426s
+Waiting for other threads to finish...       10489s
+Waiting for other threads to finish...       10552s
+Waiting for other threads to finish...       10615s
+Waiting for other threads to finish...       10679s
+Waiting for other threads to finish...       10742s
+Waiting for other threads to finish...       10805s
+Waiting for other threads to finish...       10868s
+Waiting for other threads to finish...       10931s
+Waiting for other threads to finish...       10994s
+Waiting for other threads to finish...       11058s
+Waiting for other threads to finish...       11121s
+Waiting for other threads to finish...       11184s
+Waiting for other threads to finish...       11247s
+Waiting for other threads to finish...       11310s
+Waiting for other threads to finish...       11373s
+Waiting for other threads to finish...       11437s
+Waiting for other threads to finish...       11500s
+Waiting for other threads to finish...       11563s
+Waiting for other threads to finish...       11626s
+Waiting for other threads to finish...       11689s
+Waiting for other threads to finish...       11752s
+Waiting for other threads to finish...       11816s
+Waiting for other threads to finish...       11879s
+Waiting for other threads to finish...       11942s
+Waiting for other threads to finish...       12005s
+Waiting for other threads to finish...       12068s
+Waiting for other threads to finish...       12131s
+Waiting for other threads to finish...       12195s
+Waiting for other threads to finish...       12258s
+Waiting for other threads to finish...       12321s
+Waiting for other threads to finish...       12384s
+Waiting for other threads to finish...       12447s
+Waiting for other threads to finish...       12510s
+Waiting for other threads to finish...       12574s
+Waiting for other threads to finish...       12637s
+Waiting for other threads to finish...       12700s
+Waiting for other threads to finish...       12763s
+Waiting for other threads to finish...       12826s
+Waiting for other threads to finish...       12889s
+Waiting for other threads to finish...       12952s
+Waiting for other threads to finish...       13016s
+Waiting for other threads to finish...       13079s
+Waiting for other threads to finish...       13142s
+Waiting for other threads to finish...       13205s
+Waiting for other threads to finish...       13268s
+Waiting for other threads to finish...       13331s
+Waiting for other threads to finish...       13395s
+Waiting for other threads to finish...       13458s
+Concurrent spin time: 6278.98s (can be avoided by choosing Method=3)
+
+Solved with barrier
+  495948    1.1835912e+08   8.072459e-05   2.448388e+08  13489s
+  496479    1.1835912e+08   2.515785e-04   0.000000e+00  13526s
+  496489    1.1835912e+08   0.000000e+00   0.000000e+00  13533s
+
+Extra simplex iterations after uncrush: 541
+
+Root relaxation: objective 1.183591e+08, 496489 iterations, 13448.89 seconds (7769.12 work units)
+Total elapsed time = 13535.75s (DegenMoves)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 1.1836e+08    0 3019          - 1.1836e+08      -     - 13765s
+     0     0 1.1838e+08    0 3018          - 1.1838e+08      -     - 16533s
+     0     0 1.1838e+08    0 3019          - 1.1838e+08      -     - 18765s
+     0     0 1.1838e+08    0 3016          - 1.1838e+08      -     - 18981s

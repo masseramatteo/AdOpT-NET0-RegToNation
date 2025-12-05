@@ -367,3 +367,18 @@ Solved with barrier
 Extra simplex iterations after uncrush: 1
 
 Root relaxation: objective 1.390431e+08, 469169 iterations, 2378.90 seconds (1514.65 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 1.3904e+08    0    8          - 1.3904e+08      -     - 4172s
+H    0     0                    1.391315e+08 1.3904e+08  0.06%     - 5570s
+
+Explored 1 nodes (567533 simplex iterations) in 5571.03 seconds (3528.16 work units)
+Thread count was 12 (of 192 available processors)
+
+Solution count 1: 1.39131e+08 
+
+Optimal solution found (tolerance 1.00e-02)
+Warning: max constraint violation (9.2974e-04) exceeds tolerance
+Best objective 1.391314776816e+08, best bound 1.390431146269e+08, gap 0.0635%

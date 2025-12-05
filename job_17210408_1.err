@@ -1,0 +1,37 @@
+Lmod has detected the following error: These module(s) or extension(s) exist
+but cannot be loaded as requested: "Python/3.13.1-GCCcore-14.2.0"
+   Try: "module spider Python/3.13.1-GCCcore-14.2.0" to see how to load the
+module(s).
+
+
+
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Constructing Investment Period period1 completed
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Constructing Investment Period period1 completed
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Constructing Investment Period period1 completed
+Constructing Investment Period period1 completed
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_lowP
+  warn(
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/data_management/handle_input_data.py:517: UserWarning: size_max_defined_per_arc==0, but you defined a file for it for network hydrogenPipelineOnshore_highP
+  warn(
+Constructing Investment Period period1 completed
+Constructing Investment Period period1 completed

@@ -130,13 +130,19 @@ def determine_flow_existing_compressors(self, compressor, b_period, node):
         )
         component_output_bound = max(var_output[idx].ub for idx in var_output)
     elif type_component[0] == "Network":
-        component_output_bound = next(
-            iter(
-                b_period.network_block[
-                    compressor.output_component
-                ].para_size_initial.values()
-            )
-        )
+        # Il network è in USCITA dal compressore (output del compressore)
+        # Il flusso va DAL nodo corrente verso altri nodi
+        network_block = b_period.network_block[compressor.output_component]
+
+        # Cerca un arco che parte dal nodo corrente (set_sends_to contiene i nodi di destinazione)
+        if node in network_block.set_sends_to and len(network_block.set_sends_to[node]) > 0:
+            # Prendi il primo nodo di destinazione disponibile
+            destination_node = next(iter(network_block.set_sends_to[node]))
+            # Accedi all'arc_block per ottenere para_size_initial
+            component_output_bound = network_block.arc_block[node, destination_node].para_size_initial.value
+        else:
+            # Se non ci sono archi in uscita, usa un valore di default
+            component_output_bound = float("inf")
     elif type_component[0] == "Import":
         component_output_bound = max(
             self.data.time_series["full"][period_name][node]["CarrierData"][
@@ -159,13 +165,19 @@ def determine_flow_existing_compressors(self, compressor, b_period, node):
         )
         component_input_bound = max(var_output[idx].ub for idx in var_output)
     elif type_component[1] == "Network":
-        component_input_bound = next(
-            iter(
-                b_period.network_block[
-                    compressor.input_component
-                ].para_size_initial.values()
-            )
-        )
+        # Il network è in USCITA dal nodo corrente (input del compressore)
+        # Devo trovare un arco che parte da questo nodo
+        network_block = b_period.network_block[compressor.input_component]
+
+        # Cerca un arco che parte dal nodo corrente (set_sends_to contiene i nodi di destinazione)
+        if node in network_block.set_sends_to and len(network_block.set_sends_to[node]) > 0:
+            # Prendi il primo nodo di destinazione disponibile
+            destination_node = next(iter(network_block.set_sends_to[node]))
+            # Accedi all'arc_block per ottenere para_size_initial
+            component_input_bound = network_block.arc_block[node, destination_node].para_size_initial.value
+        else:
+            # Se non ci sono archi in uscita, usa un valore di default
+            component_input_bound = float("inf")
     elif type_component[1] == "Demand":
         component_input_bound = max(
             self.data.time_series["full"][period_name][node]["CarrierData"][

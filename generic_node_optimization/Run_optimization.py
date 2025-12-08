@@ -141,7 +141,7 @@ class OptimizationRunner:
         configuration["solveroptions"]["NoRelHeurTime"] = 0
         configuration["solveroptions"]["timelim"]["value"] = 50
         # configuration["solveroptions"]["ConcurrentMethod"]["value"] = 3
-        configuration["solveroptions"]["method"]["value"] = 1
+        configuration["solveroptions"]["method"]["value"] = -1
         
         # Set threads from params (important for parallel execution to avoid CPU oversubscription)
         threads = params.get("threads", 1)
@@ -150,6 +150,7 @@ class OptimizationRunner:
         configuration["reporting"]["save_path"]["value"] = str(results_data_path)
         configuration["reporting"]["save_summary_path"]["value"] = str(results_data_path)
 
+        #configuration["optimization"]["objective"]["value"] = "costs"
         configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
         #configuration["optimization"]["objective"]["value"] = "distance_willingness_to_pay"
         configuration["optimization"]["willingness_to_pay"]["value"] = self.wtp

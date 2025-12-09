@@ -1,6 +1,7 @@
 import logging
 from logging.handlers import MemoryHandler
 from .modelhub import ModelHub as ModelHub
+from .modelhub_benders import ModelHub_Benders as ModelHub_Benders
 from .result_management import (
     print_h5_tree,
     extract_dataset_from_h5,

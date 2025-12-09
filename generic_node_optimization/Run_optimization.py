@@ -94,7 +94,7 @@ class OptimizationRunner:
 
         # Solve
         m = adopt.ModelHub()
-        m.read_data(input_data_path, start_period=0, end_period=1)
+        m.read_data(input_data_path, start_period=0, end_period=10)
         m.quick_solve()
 
         result_folder_path = m.last_solve_info["result_folder_path"]
@@ -150,10 +150,10 @@ class OptimizationRunner:
         configuration["reporting"]["save_path"]["value"] = str(results_data_path)
         configuration["reporting"]["save_summary_path"]["value"] = str(results_data_path)
 
-        #configuration["optimization"]["objective"]["value"] = "costs"
-        configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
+        configuration["optimization"]["objective"]["value"] = "costs"
+        #configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
         #configuration["optimization"]["objective"]["value"] = "distance_willingness_to_pay"
-        configuration["optimization"]["willingness_to_pay"]["value"] = self.wtp
+        #configuration["optimization"]["willingness_to_pay"]["value"] = self.wtp
 
         # Set pressure consideration
         configuration["performance"]["pressure"]["pressure_on"]["value"] = 1

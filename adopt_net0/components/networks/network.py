@@ -1046,7 +1046,7 @@ class Network(ModelComponent):
                     binary_var = b_arc.dis_installation[1].binary_indicator_var
                     distance_sum += b_arc.distance * binary_var
                 # else: No disjunction exists, arc not counted (not installed)
-
+            
             return distance_sum == b_netw.var_distance_weighted
 
         b_netw.const_distance = pyo.Constraint(rule=init_distance)

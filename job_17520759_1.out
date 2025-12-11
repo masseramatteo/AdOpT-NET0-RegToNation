@@ -1,0 +1,687 @@
+===========================
+Running on node: tcn843
+Array job index: 1
+Started: Thu Dec 11 11:59:11 CET 2025
+===========================
+Python module loaded.
+Activated virtual environment.
+Configured Gurobi runtime paths.
+Working directory: /home/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization
+[SLURM] Detected CPU total: 192
+[CONFIG] Using 50 workers × 3 threads (total 150 threads)
+[SAMPLING] Method: LATIN HYPERCUBe SAMPLING
+   Full grid would be: 2430 combinations
+   LHS samples: 100
+   Reduction: 95.9%
+
+[OK] Total combinations: 100
+[ARRAY] SLURM_ARRAY_TASK_ID=1, SLURM_ARRAY_TASK_COUNT=2
+[ARRAY] This job is chunk index 1 of 2
+[ARRAY] This job will run 50 combinations out of 100
+[OK] Total runs to execute in THIS JOB: 50
+
+[CONFIG] System configuration:
+   - Strategy: Manual configuration
+   - Total logical processors: 192
+   - Parallel workers: 50
+   - Threads per worker: 3
+   - Total thread usage: 150 (of 192)
+   - CPU utilization: 78.1%
+   [OK] Good CPU utilization balance
+
+================================================================================
+PARALLEL CREATION + GUROBI-ENV OPTIMIZATION RUNNER
+================================================================================
+Total runs: 50
+Max parallel workers: 50
+Threads per worker: 3
+Results folder: /gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251211_115921/task_001
+================================================================================
+
+
+================================================================================
+PHASE 1: Creating 50 models in PARALLEL
+Using 'spawn' context for clean process separation
+================================================================================
+
+[CREATE] Creating model: t001_parallel_run_0002
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0002: 'networks'
+[CREATE] Creating model: t001_parallel_run_0001
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0001: 'networks'
+[CREATE] Creating model: t001_parallel_run_0010
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0010: 'networks'
+[CREATE] Creating model: t001_parallel_run_0003
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0003: 'networks'
+[CREATE] Creating model: t001_parallel_run_0007
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0007: 'networks'
+[CREATE] Creating model: t001_parallel_run_0009
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0009: 'networks'
+[CREATE] Creating model: t001_parallel_run_0004
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0004: 'networks'
+[CREATE] Creating model: t001_parallel_run_0006
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0006: 'networks'
+[CREATE] Creating model: t001_parallel_run_0005
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0005: 'networks'
+[CREATE] Creating model: t001_parallel_run_0011
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0011: 'networks'
+[CREATE] Creating model: t001_parallel_run_0008
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0008: 'networks'
+[CREATE] Creating model: t001_parallel_run_0013
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0013: 'networks'
+[CREATE] Creating model: t001_parallel_run_0012
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0012: 'networks'
+[CREATE] Creating model: t001_parallel_run_0019
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0019: 'networks'
+[CREATE] Creating model: t001_parallel_run_0020
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0020: 'networks'
+[CREATE] Creating model: t001_parallel_run_0016
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0016: 'networks'
+[CREATE] Creating model: t001_parallel_run_0018
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0018: 'networks'
+[CREATE] Creating model: t001_parallel_run_0015
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0015: 'networks'
+[CREATE] Creating model: t001_parallel_run_0014
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0014: 'networks'
+[CREATE] Creating model: t001_parallel_run_0021
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0021: 'networks'
+[CREATE] Creating model: t001_parallel_run_0028
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0028: 'networks'
+[CREATE] Creating model: t001_parallel_run_0027
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0027: 'networks'
+[CREATE] Creating model: t001_parallel_run_0031
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0031: 'networks'
+[CREATE] Creating model: t001_parallel_run_0017
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0017: 'networks'
+[CREATE] Creating model: t001_parallel_run_0035
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0035: 'networks'
+[CREATE] Creating model: t001_parallel_run_0030
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0030: 'networks'
+[CREATE] Creating model: t001_parallel_run_0045
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0045: 'networks'
+[CREATE] Creating model: t001_parallel_run_0047
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0047: 'networks'
+[CREATE] Creating model: t001_parallel_run_0050
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0050: 'networks'
+[CREATE] Creating model: t001_parallel_run_0025
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0025: 'networks'
+[CREATE] Creating model: t001_parallel_run_0024
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0024: 'networks'
+[CREATE] Creating model: t001_parallel_run_0039
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0039: 'networks'
+[CREATE] Creating model: t001_parallel_run_0040
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0040: 'networks'
+[CREATE] Creating model: t001_parallel_run_0026
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0026: 'networks'
+[CREATE] Creating model: t001_parallel_run_0036
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0036: 'networks'
+[CREATE] Creating model: t001_parallel_run_0034
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0034: 'networks'
+[CREATE] Creating model: t001_parallel_run_0037
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0037: 'networks'
+[CREATE] Creating model: t001_parallel_run_0044
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0044: 'networks'
+[CREATE] Creating model: t001_parallel_run_0029
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0029: 'networks'
+[CREATE] Creating model: t001_parallel_run_0022
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0022: 'networks'
+[CREATE] Creating model: t001_parallel_run_0041
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0041: 'networks'
+[CREATE] Creating model: t001_parallel_run_0033
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0033: 'networks'
+[CREATE] Creating model: t001_parallel_run_0042
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0042: 'networks'
+[CREATE] Creating model: t001_parallel_run_0032
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0032: 'networks'
+[CREATE] Creating model: t001_parallel_run_0046
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0046: 'networks'
+[CREATE] Creating model: t001_parallel_run_0048
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0048: 'networks'
+[CREATE] Creating model: t001_parallel_run_0043
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0043: 'networks'
+[CREATE] Creating model: t001_parallel_run_0038
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0038: 'networks'
+[CREATE] Creating model: t001_parallel_run_0023
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0023: 'networks'
+[CREATE] Creating model: t001_parallel_run_0049
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+[ERROR] Error creating model t001_parallel_run_0049: 'networks'
+Model creation progress: 1/50 completed
+Model creation progress: 2/50 completed
+Model creation progress: 3/50 completed
+Model creation progress: 4/50 completed
+Model creation progress: 5/50 completed
+Model creation progress: 6/50 completed
+Model creation progress: 7/50 completed
+Model creation progress: 8/50 completed
+Model creation progress: 9/50 completed
+Model creation progress: 10/50 completed
+Model creation progress: 11/50 completed
+Model creation progress: 12/50 completed
+Model creation progress: 13/50 completed
+Model creation progress: 14/50 completed
+Model creation progress: 15/50 completed
+Model creation progress: 16/50 completed
+Model creation progress: 17/50 completed
+Model creation progress: 18/50 completed
+Model creation progress: 19/50 completed
+Model creation progress: 20/50 completed
+Model creation progress: 21/50 completed
+Model creation progress: 22/50 completed
+Model creation progress: 23/50 completed
+Model creation progress: 24/50 completed
+Model creation progress: 25/50 completed
+Model creation progress: 26/50 completed
+Model creation progress: 27/50 completed
+Model creation progress: 28/50 completed
+Model creation progress: 29/50 completed
+Model creation progress: 30/50 completed
+Model creation progress: 31/50 completed
+Model creation progress: 32/50 completed
+Model creation progress: 33/50 completed
+Model creation progress: 34/50 completed
+Model creation progress: 35/50 completed
+Model creation progress: 36/50 completed
+Model creation progress: 37/50 completed
+Model creation progress: 38/50 completed
+Model creation progress: 39/50 completed
+Model creation progress: 40/50 completed
+Model creation progress: 41/50 completed
+Model creation progress: 42/50 completed
+Model creation progress: 43/50 completed
+Model creation progress: 44/50 completed
+Model creation progress: 45/50 completed
+Model creation progress: 46/50 completed
+Model creation progress: 47/50 completed
+Model creation progress: 48/50 completed
+Model creation progress: 49/50 completed
+Model creation progress: 50/50 completed
+
+[COMPLETE] Model creation complete: 0 models ready to solve
+   Creation time: 5.2s (0.1 min)
+[WARNING] 50 models failed to create
+
+================================================================================
+PHASE 2: Solving 0 models in PARALLEL
+Using 'spawn' context for clean Gurobi environment per worker
+================================================================================
+
+
+================================================================================
+PARALLEL OPTIMIZATION COMPLETE
+================================================================================
+Total runs: 50
+Successful: 0
+Failed: 50
+  - Creation failures: 50
+  - Solve failures: 0
+
+[TIMING] Timing breakdown:
+  - Model creation (parallel): 5.2s (0.1 min)
+  - Model solving (parallel): 0.0s (0.0 min)
+  - TOTAL TIME: 5.2s (0.1 min)
+  - Average per run: 0.1s
+
+[SPEEDUP] Speedup estimate vs sequential:
+  - If creation was sequential: ~4.3 min
+  - If solving was sequential: ~0.0 min
+  - Potential total sequential time: ~4.3 min
+
+[RESULTS] Results saved to: /gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251211_115921/task_001
+================================================================================
+
+[WARNING] Failed runs:
+  t001_parallel_run_0002: 'networks'
+  t001_parallel_run_0001: 'networks'
+  t001_parallel_run_0003: 'networks'
+  t001_parallel_run_0010: 'networks'
+  t001_parallel_run_0007: 'networks'
+  t001_parallel_run_0009: 'networks'
+  t001_parallel_run_0005: 'networks'
+  t001_parallel_run_0006: 'networks'
+  t001_parallel_run_0008: 'networks'
+  t001_parallel_run_0004: 'networks'
+  t001_parallel_run_0011: 'networks'
+  t001_parallel_run_0013: 'networks'
+  t001_parallel_run_0012: 'networks'
+  t001_parallel_run_0019: 'networks'
+  t001_parallel_run_0020: 'networks'
+  t001_parallel_run_0016: 'networks'
+  t001_parallel_run_0018: 'networks'
+  t001_parallel_run_0015: 'networks'
+  t001_parallel_run_0014: 'networks'
+  t001_parallel_run_0021: 'networks'
+  t001_parallel_run_0028: 'networks'
+  t001_parallel_run_0027: 'networks'
+  t001_parallel_run_0031: 'networks'
+  t001_parallel_run_0017: 'networks'
+  t001_parallel_run_0035: 'networks'
+  t001_parallel_run_0030: 'networks'
+  t001_parallel_run_0045: 'networks'
+  t001_parallel_run_0047: 'networks'
+  t001_parallel_run_0050: 'networks'
+  t001_parallel_run_0025: 'networks'
+  t001_parallel_run_0024: 'networks'
+  t001_parallel_run_0039: 'networks'
+  t001_parallel_run_0040: 'networks'
+  t001_parallel_run_0026: 'networks'
+  t001_parallel_run_0036: 'networks'
+  t001_parallel_run_0034: 'networks'
+  t001_parallel_run_0037: 'networks'
+  t001_parallel_run_0044: 'networks'
+  t001_parallel_run_0029: 'networks'
+  t001_parallel_run_0022: 'networks'
+  t001_parallel_run_0041: 'networks'
+  t001_parallel_run_0033: 'networks'
+  t001_parallel_run_0042: 'networks'
+  t001_parallel_run_0032: 'networks'
+  t001_parallel_run_0046: 'networks'
+  t001_parallel_run_0043: 'networks'
+  t001_parallel_run_0048: 'networks'
+  t001_parallel_run_0038: 'networks'
+  t001_parallel_run_0023: 'networks'
+  t001_parallel_run_0049: 'networks'
+
+[OK] Parallel creation + Gurobi-env optimization complete!
+[RESULTS] Summary Excel: /gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251211_115921/task_001/parallel_results_summary.xlsx
+===========================
+Finished at: Thu Dec 11 11:59:27 CET 2025
+===========================

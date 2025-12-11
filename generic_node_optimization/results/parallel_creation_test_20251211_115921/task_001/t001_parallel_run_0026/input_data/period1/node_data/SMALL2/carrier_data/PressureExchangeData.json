@@ -1,0 +1,20 @@
+{
+    "hydrogen": {
+        "Demand": {
+            "value": "",
+            "unit": "bar"
+        },
+        "Export": {
+            "value": "",
+            "unit": "bar"
+        },
+        "Import": {
+            "value": "",
+            "unit": "bar"
+        },
+        "Generic production": {
+            "value": "",
+            "unit": "bar"
+        }
+    }
+}

@@ -1,0 +1,259 @@
+Lmod has detected the following error: These module(s) or extension(s) exist
+but cannot be loaded as requested: "Python/3.13.1-GCCcore-14.2.0"
+   Try: "module spider Python/3.13.1-GCCcore-14.2.0" to see how to load the
+module(s).
+
+
+
+/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/adopt_net0/model_construction/construct_balances.py:107: SyntaxWarning: invalid escape sequence '\_'
+  """
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+Traceback (most recent call last):
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'
+Traceback (most recent call last):
+  File "/gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/multi_node_run_creation_and_gurobi_optimization_parallel.py", line 78, in create_single_model
+    runner._configure_networks(input_data_path, params["networks"])
+                                                ~~~~~~^^^^^^^^^^^^
+KeyError: 'networks'

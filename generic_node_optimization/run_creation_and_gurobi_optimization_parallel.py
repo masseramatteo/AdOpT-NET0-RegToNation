@@ -891,7 +891,7 @@ if __name__ == "__main__":
         "electricity_price_avg": [150],
         "electricity_availability_small": [100],
         "willingness_to_pay": [275],
-        "hydrogen_import_price": [50, 100, 150, 200, 250],
+        "hydrogen_import_price": [50, 100, 150, 200, 250, 300],
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],

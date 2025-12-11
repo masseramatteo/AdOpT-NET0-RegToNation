@@ -27,7 +27,7 @@ def get_gurobi_parameters(solveroptions: dict):
     solver.options["Crossover"] = solveroptions["crossover"]["value"]
     solver.options["ScaleFlag"] = solveroptions["scaleflag"]["value"]
     solver.options["BarHomogeneous"] = solveroptions["barhomogeneous"]["value"]
-    solver.options["ConcurrentMIP"] = solveroptions["concurrentMIP"]["value"]
+    solver.options["ConcurrentMIP"] = solveroptions["concurrentmip"]["value"]
     solver.options["ConcurrentMethod"] = solveroptions["concurrentmethod"]["value"]
     solver.options["NodeMethod"] = solveroptions["nodemethod"]["value"]
 

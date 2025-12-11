@@ -148,6 +148,7 @@ class OptimizationRunner:
         configuration["solveroptions"]["numericfocus"]["value"] = 2
         configuration["solveroptions"]["concurrentmethod"]["value"] = 2
         configuration["solveroptions"]["nodemethod"]["value"] = 1
+        configuration["solveroptions"]["concurrentmip"]["value"] = 1
 
         # Set threads from params (important for parallel execution to avoid CPU oversubscription)
         threads = params.get("threads", 1)

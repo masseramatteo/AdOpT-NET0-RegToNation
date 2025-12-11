@@ -414,7 +414,7 @@ def initialize_configuration_templates() -> dict:
                 "options": [-1, 0, 1, 2, 3],
                 "value": -1,
             },
-            "concurrentMIP": {
+            "concurrentmip": {
                 "description": "Enables the concurrent MIP solver",
                 "value": 1,
             },

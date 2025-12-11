@@ -1,0 +1,737 @@
+===========================
+Running on node: tcn1176
+Array job index: 1
+Started: Mon Nov 24 00:23:49 CET 2025
+===========================
+Python module loaded.
+Activated virtual environment.
+Configured Gurobi runtime paths.
+Working directory: /home/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization
+[SLURM] Detected CPU total: 192
+[CONFIG] Using 4 workers × 12 threads (total 48 threads)
+[SAMPLING] Method: LATIN HYPERCUBe SAMPLING
+   Full grid would be: 1080 combinations
+   LHS samples: 50
+   Reduction: 95.4%
+
+[OK] Total combinations: 50
+[ARRAY] SLURM_ARRAY_TASK_ID=1, SLURM_ARRAY_TASK_COUNT=4
+[ARRAY] This job is chunk index 1 of 4
+[ARRAY] This job will run 13 combinations out of 50
+[OK] Total runs to execute in THIS JOB: 13
+
+[CONFIG] System configuration:
+   - Strategy: Manual configuration
+   - Total logical processors: 192
+   - Parallel workers: 4
+   - Threads per worker: 12
+   - Total thread usage: 48 (of 192)
+   - CPU utilization: 25.0%
+   [INFO] Conservative CPU usage (25.0%)
+       Consider increasing workers or threads_per_worker for better performance
+
+================================================================================
+PARALLEL CREATION + GUROBI-ENV OPTIMIZATION RUNNER
+================================================================================
+Total runs: 13
+Max parallel workers: 4
+Threads per worker: 12
+Results folder: /gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251124_002357/task_001
+================================================================================
+
+
+================================================================================
+PHASE 1: Creating 13 models in PARALLEL
+Using 'spawn' context for clean process separation
+================================================================================
+
+[CREATE] Creating model: t001_parallel_run_0003
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0003
+[CREATE] Creating model: t001_parallel_run_0008
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0008
+[CREATE] Creating model: t001_parallel_run_0012
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0012
+[CREATE] Creating model: t001_parallel_run_0004
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0004
+[CREATE] Creating model: t001_parallel_run_0006
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0006
+[CREATE] Creating model: t001_parallel_run_0010
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0010
+[CREATE] Creating model: t001_parallel_run_0013
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0013
+[CREATE] Creating model: t001_parallel_run_0001
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0001
+[CREATE] Creating model: t001_parallel_run_0007
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0007
+[CREATE] Creating model: t001_parallel_run_0011
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0011
+[CREATE] Creating model: t001_parallel_run_0002
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0002
+[CREATE] Creating model: t001_parallel_run_0005
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0005
+[CREATE] Creating model: t001_parallel_run_0009
+      Node       lon        lat  alt
+0     BIG1  0.836099  51.924400    0
+1     BIG2  8.119301  51.924400    0
+2   SMALL1  7.682309  51.026089    0
+3   SMALL2  4.769028  51.026089    0
+4   SMALL3  7.682309  52.822711    0
+5   SMALL4  4.769028  52.822711    0
+6  STORAGE  6.496768  51.071748    0
+New network
+Max size per arc:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0  1000    1000    1000    1000    1000     1000
+BIG2     1000     0    1000    1000    1000    1000     1000
+SMALL1   1000  1000       0    1000    1000    1000     1000
+SMALL2   1000  1000    1000       0    1000    1000     1000
+SMALL3   1000  1000    1000    1000       0    1000     1000
+SMALL4   1000  1000    1000    1000    1000       0     1000
+STORAGE  1000  1000    1000    1000    1000    1000        0
+Connection:          BIG1  BIG2  SMALL1  SMALL2  SMALL3  SMALL4  STORAGE
+BIG1        0     1       1       1       1       1        1
+BIG2        1     0       1       1       1       1        1
+SMALL1      1     1       0       1       1       1        1
+SMALL2      1     1       1       0       1       1        1
+SMALL3      1     1       1       1       0       1        1
+SMALL4      1     1       1       1       1       0        1
+STORAGE     1     1       1       1       1       1        0
+📍 Calculating distances from scenario coordinates
+✅ Using calculated distances from topology coordinates
+Distance matrix saved for both networks
+Created smooth electricity prices for BIG1:
+Created smooth electricity prices for BIG2:
+Created smooth electricity prices for SMALL1:
+Created smooth electricity prices for SMALL2:
+Created smooth electricity prices for SMALL3:
+Created smooth electricity prices for SMALL4:
+Created smooth electricity prices for STORAGE:
+[SUCCESS] Model created: t001_parallel_run_0009
+Model creation progress: 1/13 completed
+Model creation progress: 2/13 completed
+Model creation progress: 3/13 completed
+Model creation progress: 4/13 completed
+Model creation progress: 5/13 completed
+Model creation progress: 6/13 completed
+Model creation progress: 7/13 completed
+Model creation progress: 8/13 completed
+Model creation progress: 9/13 completed
+Model creation progress: 10/13 completed
+Model creation progress: 11/13 completed
+Model creation progress: 12/13 completed
+Model creation progress: 13/13 completed
+
+[COMPLETE] Model creation complete: 13 models ready to solve
+   Creation time: 35.0s (0.6 min)
+
+================================================================================
+PHASE 2: Solving 13 models in PARALLEL
+Using 'spawn' context for clean Gurobi environment per worker
+================================================================================
+
+[SOLVING] t001_parallel_run_0002
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+[SOLVING] t001_parallel_run_0004
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+[SOLVING] t001_parallel_run_0001
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+[SOLVING] t001_parallel_run_0003
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0002: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+[SOLVING] t001_parallel_run_0005
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0001: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+[SOLVING] t001_parallel_run_0006
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0004: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+[SOLVING] t001_parallel_run_0007
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0003: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+[SOLVING] t001_parallel_run_0008
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0005: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+[SOLVING] t001_parallel_run_0010
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0006: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+[SOLVING] t001_parallel_run_0009
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0007: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+[SOLVING] t001_parallel_run_0012
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0008: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+[SOLVING] t001_parallel_run_0011
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0010: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+[SOLVING] t001_parallel_run_0013
+Set parameter WLSAccessID
+Set parameter WLSSecret
+Set parameter LicenseID to value 2729390
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0013: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0012: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0011: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  [WARNING] Could not configure Gurobi: Too many sessions, 5 active sessions for a baseline of 2
+--- Reading in data ---
+Input data folder has been checked successfully - no errors occurred.
+--- Reading in data complete ---
+--- Constructing Model ---
+[ERROR] Error solving t001_parallel_run_0009: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+Solve progress: 1/13 completed
+Solve progress: 2/13 completed
+Solve progress: 3/13 completed
+Solve progress: 4/13 completed
+Solve progress: 5/13 completed
+Solve progress: 6/13 completed
+Solve progress: 7/13 completed
+Solve progress: 8/13 completed
+Solve progress: 9/13 completed
+Solve progress: 10/13 completed
+Solve progress: 11/13 completed
+Solve progress: 12/13 completed
+Solve progress: 13/13 completed
+
+================================================================================
+PARALLEL OPTIMIZATION COMPLETE
+================================================================================
+Total runs: 13
+Successful: 0
+Failed: 13
+  - Creation failures: 0
+  - Solve failures: 13
+
+[TIMING] Timing breakdown:
+  - Model creation (parallel): 35.0s (0.6 min)
+  - Model solving (parallel): 18.2s (0.3 min)
+  - TOTAL TIME: 53.2s (0.9 min)
+  - Average per run: 4.1s
+
+[SPEEDUP] Speedup estimate vs sequential:
+  - If creation was sequential: ~2.3 min
+  - If solving was sequential: ~1.2 min
+  - Potential total sequential time: ~3.5 min
+
+[RESULTS] Results saved to: /gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251124_002357/task_001
+================================================================================
+
+[WARNING] Failed runs:
+  t001_parallel_run_0002: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0001: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0004: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0003: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0005: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0006: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0007: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0008: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0010: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0009: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0012: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0011: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+  t001_parallel_run_0013: The solver you are trying to use is not available. This could be due to the following two reasons: (1) it is not implemented (currently AdOpT-NET0 supports gurobi and glpk. (2) If you are using gurobi, make sure that the gurobipy version installed matches the gurobi version installed.
+
+[OK] Parallel creation + Gurobi-env optimization complete!
+[RESULTS] Summary Excel: /gpfs/home3/scur1696/AdOpT-NET0-RegToNation/generic_node_optimization/results/parallel_creation_test_20251124_002357/task_001/parallel_results_summary.xlsx
+===========================
+Finished at: Mon Nov 24 00:24:51 CET 2025
+===========================

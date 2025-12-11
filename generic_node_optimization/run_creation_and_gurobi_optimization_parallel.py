@@ -849,13 +849,14 @@ if __name__ == "__main__":
     # Example parameter grid (small test)
     param_grid = {
         "scenarios": ["1751"],
-        "demand_level_ratio": [15],
-        "total_demand_TWh": [20],
-        "import_availability_ratio": [0.4],
+        "demand_level_ratio": [5, 10, 15],
+        "total_demand_TWh": [20, 50],
+        "import_availability_ratio": [0.2, 0.4, 0.5],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
-        "electricity_price_avg": [150],
-        "electricity_availability_small": [100],
-        "willingness_to_pay": [250],
+        "electricity_price_avg": [50, 100, 150, 200],
+        "electricity_availability_small": [30, 50, 80, 100],
+        "willingness_to_pay": [150, 250, 350],
+        "hydrogen_import_price": [50, 100, 150, 200, 250, 300],
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
@@ -884,7 +885,7 @@ if __name__ == "__main__":
     combinations = generate_parameter_combinations(
         param_grid,
         method='lhs',       # 'lhs' or 'full'
-        max_samples=1,    # Maximum number of samples
+        max_samples=100,    # Maximum number of samples
         seed=42             # For reproducibility
     )
 

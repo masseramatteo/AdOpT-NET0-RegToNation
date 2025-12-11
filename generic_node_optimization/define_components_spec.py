@@ -47,31 +47,31 @@ def define_hydrogen_pipeline2(input_data_path):
     network_data["size_min"] = 0
     network_data["size_max"] = 250
 
-    network_data["Economics"]["gamma1"] = 100000
+    network_data["Economics"]["gamma1"] = 5000000
     network_data["Economics"]["gamma3"] = 0
 
     network_data["Economics"]["gamma2"] = 0
-    network_data["Economics"]["gamma4"] = 4000
+    network_data["Economics"]["gamma4"] = 1700
 
     network_data["Performance"]["bidirectional_network"] = 1
     network_data["Performance"]["bidirectional_network_precise"] = 0
 
     network_data["Performance"]["min_transport"] = 0
 
-    with open(input_data_path / "period1" / "network_data"/ "hydrogenPipelineOnshore_lowP.json", "w") as json_file:
+    with open(input_data_path / "period1" / "network_data" / "hydrogenPipelineOnshore_lowP.json", "w") as json_file:
         json.dump(network_data, json_file, indent=4)
 
     with open(input_data_path / "period1" / "network_data" / "hydrogenPipelineOnshore_highP.json", "r") as json_file:
         network_data = json.load(json_file)
 
-    network_data["size_min"] = 0
+    network_data["size_min"] = 250
     network_data["size_max"] = 1000
 
-    network_data["Economics"]["gamma1"] = 200000
+    network_data["Economics"]["gamma1"] = 25000000
     network_data["Economics"]["gamma3"] = 0
 
     network_data["Economics"]["gamma2"] = 0
-    network_data["Economics"]["gamma4"] = 4400
+    network_data["Economics"]["gamma4"] = 1000
 
     network_data["Performance"]["bidirectional_network"] = 1
     network_data["Performance"]["bidirectional_network_precise"] = 0

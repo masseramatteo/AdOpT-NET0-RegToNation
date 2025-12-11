@@ -24,6 +24,12 @@ def get_gurobi_parameters(solveroptions: dict):
     solver.options["Cuts"] = solveroptions["cuts"]["value"]
     solver.options["NumericFocus"] = solveroptions["numericfocus"]["value"]
     #solver.options["NoRelHeurTime"] = solveroptions["NoRelHeurTime"]
+    solver.options["Crossover"] = solveroptions["crossover"]["value"]
+    solver.options["ScaleFlag"] = solveroptions["scaleflag"]["value"]
+    solver.options["BarHomogeneous"] = solveroptions["barhomogeneous"]["value"]
+    solver.options["ConcurrentMIP"] = solveroptions["concurrentMIP"]["value"]
+    solver.options["ConcurrentMethod"] = solveroptions["concurrentmethod"]["value"]
+    solver.options["NodeMethod"] = solveroptions["nodemethod"]["value"]
 
     return solver
 

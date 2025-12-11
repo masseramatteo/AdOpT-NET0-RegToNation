@@ -381,6 +381,16 @@ def initialize_configuration_templates() -> dict:
                 "options": [-1, 0, 1, 2],
                 "value": -1,
             },
+            "scaleflag": {
+                "description": "Controls the presolve level.",
+                "options": [-1, 0, 1, 2, 3],
+                "value": -1,
+            },
+            "barhomogeneous": {
+                "description": "Controls the presolve level.",
+                "options": [-1, 0, 1],
+                "value": -1,
+            },
             "branchdir": {
                 "description": "Determines which child node is explored first in the branch-and-cut.",
                 "options": [-1, 0, 1],
@@ -399,14 +409,33 @@ def initialize_configuration_templates() -> dict:
                 "description": "Value that determines feasibility for all constraints.",
                 "value": 1e-06,
             },
+            "concurrentmethod": {
+                "description": "Enables the concurrent MIP solver",
+                "options": [-1, 0, 1, 2, 3],
+                "value": -1,
+            },
+            "concurrentMIP": {
+                "description": "Enables the concurrent MIP solver",
+                "value": 1,
+            },
             "numericfocus": {
                 "description": "Degree of which Gurobi tries to detect and manage numeric issues.",
                 "options": [0, 1, 2, 3],
                 "value": 0,
             },
+            "nodemethod": {
+                "description": "Enables the concurrent MIP solver",
+                "options": [-1, 0, 1, 2],
+                "value": -1,
+            },
             "cuts": {
                 "description": "Setting defining the aggressiveness of the global cut.",
                 "options": [-1, 0, 1, 2, 3],
+                "value": -1,
+            },
+            "crossover": {
+                "description": "Crossover strategy used to transform the interior solution produced by barrier or PDHG into a basic solution .",
+                "options": [-1, 0, 1, 2, 3, 4],
                 "value": -1,
             },
         },

@@ -853,8 +853,8 @@ if __name__ == "__main__":
     print(f"[SLURM] Detected CPU total: {cpu_total}")
 
     # Qui puoi mettere valori "sicuri" per un nodo Genoa
-    max_workers = 6
-    threads_per_worker = 12
+    max_workers = 50
+    threads_per_worker = 3
 
     print(f"[CONFIG] Using {max_workers} workers × {threads_per_worker} threads "
           f"(total {max_workers * threads_per_worker} threads)")
@@ -864,13 +864,16 @@ if __name__ == "__main__":
     # ---------------------------
     param_grid = {
         "scenarios": ["1751"],
-        "demand_level_ratio": [5, 15, 20],
-        "total_demand_TWh": [10, 20, 50],
-        "import_availability_ratio": [0.2, 0.7],
-        "electricity_price_avg": [50, 100, 150, 200],
-        "electricity_availability_small": [50, 100, 150],
-        "willingness_to_pay": [200, 250, 300, 350, 400],
-        "networks": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
+        "demand_level_ratio": [5, 10, 15],
+        "total_demand_TWh": [20],
+        "import_availability_ratio": [0.2, 0.4, 0.5],
+        # "import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
+        "electricity_price_avg": [50, 100, 150],
+        "electricity_availability_small": [50, 80, 100],
+        "willingness_to_pay": [150, 200, 250, 300, 350],
+        "hydrogen_import_price": [50, 100, 150, 200, 250, 300],
+        "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
+        "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
         "existing_storage_technologies": [{"Storage_H2_Cavern": 100000}],
@@ -886,6 +889,7 @@ if __name__ == "__main__":
         }],
         "mipgap": [0.01],
         "time_limit": [50],
+        # "threads" viene aggiunto dal runner
     }
 
     # ---------------------------
@@ -894,7 +898,7 @@ if __name__ == "__main__":
     combinations = generate_parameter_combinations(
         param_grid,
         method='lhs',
-        max_samples=50,
+        max_samples=100,
         seed=42
     )
 

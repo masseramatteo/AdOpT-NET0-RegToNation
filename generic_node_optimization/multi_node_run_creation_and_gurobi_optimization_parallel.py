@@ -2,6 +2,11 @@
 Parallel Optimization Runner with Parallel Model Creation and Gurobi Environment Management
 BOTH creates models AND solves them in parallel using multiprocessing
 Uses Gurobi-recommended explicit environment management to avoid resource leaks
+
+Multi-node support:
+- Use SLURM array jobs: each array task runs this script on (at least) one node
+- The script reads SLURM_ARRAY_TASK_ID and SLURM_ARRAY_TASK_COUNT
+- Each task gets a disjoint subset of parameter combinations
 """
 
 import json
@@ -70,46 +75,11 @@ def create_single_model(args):
         adopt.copy_compressor_data(input_data_path)
 
         # Networks configuration
-        runner._configure_networks(input_data_path, params["networks_existing"], params["networks_new"])
+        runner._configure_networks(input_data_path, params["networks"])
         adopt.copy_network_data(input_data_path)
 
-        # Import network creation functions
-        from define_topology import (
-            add_new_distribution_network,
-            add_new_transmission_network,
-            add_existing_distribution_network,
-            add_existing_transmission_network
-        )
-
-        # Create networks based on configuration
-        # NEW networks
-        if params.get("networks_new") and params["networks_new"][0]:
-            networks_new = params["networks_new"]
-
-            # Check for new low pressure (distribution)
-            if "hydrogenPipelineOnshore_lowP" in networks_new:
-                print(f"[NETWORK] Creating new distribution network (lowP)")
-                add_new_distribution_network(input_data_path, params["scenarios"])
-
-            # Check for new high pressure (transmission)
-            if "hydrogenPipelineOnshore_highP" in networks_new:
-                print(f"[NETWORK] Creating new transmission network (highP)")
-                add_new_transmission_network(input_data_path, params["scenarios"])
-
-        # EXISTING networks
-        if params.get("networks_existing") and params["networks_existing"][0]:
-            networks_existing = params["networks_existing"]
-
-            # Check for existing low pressure (distribution)
-            if "hydrogenPipelineOnshore_lowP" in networks_existing:
-                print(f"[NETWORK] Creating existing distribution network (lowP)")
-                add_existing_distribution_network(input_data_path, params["scenarios"])
-
-            # Check for existing high pressure (transmission)
-            if "hydrogenPipelineOnshore_highP" in networks_existing:
-                print(f"[NETWORK] Creating existing transmission network (highP)")
-                add_existing_transmission_network(input_data_path, params["scenarios"])
-
+        from define_topology import add_new_network_H2
+        add_new_network_H2(input_data_path, params["scenarios"])
 
         from define_components_spec import (
             define_hydrogen_pipeline2,
@@ -615,8 +585,6 @@ class ParallelCreationAndGurobiOptimizationRunner:
         solve_errors = []
 
         # Reuse spawn context (already created in Phase 1)
-        # This ensures child processes don't inherit parent's Gurobi environment
-        # Critical for proper license management and resource cleanup
 
         with ProcessPoolExecutor(max_workers=self.max_workers, mp_context=ctx) as executor:
             # Submit all solve jobs
@@ -775,14 +743,12 @@ def latin_hypercube_sampling(param_grid, n_samples=100, seed=None):
                 values = sorted(numeric_params[key])
                 # Map [0, 1] to parameter range using interpolation
                 idx_float = sample[i] * (len(values) - 1)
-                idx_low = int(np.floor(idx_float))
+                idx_low = int(idx_float // 1)
                 idx_high = min(idx_low + 1, len(values) - 1)
 
-                # If very close to a discrete value, use it; otherwise interpolate
                 if idx_low == idx_high:
                     param_dict[key] = values[idx_low]
                 else:
-                    # Linear interpolation
                     weight = idx_float - idx_low
                     param_dict[key] = values[idx_low] * (1 - weight) + values[idx_high] * weight
 
@@ -792,18 +758,15 @@ def latin_hypercube_sampling(param_grid, n_samples=100, seed=None):
 
     # For non-numeric parameters, sample randomly or use all combinations if few
     if non_numeric_params:
-        # Calculate total non-numeric combinations
         import itertools
         non_numeric_combinations = list(itertools.product(*non_numeric_params.values()))
 
         if len(non_numeric_combinations) <= n_samples:
-            # Use all combinations
             sampled_non_numeric = [
                 dict(zip(non_numeric_params.keys(), combo))
                 for combo in non_numeric_combinations
             ]
         else:
-            # Random sample without replacement
             indices = np.random.choice(len(non_numeric_combinations), n_samples, replace=False)
             sampled_non_numeric = [
                 dict(zip(non_numeric_params.keys(), non_numeric_combinations[idx]))
@@ -813,7 +776,6 @@ def latin_hypercube_sampling(param_grid, n_samples=100, seed=None):
         sampled_non_numeric = [{}] * n_samples
 
     # Combine numeric and non-numeric samples
-    # If different lengths, cycle or truncate
     max_len = max(len(sampled_numeric), len(sampled_non_numeric))
     combinations = []
 
@@ -844,7 +806,6 @@ def generate_parameter_combinations(param_grid, method='full', max_samples=100, 
     import itertools
 
     if method == 'full':
-        # Full grid search (Cartesian product)
         keys = list(param_grid.keys())
         values = list(param_grid.values())
         combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
@@ -853,8 +814,6 @@ def generate_parameter_combinations(param_grid, method='full', max_samples=100, 
         return combinations
 
     elif method == 'lhs':
-        # Latin Hypercube Sampling
-        # Calculate potential full grid size
         full_size = 1
         for values in param_grid.values():
             full_size *= len(values)
@@ -862,7 +821,7 @@ def generate_parameter_combinations(param_grid, method='full', max_samples=100, 
         actual_samples = min(max_samples, full_size)
         combinations = latin_hypercube_sampling(param_grid, n_samples=actual_samples, seed=seed)
 
-        print(f"[SAMPLING] Method: LATIN HYPERCUBE SAMPLING")
+        print(f"[SAMPLING] Method: LATIN HYPERCUBe SAMPLING")
         print(f"   Full grid would be: {full_size} combinations")
         print(f"   LHS samples: {len(combinations)}")
         print(f"   Reduction: {(1 - len(combinations)/full_size)*100:.1f}%")
@@ -873,27 +832,45 @@ def generate_parameter_combinations(param_grid, method='full', max_samples=100, 
 
 
 # ============================================================================
-# EXAMPLE USAGE
+# EXAMPLE USAGE + MULTI-NODE VIA SLURM ARRAY
 # ============================================================================
 if __name__ == "__main__":
     import itertools
     import numpy as np
+    import os
 
     base_path = Path(__file__).parent
 
-    # Example parameter grid (small test)
+    # ---------------------------
+    # 1) CPU info (from SLURM)
+    # ---------------------------
+    slurm_cpus = os.environ.get("SLURM_CPUS_PER_TASK")
+    if slurm_cpus is not None:
+        cpu_total = int(slurm_cpus)
+    else:
+        cpu_total = mp.cpu_count()
+
+    print(f"[SLURM] Detected CPU total: {cpu_total}")
+
+    # Qui puoi mettere valori "sicuri" per un nodo Genoa
+    max_workers = 6
+    threads_per_worker = 12
+
+    print(f"[CONFIG] Using {max_workers} workers × {threads_per_worker} threads "
+          f"(total {max_workers * threads_per_worker} threads)")
+
+    # ---------------------------
+    # 2) Param grid
+    # ---------------------------
     param_grid = {
         "scenarios": ["1751"],
-        "demand_level_ratio": [15],
-        "total_demand_TWh": [20],
-        "import_availability_ratio": [0.4],
-        #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
-        "electricity_price_avg": [150],
-        "electricity_availability_small": [50],
-        "willingness_to_pay": [300],
-        "hydrogen_import_price": [50,100, 150, 200, 250, 300],
-        "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
-        "networks_existing": [[]],
+        "demand_level_ratio": [5, 15, 20],
+        "total_demand_TWh": [10, 20, 50],
+        "import_availability_ratio": [0.2, 0.7],
+        "electricity_price_avg": [50, 100, 150, 200],
+        "electricity_availability_small": [50, 100, 150],
+        "willingness_to_pay": [200, 250, 300, 350, 400],
+        "networks": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
         "existing_storage_technologies": [{"Storage_H2_Cavern": 100000}],
@@ -909,65 +886,85 @@ if __name__ == "__main__":
         }],
         "mipgap": [0.01],
         "time_limit": [50],
-        # Note: threads will be auto-calculated by the runner
     }
 
-    # ========================================================================
-    # CHOOSE SAMPLING METHOD
-    # ========================================================================
-    # Option 1: Use Latin Hypercube Sampling (RECOMMENDED for large grids)
-    # Limits to max_samples (e.g., 100) using smart sampling
+    # ---------------------------
+    # 3) All combinations
+    # ---------------------------
     combinations = generate_parameter_combinations(
         param_grid,
-        method='lhs',       # 'lhs' or 'full'
-        max_samples=1,    # Maximum number of samples
-        seed=42             # For reproducibility
+        method='lhs',
+        max_samples=50,
+        seed=42
     )
 
-    # Option 2: Use full grid (all combinations)
-    # Uncomment this to use all possible combinations
-    # combinations = generate_parameter_combinations(param_grid, method='full')
+    total_combos = len(combinations)
+    print(f"\n[OK] Total combinations: {total_combos}")
 
-    # Prepare run configs
-    run_configs = [(f"parallel_run_{i:04d}", params) for i, params in enumerate(combinations, 1)]
+    # ---------------------------
+    # 4) Divide tra task array
+    # ---------------------------
+    array_id_str = os.environ.get("SLURM_ARRAY_TASK_ID")
+    array_count_str = os.environ.get("SLURM_ARRAY_TASK_COUNT")
 
-    print(f"\n[OK] Total runs to execute: {len(run_configs)}")
+    if array_id_str is None or array_count_str is None:
+        # No array job → usa tutte le combinazioni in un solo job
+        task_index = 0
+        task_count = 1
+        print("[ARRAY] No SLURM array variables found → running ALL combinations in this job")
+    else:
+        task_id = int(array_id_str)      # tipicamente 0..N-1 o 1..N
+        task_count = int(array_count_str)
 
-    # Create timestamp for results folder
+        # assumiamo SLURM_ARRAY_TASK_ID 0-based; se è 1-based, spostiamo
+        if task_id >= task_count:
+            # questo succede se è 1-based
+            task_index = task_id - 1
+        else:
+            task_index = task_id
+
+        print(f"[ARRAY] SLURM_ARRAY_TASK_ID={task_id}, SLURM_ARRAY_TASK_COUNT={task_count}")
+        print(f"[ARRAY] This job is chunk index {task_index} of {task_count}")
+
+    # Separa le combinazioni in "task_count" sottoinsiemi, prendi quello di questo job
+    my_combinations = [
+        combo for i, combo in enumerate(combinations)
+        if i % max(task_count, 1) == task_index
+    ]
+
+    print(f"[ARRAY] This job will run {len(my_combinations)} combinations out of {total_combos}")
+
+    # ---------------------------
+    # 5) Config run_ids e results
+    # ---------------------------
+    # Aggiungo l'indice dell'array nel nome del run per evitare collisioni
+    prefix = f"t{task_index:03d}_" if task_count > 1 else ""
+
+    run_configs = [
+        (f"{prefix}parallel_run_{i:04d}", params)
+        for i, params in enumerate(my_combinations, 1)
+    ]
+
+    print(f"[OK] Total runs to execute in THIS JOB: {len(run_configs)}")
+
+    # Cartella risultati: se array, separa per task
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    results_folder = base_path / "results" / f"parallel_creation_test_{timestamp}"
+    base_results_folder = base_path / "results" / f"parallel_creation_test_{timestamp}"
 
-    # Create runner with explicit configuration
-    # Option 1: Auto-detect everything (RECOMMENDED)
+    if task_count > 1:
+        results_folder = base_results_folder / f"task_{task_index:03d}"
+    else:
+        results_folder = base_results_folder
+
+    # ---------------------------
+    # 6) Crea runner e lancia
+    # ---------------------------
     runner = ParallelCreationAndGurobiOptimizationRunner(
         base_path=base_path,
-        max_workers=None,  # Auto-detect (uses half of cores, max 8)
-        threads_per_worker=None  # Auto-calculate based on workers
+        max_workers=max_workers,
+        threads_per_worker=threads_per_worker,
+        strategy="auto",
     )
-
-    # Option 2: Explicit configuration examples
-    #
-    # For 14 cores (your laptop):
-    # runner = ParallelCreationAndGurobiOptimizationRunner(
-    #     base_path=base_path,
-    #     max_workers=7,
-    #     threads_per_worker=2
-    # )
-    #
-    # For 48 cores (your VM):
-    # - Conservative: 8 workers × 6 threads = 48 threads total
-    # runner = ParallelCreationAndGurobiOptimizationRunner(
-    #     base_path=base_path,
-    #     max_workers=8,
-    #     threads_per_worker=6
-    # )
-    #
-    # - More parallel: 16 workers × 3 threads = 48 threads total
-    # runner = ParallelCreationAndGurobiOptimizationRunner(
-    #     base_path=base_path,
-    #     max_workers=16,
-    #     threads_per_worker=3
-    # )
 
     results_summary = runner.run_parallel_optimization(
         run_configs=run_configs,
@@ -976,4 +973,3 @@ if __name__ == "__main__":
 
     print(f"\n[OK] Parallel creation + Gurobi-env optimization complete!")
     print(f"[RESULTS] Summary Excel: {results_folder / 'parallel_results_summary.xlsx'}")
-

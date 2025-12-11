@@ -128,21 +128,27 @@ class OptimizationRunner:
             configuration = json.load(f)
 
         # Set time aggregation settings:
-        configuration["optimization"]["typicaldays"]["N"]["value"] = 0
+        configuration["optimization"]["typicaldays"]["N"]["value"] = 30
         configuration["optimization"]["typicaldays"]["method"]["value"] = 1
         # Set MILP gap
         configuration["solveroptions"]["mipgap"]["value"] = 0.01
-        configuration["solveroptions"]["mipfocus"]["value"] = 3
+        configuration["solveroptions"]["mipfocus"]["value"] = 1
         #configuration["solveroptions"]["presolve"]["value"] = -1
         configuration["solveroptions"]["presolve"]["value"] = 2
         configuration["solveroptions"]["heuristics"]["value"] = 0.05
         configuration["solveroptions"]["cuts"]["value"] = -1
-        configuration["solveroptions"]["lpwarmstart"]["value"] = 0
+        #configuration["solveroptions"]["lpwarmstart"]["value"] = -1
         configuration["solveroptions"]["NoRelHeurTime"] = 0
         configuration["solveroptions"]["timelim"]["value"] = 50
         # configuration["solveroptions"]["ConcurrentMethod"]["value"] = 3
-        configuration["solveroptions"]["method"]["value"] = -1
-        
+        configuration["solveroptions"]["method"]["value"] = 3
+        configuration["solveroptions"]["crossover"]["value"] = -1
+        configuration["solveroptions"]["scaleflag"]["value"] = 2
+        configuration["solveroptions"]["barhomogeneous"]["value"] = 1
+        configuration["solveroptions"]["numericfocus"]["value"] = 2
+        configuration["solveroptions"]["concurrentmethod"]["value"] = 2
+        configuration["solveroptions"]["nodemethod"]["value"] = 1
+
         # Set threads from params (important for parallel execution to avoid CPU oversubscription)
         threads = params.get("threads", 1)
         configuration["solveroptions"]["threads"]["value"] = threads
@@ -289,7 +295,7 @@ class OptimizationRunner:
         h2_import_limit = average_demand_MW * import_availability
 
         # H2 import price: electricity price * ratio
-        h2_import_price = self.wtp
+        h2_import_price = params["hydrogen_import_price"]
 
         return {
             "h2_import_limit": h2_import_limit,

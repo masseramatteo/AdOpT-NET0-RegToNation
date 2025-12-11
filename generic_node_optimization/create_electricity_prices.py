@@ -96,7 +96,7 @@ def create_electricity_prices(input_data_path, nodes, params):
         electricity_prices_smooth = np.convolve(electricity_prices, np.ones(window_size)/window_size, mode='same')
 
         # Ensure prices stay within reasonable bounds
-        electricity_prices_smooth = np.clip(electricity_prices_smooth, 50, 400)  # Min 50, Max 400 EUR/MWh
+        electricity_prices_smooth = np.clip(electricity_prices_smooth, 20, 400)  # Min 50, Max 400 EUR/MWh
 
         # Create DataFrame
         price_data = pd.DataFrame({

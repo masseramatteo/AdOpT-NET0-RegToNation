@@ -177,7 +177,7 @@ def solve_single_model(args):
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
         m = adopt.ModelHub()
-        m.read_data(input_data_path, start_period=0, end_period=1)
+        m.read_data(input_data_path, start_period=0, end_period=8760)
 
         # Solve
         m.quick_solve()
@@ -889,9 +889,8 @@ if __name__ == "__main__":
         "import_availability_ratio": [0.4],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
         "electricity_price_avg": [150],
-        "electricity_availability_small": [100],
-        "willingness_to_pay": [275],
-        "hydrogen_import_price": [50, 100, 150, 200, 250, 300],
+        "electricity_availability_small": [50],
+        "willingness_to_pay": [300],
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],

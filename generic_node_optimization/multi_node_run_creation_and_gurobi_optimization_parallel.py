@@ -887,7 +887,7 @@ if __name__ == "__main__":
     print(f"[SLURM] Detected CPU total: {cpu_total}")
 
     # Qui puoi mettere valori "sicuri" per un nodo Genoa
-    max_workers = 12
+    max_workers = 11
     threads_per_worker = 16
 
     print(f"[CONFIG] Using {max_workers} workers × {threads_per_worker} threads "

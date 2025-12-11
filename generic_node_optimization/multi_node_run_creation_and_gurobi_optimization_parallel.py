@@ -75,11 +75,45 @@ def create_single_model(args):
         adopt.copy_compressor_data(input_data_path)
 
         # Networks configuration
-        runner._configure_networks(input_data_path, params["networks"])
+        runner._configure_networks(input_data_path, params["networks_existing"], params["networks_new"])
         adopt.copy_network_data(input_data_path)
 
-        from define_topology import add_new_network_H2
-        add_new_network_H2(input_data_path, params["scenarios"])
+        # Import network creation functions
+        from define_topology import (
+            add_new_distribution_network,
+            add_new_transmission_network,
+            add_existing_distribution_network,
+            add_existing_transmission_network
+        )
+
+        # Create networks based on configuration
+        # NEW networks
+        if params.get("networks_new") and params["networks_new"][0]:
+            networks_new = params["networks_new"]
+
+            # Check for new low pressure (distribution)
+            if "hydrogenPipelineOnshore_lowP" in networks_new:
+                print(f"[NETWORK] Creating new distribution network (lowP)")
+                add_new_distribution_network(input_data_path, params["scenarios"])
+
+            # Check for new high pressure (transmission)
+            if "hydrogenPipelineOnshore_highP" in networks_new:
+                print(f"[NETWORK] Creating new transmission network (highP)")
+                add_new_transmission_network(input_data_path, params["scenarios"])
+
+        # EXISTING networks
+        if params.get("networks_existing") and params["networks_existing"][0]:
+            networks_existing = params["networks_existing"]
+
+            # Check for existing low pressure (distribution)
+            if "hydrogenPipelineOnshore_lowP" in networks_existing:
+                print(f"[NETWORK] Creating existing distribution network (lowP)")
+                add_existing_distribution_network(input_data_path, params["scenarios"])
+
+            # Check for existing high pressure (transmission)
+            if "hydrogenPipelineOnshore_highP" in networks_existing:
+                print(f"[NETWORK] Creating existing transmission network (highP)")
+                add_existing_transmission_network(input_data_path, params["scenarios"])
 
         from define_components_spec import (
             define_hydrogen_pipeline2,

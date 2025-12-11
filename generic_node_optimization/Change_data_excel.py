@@ -96,7 +96,7 @@ def define_excel_data(input_data_path, params):
         seed = 42
         rng = np.random.default_rng(seed)
         fluctuation = rng.normal(loc=0.0, scale=0.15 * average_MW, size=timesteps)
-        hydrogen_profile = average_MW + fluctuation
+        hydrogen_profile = average_MW #+ fluctuation
 
         # #  to keep lower than capacity
         # scale_factor = capacity_MW / hydrogen_profile.max()
@@ -127,7 +127,7 @@ def define_excel_data(input_data_path, params):
         seed = 42
         rng = np.random.default_rng(seed)
         fluctuation = rng.normal(loc=0.0, scale=0.10 * average_MW, size=timesteps)
-        hydrogen_profile = average_MW + fluctuation
+        hydrogen_profile = average_MW #+ fluctuation
 
         df = pd.DataFrame({
             'Hydrogen': hydrogen_profile,

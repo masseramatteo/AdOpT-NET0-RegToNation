@@ -1173,7 +1173,8 @@ def construct_global_balance(model, data):
 
     def init_network_cost(const):
         return (
-                sum(model.periods[period].var_cost_netws for period in model.set_periods)
+                sum(model.periods[period].var_cost_netws for period in model.set_periods) #+
+                #sum(model.periods[period].var_cost_compress for period in model.set_periods)
                 == model.var_cost_networks
         )
 

@@ -70,11 +70,46 @@ def create_single_model(args):
         adopt.copy_compressor_data(input_data_path)
 
         # Networks configuration
-        runner._configure_networks(input_data_path, params["networks"])
+        runner._configure_networks(input_data_path, params["networks_existing"], params["networks_new"])
         adopt.copy_network_data(input_data_path)
 
-        from define_topology import add_new_network_H2
-        add_new_network_H2(input_data_path, params["scenarios"])
+        # Import network creation functions
+        from define_topology import (
+            add_new_distribution_network,
+            add_new_transmission_network,
+            add_existing_distribution_network,
+            add_existing_transmission_network
+        )
+
+        # Create networks based on configuration
+        # NEW networks
+        if params.get("networks_new") and params["networks_new"][0]:
+            networks_new = params["networks_new"]
+
+            # Check for new low pressure (distribution)
+            if "hydrogenPipelineOnshore_lowP" in networks_new:
+                print(f"[NETWORK] Creating new distribution network (lowP)")
+                add_new_distribution_network(input_data_path, params["scenarios"])
+
+            # Check for new high pressure (transmission)
+            if "hydrogenPipelineOnshore_highP" in networks_new:
+                print(f"[NETWORK] Creating new transmission network (highP)")
+                add_new_transmission_network(input_data_path, params["scenarios"])
+
+        # EXISTING networks
+        if params.get("networks_existing") and params["networks_existing"][0]:
+            networks_existing = params["networks_existing"]
+
+            # Check for existing low pressure (distribution)
+            if "hydrogenPipelineOnshore_lowP" in networks_existing:
+                print(f"[NETWORK] Creating existing distribution network (lowP)")
+                add_existing_distribution_network(input_data_path, params["scenarios"])
+
+            # Check for existing high pressure (transmission)
+            if "hydrogenPipelineOnshore_highP" in networks_existing:
+                print(f"[NETWORK] Creating existing transmission network (highP)")
+                add_existing_transmission_network(input_data_path, params["scenarios"])
+
 
         from define_components_spec import (
             define_hydrogen_pipeline2,
@@ -873,13 +908,16 @@ if __name__ == "__main__":
     # =======================================================
     param_grid = {
         "scenarios": ["1751"],
-        "demand_level_ratio": [5, 15, 20],
-        "total_demand_TWh": [10, 20, 50],
-        "import_availability_ratio": [0.2, 0.7],
-        "electricity_price_avg": [50, 100, 150, 200],
-        "electricity_availability_small": [50, 100, 150],
-        "willingness_to_pay": [200, 250, 300, 350, 400],
-        "networks": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
+        "demand_level_ratio": [15],
+        "total_demand_TWh": [20],
+        "import_availability_ratio": [0.4],
+        #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
+        "electricity_price_avg": [150],
+        "electricity_availability_small": [50],
+        "willingness_to_pay": [300],
+        "hydrogen_import_price": [50,100, 150, 200, 250, 300],
+        "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
+        "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
         "existing_storage_technologies": [{"Storage_H2_Cavern": 100000}],

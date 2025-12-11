@@ -156,10 +156,10 @@ class OptimizationRunner:
         configuration["reporting"]["save_path"]["value"] = str(results_data_path)
         configuration["reporting"]["save_summary_path"]["value"] = str(results_data_path)
 
-        #configuration["optimization"]["objective"]["value"] = "costs"
-        configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
+        configuration["optimization"]["objective"]["value"] = "costs"
+        #configuration["optimization"]["objective"]["value"] = "supply_willingness_to_pay"
         #configuration["optimization"]["objective"]["value"] = "distance_willingness_to_pay"
-        configuration["optimization"]["willingness_to_pay"]["value"] = self.wtp
+        #configuration["optimization"]["willingness_to_pay"]["value"] = self.wtp
 
         # Set pressure consideration
         configuration["performance"]["pressure"]["pressure_on"]["value"] = 1

@@ -137,7 +137,7 @@ class OptimizationRunner:
         configuration["solveroptions"]["presolve"]["value"] = 2
         configuration["solveroptions"]["heuristics"]["value"] = 0.05
         configuration["solveroptions"]["cuts"]["value"] = -1
-        #configuration["solveroptions"]["lpwarmstart"]["value"] = -1
+        configuration["solveroptions"]["lpwarmstart"]["value"] = -1
         configuration["solveroptions"]["NoRelHeurTime"] = 0
         configuration["solveroptions"]["timelim"]["value"] = 50
         # configuration["solveroptions"]["ConcurrentMethod"]["value"] = 3
@@ -145,7 +145,7 @@ class OptimizationRunner:
         configuration["solveroptions"]["crossover"]["value"] = -1
         configuration["solveroptions"]["scaleflag"]["value"] = 2
         configuration["solveroptions"]["barhomogeneous"]["value"] = 1
-        configuration["solveroptions"]["numericfocus"]["value"] = 2
+        configuration["solveroptions"]["numericfocus"]["value"] = 1
         configuration["solveroptions"]["concurrentmethod"]["value"] = 2
         configuration["solveroptions"]["nodemethod"]["value"] = 1
         configuration["solveroptions"]["concurrentmip"]["value"] = 1

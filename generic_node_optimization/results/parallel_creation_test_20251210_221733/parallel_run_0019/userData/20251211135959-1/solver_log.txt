@@ -1,0 +1,122 @@
+
+Gurobi 12.0.3 (win64) logging started Thu Dec 11 14:00:53 2025
+
+Set parameter LogFile to value "Z:\AdOpT-NET0-RegToNation\generic_node_optimization\results\parallel_creation_test_20251210_221733\parallel_run_0019\userData\20251211135959-1\solver_log.txt"
+Set parameter TimeLimit to value 180000
+Set parameter MIPGap to value 0.01
+Set parameter MIPFocus to value 1
+Set parameter Threads to value 3
+Set parameter NodefileStart to value 60
+Set parameter Method to value 3
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value 2
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 2
+Set parameter Crossover to value -1
+Set parameter ScaleFlag to value 2
+Set parameter BarHomogeneous to value 1
+Set parameter ConcurrentMIP to value 1
+Set parameter ConcurrentMethod to value 2
+Set parameter NodeMethod to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (win64 - Windows Server 2016.0 (14393.2))
+
+CPU model: QEMU Virtual CPU version 2.5+, instruction set [SSE2]
+Thread count: 48 physical cores, 48 logical processors, using up to 3 threads
+
+Non-default parameters:
+TimeLimit  180000
+MIPGap  0.01
+Method  3
+ConcurrentMethod  2
+ScaleFlag  2
+LPWarmStart  0
+BarHomogeneous  1
+MIPFocus  1
+NodefileStart  60
+NodeMethod  1
+NumericFocus  2
+Presolve  2
+Threads  3
+
+Optimize a model with 679621 rows, 539544 columns and 1813319 nonzeros
+Model fingerprint: 0x1f82e63d
+Variable types: 539372 continuous, 172 integer (172 binary)
+Coefficient statistics:
+  Matrix range     [2e-03, 6e+07]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [5e-02, 6e+08]
+  RHS range        [1e+00, 5e+09]
+Warning: Model contains large rhs
+Presolve removed 355349 rows and 300936 columns (presolve time = 5s)...
+Presolve removed 355391 rows and 300936 columns
+Presolve time: 7.08s
+Presolved: 324230 rows, 238608 columns, 1145643 nonzeros
+Variable types: 238564 continuous, 44 integer (44 binary)
+Root relaxation presolve removed 73444 rows and 4299 columns
+Root relaxation presolved: 250786 rows, 234309 columns, 982612 nonzeros
+
+Concurrent LP optimizer: primal simplex and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Ordering time: 2.81s
+
+Barrier statistics:
+ Dense cols : 103
+ AA' NZ     : 1.434e+06
+ Factor NZ  : 1.424e+07 (roughly 300 MB of memory)
+ Factor Ops : 3.047e+09 (less than 1 second per iteration)
+ Threads    : 2
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -5.31674534e+08 -5.07187885e+12  4.84e+08 8.19e+02  1.45e+09    16s
+   1  -3.11019842e+10 -4.55871928e+12  4.53e+08 7.47e+02  1.23e+09    18s
+   2  -1.74705793e+10 -3.68664948e+12  2.88e+08 5.40e+01  7.64e+08    19s
+   3  -2.98567253e+09 -2.90273983e+12  5.92e+07 1.86e-08  1.71e+08    26s
+   4  -8.36983376e+08 -5.19728964e+11  7.46e+06 4.73e-09  1.01e+07    28s
+   5  -4.92184902e+08 -1.14024289e+11  3.21e+06 1.51e-08  2.82e+06    30s
+   6  -4.11387773e+08 -2.83815522e+10  2.37e+06 6.89e-08  6.79e+06    31s
+   7  -4.01403962e+08 -4.07199189e+09  2.31e+06 1.94e-06  6.51e+07    32s
+   8  -4.01403147e+08  1.93781134e+11  2.31e+06 9.89e-06  6.52e+08    34s
+   9* -4.01403147e+08  2.17378744e+12  1.10e+04 2.04e-01  5.21e+04    35s
+  10* -4.01403148e+08  2.19916700e+13  1.10e+03 2.04e-02  5.22e+03    37s
+  11* -4.01403148e+08  2.20348857e+14  1.10e+02 2.04e-03  5.22e+02    38s
+  12* -4.01403148e+08  2.20570594e+15  1.10e+01 1.86e-04  5.23e+01    40s
+  13* -4.01403148e+08  2.20771450e+16  1.10e+00 1.87e-05  5.23e+00    42s
+  14* -4.01403148e+08  2.20970378e+17  1.10e-01 2.30e-06  5.24e-01    43s
+  15* -4.01403148e+08  2.21169275e+18  1.10e-02 9.34e-07  5.24e-02    45s
+  16* -4.01410701e+08  2.21367182e+19  1.13e-03 1.75e-07  5.54e-03    48s
+  17* -4.01411847e+08  2.15426295e+20  1.13e-04 3.33e-06  5.53e-04    52s
+  18* -3.83515117e+08  1.80619064e+21  2.13e-05 5.80e-07  1.85e-04    60s
+  19* -4.05091383e+08  1.02684781e+22  3.49e-06 2.13e-06  4.79e-05    64s
+  20* -3.95201556e+08  6.25902176e+22  4.68e-07 1.93e-05  8.32e-06    68s
+  21* -3.94134525e+08  4.64292735e+23  4.69e-08 6.67e-07  8.34e-07    71s
+  22* -3.93236317e+08  4.45058669e+24  4.69e-09 2.35e-05  8.33e-08    73s
+  23* -3.92716437e+08  4.40903512e+25  4.70e-10 8.28e-05  8.29e-09    75s
+
+Barrier performed 23 iterations in 74.98 seconds (33.96 work units)
+Infeasible model
+
+
+Solved with barrier
+
+Root relaxation: infeasible, 0 iterations, 66.60 seconds (27.14 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -   75s
+
+Explored 1 nodes (0 simplex iterations) in 75.17 seconds (35.02 work units)
+Thread count was 3 (of 48 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -

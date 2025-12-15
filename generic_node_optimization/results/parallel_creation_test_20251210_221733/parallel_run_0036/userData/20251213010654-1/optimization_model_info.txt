@@ -1,0 +1,57 @@
+{
+    "demand_level_ratio": 5.5942853570557975,
+    "total_demand_TWh": 43.27365946865227,
+    "import_availability_ratio": 0.27162541754037894,
+    "electricity_price_avg": 155.89591712338316,
+    "electricity_availability_small": 61.31760550520026,
+    "willingness_to_pay": 233.1465887563588,
+    "hydrogen_import_price": 260.7034774014438,
+    "mipgap": 0.01,
+    "time_limit": 50,
+    "scenarios": "1751",
+    "networks_new": [
+        "hydrogenPipelineOnshore_lowP",
+        "hydrogenPipelineOnshore_highP"
+    ],
+    "networks_existing": [],
+    "small_cluster_new_technologies": [
+        "Electrolyzer_small",
+        "Storage_H2_lowP"
+    ],
+    "big_cluster_new_technologies": [
+        "Electrolyzer_big",
+        "Storage_H2_highP"
+    ],
+    "existing_storage_technologies": {
+        "Storage_H2_Cavern": 100000
+    },
+    "hydrogen_demand_small": {
+        "SMALL1": {
+            "Hydrogen use (TWh)": 0.95,
+            "Capacity (MW)": 174
+        },
+        "SMALL2": {
+            "Hydrogen use (TWh)": 0.64,
+            "Capacity (MW)": 117
+        },
+        "SMALL3": {
+            "Hydrogen use (TWh)": 0.48,
+            "Capacity (MW)": 87
+        },
+        "SMALL4": {
+            "Hydrogen use (TWh)": 0.18,
+            "Capacity (MW)": 33
+        }
+    },
+    "hydrogen_demand_big": {
+        "BIG1": {
+            "Hydrogen use (TWh)": 15
+        },
+        "BIG2": {
+            "Hydrogen use (TWh)": 5
+        }
+    },
+    "threads": 3,
+    "h2_import_limit": 1341.8066006475854,
+    "el_import_limit": 61.31760550520026
+}

@@ -52,7 +52,7 @@ def create_electricity_prices(input_data_path, nodes, params):
             random_walk = np.cumsum(np.random.normal(0, 0.002, 8760))  # Small incremental changes
             smooth_noise = 1 + 0.03 * np.tanh(random_walk)  # Bounded between ±3%
 
-            electricity_prices = base_price_small * daily_cycle * weekend_factor * seasonal_factor * congestion_cycle * smooth_noise
+            electricity_prices = base_price_small #* daily_cycle * weekend_factor * seasonal_factor * congestion_cycle * smooth_noise
 
         elif node.startswith("BIG"):
             # Big nodes: More stable with smooth wind patterns
@@ -71,7 +71,7 @@ def create_electricity_prices(input_data_path, nodes, params):
             random_walk = np.cumsum(np.random.normal(0, 0.001, 8760))
             smooth_noise = 1 + 0.015 * np.tanh(random_walk)  # ±1.5% bounded variation
 
-            electricity_prices = base_price_big * wind_cycle * seasonal_factor * stability_cycle * smooth_noise
+            electricity_prices = base_price_big #* wind_cycle * seasonal_factor * stability_cycle * smooth_noise
 
         elif node == "STORAGE":
             # Storage node: Smooth arbitrage-based pricing

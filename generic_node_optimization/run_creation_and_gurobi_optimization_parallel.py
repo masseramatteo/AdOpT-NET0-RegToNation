@@ -892,12 +892,14 @@ if __name__ == "__main__":
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
         "electricity_price_avg": [150],
         "electricity_availability_small": [50],
-        "willingness_to_pay": [300],
-        "hydrogen_import_price": [50,100, 150, 200, 250, 300],
+        "willingness_to_pay": [250],
+        "hydrogen_import_price": [200],
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
+        "small_cluster_existing_technologies": [{}],
+        "big_cluster_existing_technologies": [{}],
         "existing_storage_technologies": [{"Storage_H2_Cavern": 100000}],
         "hydrogen_demand_small": [{
             "SMALL1": {"Hydrogen use (TWh)": 0.95, "Capacity (MW)": 174},

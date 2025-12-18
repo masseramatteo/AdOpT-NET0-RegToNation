@@ -10,108 +10,90 @@ from pathlib import Path
 
 def create_electricity_prices(input_data_path, nodes, params):
     """
-    Create electricity price data for each node with smooth, continuous variations
+    Create electricity price data for each node.
 
-    Args:
-        input_data_path: Path to input data folder
-        nodes: List of node names
+    params keys consigliate:
+      - electricity_price_avg: float
+      - electricity_price_mode: "constant" oppure "fluctuating"
+      - electricity_price_min / electricity_price_max (opzionali)
+      - smoothing_window (opzionale)
     """
 
-    # Create data directory if it doesn't exist
+    input_data_path = Path(input_data_path)
 
-    # Create hourly time series for full year (8760 hours)
-    hours = np.arange(8760)
-    days = hours // 24
-    hour_of_day = hours % 24
+    electricity_example_folder = (input_data_path.parents[4] / "data")
+    electricity_example = electricity_example_folder/"Example_electricity_prices.xlsx"
 
-    # Base prices
-    base_price_small = params["electricity_price_avg"]  # EUR/MWh for small nodes
-    base_price_big = params["electricity_price_avg"]    # EUR/MWh for big nodes (lower base due to better grid connection)
+    example_series = pd.read_excel(
+        electricity_example,
+        usecols=[0],
+        header=0
+    ).iloc[:, 0].astype(float).to_numpy()
+
+    if len(example_series) < 8760:
+        raise ValueError(f"Example series too short: {len(example_series)} < 8760")
+    example_series = example_series[:8760]
+
+    example_mean = float(np.mean(example_series))
+    if example_mean == 0:
+        raise ValueError("Mean of example series is 0, cannot normalize.")
+    example_fluct_factors = example_series / example_mean  # mean = 1
+
+    base_price_small = float(params["electricity_price_avg"])
+    base_price_big = float(params["electricity_price_avg"])
+
+    price_min = float(params.get("electricity_price_min", 0))
+    price_max = float(params.get("electricity_price_max", 400))
+    window_size = int(params.get("smoothing_window", 0))  # 0 = no smoothing
 
     for node in nodes:
+        # ---- manual mode selection (keep your structure) ----
         if node.startswith("SMALL"):
-            # Small nodes: Higher congestion with smooth daily patterns
-            # Create smooth daily variation using sinusoidal function
-            # Peak price at 19h (evening), lowest at 13h (midday solar peak)
-            daily_cycle = 0.85 + 0.3 * np.cos(2 * np.pi * (hour_of_day - 13) / 24)
-
-            # Weekly pattern - weekends slightly cheaper (smooth transition)
-            day_of_week = (days % 7)
-            weekend_factor = 0.95 + 0.05 * np.cos(2 * np.pi * day_of_week / 7)
-
-            # Seasonal variation - smooth winter peak
-            day_of_year = days % 365
-            seasonal_factor = 0.9 + 0.2 * np.cos(2 * np.pi * (day_of_year - 15) / 365)  # Peak in January
-
-            # Add smooth congestion variations (longer cycles)
-            congestion_cycle = 1 + 0.08 * np.sin(2 * np.pi * hours / (24 * 7))  # Weekly cycle
-            congestion_cycle += 0.05 * np.sin(2 * np.pi * hours / (24 * 3))      # 3-day cycle
-
-            # Gentle random walk for market variations (continuous, no jumps)
-            np.random.seed(hash(node) % 2**32)
-            random_walk = np.cumsum(np.random.normal(0, 0.002, 8760))  # Small incremental changes
-            smooth_noise = 1 + 0.03 * np.tanh(random_walk)  # Bounded between ±3%
-
-            electricity_prices = base_price_small #* daily_cycle * weekend_factor * seasonal_factor * congestion_cycle * smooth_noise
+            mode = "fluctuating"  # change manually if you want
+            base = base_price_small
 
         elif node.startswith("BIG"):
-            # Big nodes: More stable with smooth wind patterns
-            # Wind pattern - stronger at night, weaker in afternoon
-            wind_cycle = 0.9 + 0.2 * np.cos(2 * np.pi * (hour_of_day - 15) / 24)  # Cheapest at 3am, peak at 3pm
-
-            # Smoother seasonal variation
-            day_of_year = days % 365
-            seasonal_factor = 0.95 + 0.1 * np.cos(2 * np.pi * (day_of_year - 15) / 365)
-
-            # Grid stability factor - very smooth variations
-            stability_cycle = 1 + 0.03 * np.sin(2 * np.pi * hours / (24 * 14))  # Bi-weekly cycle
-
-            # Minimal random variations for stable grid
-            np.random.seed(hash(node) % 2**32)
-            random_walk = np.cumsum(np.random.normal(0, 0.001, 8760))
-            smooth_noise = 1 + 0.015 * np.tanh(random_walk)  # ±1.5% bounded variation
-
-            electricity_prices = base_price_big #* wind_cycle * seasonal_factor * stability_cycle * smooth_noise
+            mode = "constant"  # change manually if you want
+            base = base_price_big
 
         elif node == "STORAGE":
-            # Storage node: Smooth arbitrage-based pricing
-            # Follows renewable production patterns
-            storage_cycle = 0.9 + 0.2 * np.cos(2 * np.pi * (hour_of_day - 14) / 24)  # Cheapest at 2pm, peak at 2am
+            mode = "constant"  # change manually if you want
+            base = base_price_big  # or params.get("storage_price_avg", base_price_big)
 
-            # Moderate seasonal variation
-            day_of_year = days % 365
-            seasonal_factor = 0.93 + 0.14 * np.cos(2 * np.pi * (day_of_year - 15) / 365)
+        else:
+            mode = "constant"
+            base = float(params["electricity_price_avg"])
 
-            # Storage optimization cycles
-            arbitrage_cycle = 1 + 0.04 * np.sin(2 * np.pi * hours / (24 * 5))  # 5-day optimization cycle
+        # ---- build series from chosen mode ----
+        if mode == "constant":
+            electricity_prices = np.full(8760, base, dtype=float)
+        else:
+            electricity_prices = base * example_fluct_factors  # same trend, new mean (=base)
 
-            # Moderate random variations
-            np.random.seed(hash(node) % 2**32)
-            random_walk = np.cumsum(np.random.normal(0, 0.0015, 8760))
-            smooth_noise = 1 + 0.025 * np.tanh(random_walk)  # ±2.5% bounded variation
+        # smoothing (optional)
+        if window_size and window_size > 1:
+            electricity_prices = np.convolve(
+                electricity_prices,
+                np.ones(window_size) / window_size,
+                mode="same"
+            )
 
-        # Apply smoothing filter to ensure no sudden jumps
-        # Use a moving average to further smooth the prices
-        window_size = 3  # 3-hour smoothing window
-        electricity_prices_smooth = np.convolve(electricity_prices, np.ones(window_size)/window_size, mode='same')
+        # bounds
+        electricity_prices = np.clip(electricity_prices, price_min, price_max)
 
-        # Ensure prices stay within reasonable bounds
-        electricity_prices_smooth = np.clip(electricity_prices_smooth, 20, 400)  # Min 50, Max 400 EUR/MWh
-
-        # Create DataFrame
+        # export
         price_data = pd.DataFrame({
-            'Hour': range(1, 8761),
-            'Electricity_Price_EUR_MWh': electricity_prices_smooth
+            "Hour": np.arange(1, 8761),
+            "Electricity_Price_EUR_MWh": electricity_prices
         })
-
-        # Save to Excel file
         output_file = input_data_path / f"electricity_prices_{node}.xlsx"
         price_data.to_excel(output_file, index=False)
 
-        # Calculate price variation metrics
-        price_changes = np.abs(np.diff(electricity_prices_smooth))
-        max_hourly_change = np.max(price_changes)
-        avg_hourly_change = np.mean(price_changes)
-
-        # Print statistics
-        print(f"Created smooth electricity prices for {node}:")
+        # stats
+        price_changes = np.abs(np.diff(electricity_prices))
+        print(f"Created electricity prices for {node} (mode={mode}): "
+              f"avg={np.mean(electricity_prices):.2f}, "
+              f"min={np.min(electricity_prices):.2f}, "
+              f"max={np.max(electricity_prices):.2f}, "
+              f"max Δh={np.max(price_changes):.2f}, "
+              f"avg Δh={np.mean(price_changes):.2f}")

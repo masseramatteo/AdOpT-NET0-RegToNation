@@ -66,13 +66,14 @@ def define_nodes(input_data_path, params):
     # Add required technologies for SMALL cluster nodes
     small_nodes = ["SMALL1", "SMALL2", "SMALL3", "SMALL4"]
     small_new_tech_list = params["small_cluster_new_technologies"]
-    
+    small_existing_tech_list = params["small_cluster_existing_technologies"]
+
     for node in small_nodes:
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "r") as json_file:
             technologies = json.load(json_file)
 
         technologies["new"] = small_new_tech_list
-        technologies["existing"] = {}
+        technologies["existing"] = small_existing_tech_list
 
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "w") as json_file:
             json.dump(technologies, json_file, indent=4)
@@ -80,13 +81,15 @@ def define_nodes(input_data_path, params):
     # Add required technologies for BIG cluster nodes
     big_nodes = ["BIG1", "BIG2"]
     big_new_tech_list = params["big_cluster_new_technologies"]
+    big_existing_tech_list = params["big_cluster_existing_technologies"]
+
     
     for node in big_nodes:
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "r") as json_file:
             technologies = json.load(json_file)
 
         technologies["new"] = big_new_tech_list
-        technologies["existing"] = {}
+        technologies["existing"] = big_existing_tech_list
 
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "w") as json_file:
             json.dump(technologies, json_file, indent=4)

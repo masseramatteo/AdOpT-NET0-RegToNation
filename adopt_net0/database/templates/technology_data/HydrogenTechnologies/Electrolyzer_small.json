@@ -4,7 +4,7 @@
   "size_max": 100,
   "size_is_int": 0,
   "size_based_on": "input",
-  "decommission": 0,
+  "decommission": "impossible",
   "Economics": {
     "comment": "capex in EUR/MW or as a piecewise function, opex_variable in EUR/MWh, opex_fixed in % of capex_annual",
     "capex_model": 1,

@@ -66,13 +66,14 @@ def define_nodes(input_data_path, params):
     # Add required technologies for SMALL cluster nodes
     small_nodes = ["SMALL1", "SMALL2", "SMALL3", "SMALL4"]
     small_new_tech_list = params["small_cluster_new_technologies"]
+    small_existing_tech_list = params["small_cluster_existing_technologies"]
     
     for node in small_nodes:
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "r") as json_file:
             technologies = json.load(json_file)
 
         technologies["new"] = small_new_tech_list
-        technologies["existing"] = {}
+        technologies["existing"] = small_existing_tech_list
 
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "w") as json_file:
             json.dump(technologies, json_file, indent=4)
@@ -80,13 +81,14 @@ def define_nodes(input_data_path, params):
     # Add required technologies for BIG cluster nodes
     big_nodes = ["BIG1", "BIG2"]
     big_new_tech_list = params["big_cluster_new_technologies"]
+    big_existing_tech_list = params["big_cluster_existing_technologies"]
     
     for node in big_nodes:
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "r") as json_file:
             technologies = json.load(json_file)
 
         technologies["new"] = big_new_tech_list
-        technologies["existing"] = {}
+        technologies["existing"] = big_existing_tech_list
 
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "w") as json_file:
             json.dump(technologies, json_file, indent=4)
@@ -126,21 +128,46 @@ def add_existing_distribution_network(input_data_path, scenario_to_use):
 
     # Define existing connections for low pressure distribution network
     # Connect small nodes to each other (local distribution)
-    for i, node1 in enumerate(small_nodes):
-        for j, node2 in enumerate(small_nodes):
-            if i < j:  # Only upper triangle to avoid duplicates
-                connection.loc[node1, node2] = 1
-                connection.loc[node2, node1] = 1
+    # for i, node1 in enumerate(small_nodes):
+    #     for j, node2 in enumerate(small_nodes):
+    #         if i < j:  # Only upper triangle to avoid duplicates
+    #             connection.loc[node1, node2] = 1
+    #             connection.loc[node2, node1] = 1
 
-    # Connect each small node to nearest big node
-    connection.loc["SMALL1", "BIG1"] = 1
-    connection.loc["BIG1", "SMALL1"] = 1
-    connection.loc["SMALL2", "BIG1"] = 1
-    connection.loc["BIG1", "SMALL2"] = 1
+    # Satellite connections big and small:
+
+    connection.loc["SMALL1", "BIG2"] = 1
+    connection.loc["BIG2", "SMALL1"] = 1
+    connection.loc["SMALL2", "BIG2"] = 1
+    connection.loc["BIG2", "SMALL2"] = 1
     connection.loc["SMALL3", "BIG2"] = 1
     connection.loc["BIG2", "SMALL3"] = 1
     connection.loc["SMALL4", "BIG2"] = 1
     connection.loc["BIG2", "SMALL4"] = 1
+
+    # Connect each small node to nearest big node
+    # connection.loc["SMALL1", "BIG1"] = 1
+    # connection.loc["BIG1", "SMALL1"] = 1
+    # connection.loc["SMALL2", "BIG1"] = 1
+    # connection.loc["BIG1", "SMALL2"] = 1
+    # connection.loc["SMALL3", "BIG2"] = 1
+    # connection.loc["BIG2", "SMALL3"] = 1
+    # connection.loc["SMALL4", "BIG2"] = 1
+    # connection.loc["BIG2", "SMALL4"] = 1
+    # connection.loc["STORAGE", "SMALL1"] = 1
+    # connection.loc["STORAGE", "SMALL2"] = 1
+    # connection.loc["SMALL2", "STORAGE"] = 1
+    # connection.loc["SMALL1", "STORAGE"] = 1
+    # connection.loc["SMALL1", "BIG2"] = 1
+    # connection.loc["BIG2", "SMALL1"] = 1
+    # connection.loc["BIG2", "SMALL3"] = 1
+    # connection.loc["SMALL3", "BIG2"] = 1
+    # connection.loc["SMALL4", "SMALL3"] = 1
+    # connection.loc["SMALL3", "SMALL4"] = 1
+    # connection.loc["SMALL4", "BIG1"] = 1
+    # connection.loc["BIG1", "SMALL4"] = 1
+    # connection.loc["SMALL2", "BIG1"] = 1
+    # connection.loc["BIG1", "SMALL2"] = 1
 
     connection.to_csv(
         input_data_path / "period1" / "network_topology" / "existing" / "hydrogenPipelineOnshore_lowP" / "connection.csv",
@@ -167,28 +194,52 @@ def add_existing_distribution_network(input_data_path, scenario_to_use):
                        index_col=0)
 
     # Set existing sizes for connections (size 1 = standard existing pipeline)
-    for i, node1 in enumerate(small_nodes):
-        for j, node2 in enumerate(small_nodes):
-            if i < j:
-                size.loc[node1, node2] = 1
-                size.loc[node2, node1] = 1
+    # for i, node1 in enumerate(small_nodes):
+    #     for j, node2 in enumerate(small_nodes):
+    #         if i < j:
+    #             size.loc[node1, node2] = 100
+    #             size.loc[node2, node1] = 100
+
+
+    # Satellite connections big and small:
+
+    size.loc["SMALL1", "BIG2"] = 150
+    size.loc["BIG2", "SMALL1"] = 150
+    size.loc["SMALL2", "BIG2"] = 150
+    size.loc["BIG2", "SMALL2"] = 150
+    size.loc["SMALL3", "BIG2"] = 150
+    size.loc["BIG2", "SMALL3"] = 150
+    size.loc["SMALL4", "BIG2"] = 150
+    size.loc["BIG2", "SMALL4"] = 150
 
     # Small to big connections
-    size.loc["SMALL1", "BIG1"] = 250
-    size.loc["BIG1", "SMALL1"] = 250
-    size.loc["SMALL2", "BIG1"] = 250
-    size.loc["BIG1", "SMALL2"] = 250
-    size.loc["SMALL3", "BIG2"] = 250
-    size.loc["BIG2", "SMALL3"] = 250
-    size.loc["SMALL4", "BIG2"] = 250
-    size.loc["BIG2", "SMALL4"] = 250
+    # size.loc["SMALL1", "BIG1"] = 100
+    # size.loc["BIG1", "SMALL1"] = 100
+    # size.loc["SMALL2", "BIG1"] = 100
+    # size.loc["BIG1", "SMALL2"] = 100
+    # size.loc["SMALL3", "BIG2"] = 100
+    # size.loc["BIG2", "SMALL3"] = 100
+    # size.loc["SMALL4", "BIG2"] = 100
+    # size.loc["BIG2", "SMALL4"] = 100
+    # size.loc["STORAGE", "SMALL1"] = 200
+    # size.loc["STORAGE", "SMALL2"] = 200
+    # size.loc["SMALL2", "STORAGE"] = 200
+    # size.loc["SMALL1", "STORAGE"] = 200
+    # size.loc["SMALL1", "BIG2"] = 200
+    # size.loc["BIG2", "SMALL1"] = 200
+    # size.loc["BIG2", "SMALL3"] = 200
+    # size.loc["SMALL3", "BIG2"] = 200
+    # size.loc["SMALL4", "SMALL3"] = 200
+    # size.loc["SMALL3", "SMALL4"] = 200
+    # size.loc["SMALL4", "SMALL2"] = 200
+    # size.loc["SMALL2", "SMALL4"] = 200
+
 
     size.to_csv(
         input_data_path / "period1" / "network_topology" / "existing" / "hydrogenPipelineOnshore_lowP" / "size.csv",
         sep=";")
     print(f"  ✓ Size matrix saved")
     print(f"✅ Existing distribution network created successfully\n")
-
 
 def add_existing_transmission_network(input_data_path, scenario_to_use):
     """

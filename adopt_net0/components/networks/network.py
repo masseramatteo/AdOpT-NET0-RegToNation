@@ -339,7 +339,7 @@ class Network(ModelComponent):
 
         b_netw = self._define_capex_total(b_netw)
         b_netw = self._define_opex_total(b_netw, data)
-        b_netw = self._define_distance_total(b_netw)
+        #b_netw = self._define_distance_total(b_netw)
         b_netw = self._define_inflow_constraints(b_netw)
         b_netw = self._define_outflow_constraints(b_netw)
         b_netw = self._define_emission_constraints(b_netw)
@@ -1021,37 +1021,37 @@ class Network(ModelComponent):
         b_netw.const_opex_var = pyo.Constraint(rule=init_opex_variable)
         return b_netw
 
-    def _define_distance_total(self, b_netw):
-        """
-        Defines total distance of network
-
-        :param b_netw: pyomo network block
-        :param dict data: dict containing model information
-        :return: pyomo network block
-        """
-
-        b_netw.var_distance_weighted = pyo.Var()
-
-        def init_distance(const):
-            distance_sum = 0
-            for arc in b_netw.set_arcs:
-                b_arc = b_netw.arc_block[arc]
-                # Use binary indicator variable if it exists (from size or capex disjunction)
-                if hasattr(b_arc, 'dis_size_installation'):
-                    # Binary variable: 1 if arc is installed (dis_size_installation[1] is active)
-                    binary_var = b_arc.dis_size_installation[1].binary_indicator_var
-                    distance_sum += b_arc.distance * binary_var
-                elif hasattr(b_arc, 'dis_installation'):
-                    # Binary variable from capex disjunction
-                    binary_var = b_arc.dis_installation[1].binary_indicator_var
-                    distance_sum += b_arc.distance * binary_var
-                # else: No disjunction exists, arc not counted (not installed)
-            
-            return distance_sum == b_netw.var_distance_weighted
-
-        b_netw.const_distance = pyo.Constraint(rule=init_distance)
-
-        return b_netw
+    # def _define_distance_total(self, b_netw):
+    #     """
+    #     Defines total distance of network
+    #
+    #     :param b_netw: pyomo network block
+    #     :param dict data: dict containing model information
+    #     :return: pyomo network block
+    #     """
+    #
+    #     b_netw.var_distance_weighted = pyo.Var()
+    #
+    #     def init_distance(const):
+    #         distance_sum = 0
+    #         for arc in b_netw.set_arcs:
+    #             b_arc = b_netw.arc_block[arc]
+    #             # Use binary indicator variable if it exists (from size or capex disjunction)
+    #             if hasattr(b_arc, 'dis_size_installation'):
+    #                 # Binary variable: 1 if arc is installed (dis_size_installation[1] is active)
+    #                 binary_var = b_arc.dis_size_installation[1].binary_indicator_var
+    #                 distance_sum += b_arc.distance * binary_var
+    #             elif hasattr(b_arc, 'dis_installation'):
+    #                 # Binary variable from capex disjunction
+    #                 binary_var = b_arc.dis_installation[1].binary_indicator_var
+    #                 distance_sum += b_arc.distance * binary_var
+    #             # else: No disjunction exists, arc not counted (not installed)
+    #
+    #         return distance_sum == b_netw.var_distance_weighted
+    #
+    #     b_netw.const_distance = pyo.Constraint(rule=init_distance)
+    #
+    #     return b_netw
 
 
     def _define_inflow_constraints(self, b_netw):

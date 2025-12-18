@@ -128,7 +128,7 @@ class OptimizationRunner:
             configuration = json.load(f)
 
         # Set time aggregation settings:
-        configuration["optimization"]["typicaldays"]["N"]["value"] = 30
+        configuration["optimization"]["typicaldays"]["N"]["value"] = 0
         configuration["optimization"]["typicaldays"]["method"]["value"] = 1
         # Set MILP gap
         configuration["solveroptions"]["mipgap"]["value"] = 0.01
@@ -141,7 +141,7 @@ class OptimizationRunner:
         configuration["solveroptions"]["NoRelHeurTime"] = 0
         configuration["solveroptions"]["timelim"]["value"] = 50
         # configuration["solveroptions"]["ConcurrentMethod"]["value"] = 3
-        configuration["solveroptions"]["method"]["value"] = 3
+        configuration["solveroptions"]["method"]["value"] = -1
         configuration["solveroptions"]["crossover"]["value"] = -1
         configuration["solveroptions"]["scaleflag"]["value"] = 2
         configuration["solveroptions"]["barhomogeneous"]["value"] = 1
@@ -295,7 +295,7 @@ class OptimizationRunner:
         h2_import_limit = average_demand_MW * import_availability
 
         # H2 import price: electricity price * ratio
-        h2_import_price = params["hydrogen_import_price"]
+        h2_import_price = self.wtp
 
         return {
             "h2_import_limit": h2_import_limit,

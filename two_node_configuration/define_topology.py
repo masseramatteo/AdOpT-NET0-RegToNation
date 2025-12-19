@@ -11,6 +11,9 @@ def set_distance_between_nodes(input_data_path, params):
     - Distance to shore for large and small cluster
     """
 
+    # Convert distance to float to avoid dtype warnings
+    distance_value = float(params["distance_between_nodes"])
+
     # Process new networks
     if "networks_new" in params and params["networks_new"]:
         for network in params["networks_new"]:
@@ -18,9 +21,11 @@ def set_distance_between_nodes(input_data_path, params):
             distance = pd.read_csv(input_data_path / "period1" / "network_topology" / "new" / "distance.csv",
                                    sep=";",
                                    index_col=0)
+            # Convert DataFrame to float BEFORE assignment
+            distance = distance.astype(float)
 
-            distance.loc["Large_cluster", "Small_cluster"] = params["distance_between_nodes"]
-            distance.loc["Small_cluster", "Large_cluster"] = params["distance_between_nodes"]
+            distance.loc["Large_cluster", "Small_cluster"] = distance_value
+            distance.loc["Small_cluster", "Large_cluster"] = distance_value
 
             distance.to_csv(
                 input_data_path / "period1" / "network_topology" / "new" /
@@ -37,8 +42,11 @@ def set_distance_between_nodes(input_data_path, params):
                                    sep=";",
                                    index_col=0)
 
-            distance.loc["Large_cluster", "Small_cluster"] = params["distance_between_nodes"]
-            distance.loc["Small_cluster", "Large_cluster"] = params["distance_between_nodes"]
+            # Convert DataFrame to float BEFORE assignment
+            distance = distance.astype(float)
+
+            distance.loc["Large_cluster", "Small_cluster"] = distance_value
+            distance.loc["Small_cluster", "Large_cluster"] = distance_value
 
             distance.to_csv(
                 input_data_path / "period1" / "network_topology" / "existing" /

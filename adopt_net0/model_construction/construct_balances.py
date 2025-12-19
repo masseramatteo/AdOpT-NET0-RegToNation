@@ -1180,25 +1180,25 @@ def construct_global_balance(model, data):
 
     model.const_network = pyo.Constraint(rule=init_network_cost)
 
-    def init_netw_distance_weighted(const):
-        def _weight_for(netw_name: str) -> float:
-            if "highP" in netw_name:
-                return 2
-            if "lowP" in netw_name:
-                return 1.0
-            return 1.0
-
-        return (
-                sum(
-                    _weight_for(netw)
-                    * model.periods[period].network_block[netw].var_distance_weighted
-                    for period in model.set_periods
-                    for netw in model.periods[period].set_networks
-                    )
-                == model.var_netws_distance_weighted
-        )
-
-    model.const_netw_distance_weighted = pyo.Constraint(rule=init_netw_distance_weighted)
+    # def init_netw_distance_weighted(const):
+    #     def _weight_for(netw_name: str) -> float:
+    #         if "highP" in netw_name:
+    #             return 2
+    #         if "lowP" in netw_name:
+    #             return 1.0
+    #         return 1.0
+    #
+    #     return (
+    #             sum(
+    #                 _weight_for(netw)
+    #                 * model.periods[period].network_block[netw].var_distance_weighted
+    #                 for period in model.set_periods
+    #                 for netw in model.periods[period].set_networks
+    #                 )
+    #             == model.var_netws_distance_weighted
+    #     )
+    #
+    # model.const_netw_distance_weighted = pyo.Constraint(rule=init_netw_distance_weighted)
 
     # Calculate total demand from parameters
     def calculate_total_demand():

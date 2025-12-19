@@ -1,8 +1,0 @@
-Lmod has detected the following error: These module(s) or extension(s) exist
-but cannot be loaded as requested: "Python/3.13.1-GCCcore-14.2.0"
-   Try: "module spider Python/3.13.1-GCCcore-14.2.0" to see how to load the
-module(s).
-
-
-
-[2025-12-05T09:20:37.754] error: *** JOB 17210302 ON tcn654 CANCELLED AT 2025-12-05T09:20:37 DUE to SIGNAL Terminated ***

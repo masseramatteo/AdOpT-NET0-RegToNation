@@ -90,8 +90,8 @@ def define_hydrogen_storage(input_data_path):
                   "r") as json_file:
             storage_data = json.load(json_file)
 
-        storage_data["Size_min"] = 0
-        storage_data["Size_max"]  = 50
+        storage_data["size_min"] = 0
+        storage_data["size_max"]  = 50
 
         storage_data["Performance"]["allow_only_one_direction"] = 1
         storage_data["Performance"]["allow_only_one_direction_precise"] = 0
@@ -109,8 +109,8 @@ def define_hydrogen_storage(input_data_path):
                   "r") as json_file:
             storage_data = json.load(json_file)
 
-        storage_data["Size_min"] = 0
-        storage_data["Size_max"]  = 500
+        storage_data["size_min"] = 0
+        storage_data["size_max"] = 500
 
         storage_data["Performance"]["allow_only_one_direction"] = 1
         storage_data["Performance"]["allow_only_one_direction_precise"] = 0

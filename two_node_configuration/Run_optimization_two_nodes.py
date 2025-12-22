@@ -268,7 +268,7 @@ class OptimizationRunner:
                                   columns=['Import limit'], carriers=['hydrogen'], nodes=[node])
             adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_price,
                                   columns=['Import price'], carriers=['hydrogen'], nodes=[node])
-            adopt.fill_carrier_data(input_data_path, value_or_data=4000,  # BIG nodes have 2000 MW
+            adopt.fill_carrier_data(input_data_path, value_or_data=6000,  # BIG nodes have 2000 MW
                                   columns=['Import limit'], carriers=['electricity'], nodes=[node])
             # Use dynamic electricity prices for BIG nodes too
             adopt.fill_carrier_data(input_data_path, value_or_data=self.electricity_average_price, columns=['Import price'],

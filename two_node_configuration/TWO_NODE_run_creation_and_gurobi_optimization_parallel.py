@@ -887,15 +887,15 @@ if __name__ == "__main__":
     #  Define Parameters
     # =======================================================
     param_grid = {
-        "demand_level_ratio": [15],
-        "total_demand_TWh": [10],
-        "distance_between_nodes" : [450],
-        "import_availability_ratio": [0.4],
+        "demand_level_ratio": [2, 5, 10, 15, 20],
+        "total_demand_TWh": [2, 5, 10, 15, 20],
+        "distance_between_nodes": [50, 100, 200, 300, 400, 500],
+        "import_availability_ratio": [0.2, 0.3, 0.4, 0.5, 0.6],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
-        "electricity_price_avg": [100],
-        "electricity_availability_small": [150],
+        "electricity_price_avg": [30, 50, 100, 150, 200, 250],
+        "electricity_availability_small": [30, 50, 80, 100, 150, 200],
         "willingness_to_pay": [250],
-        "hydrogen_import_price": [200],
+        "hydrogen_import_price": [50, 100, 150, 200, 250, 300],
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
@@ -908,7 +908,7 @@ if __name__ == "__main__":
         "hydrogen_demand_big": [{
             "Large_cluster": {"Hydrogen use (TWh)": 15},
         }],
-        "mipgap": [0.01],
+        "mipgap": [0.0001],
         "time_limit": [50],
         # "threads" viene aggiunto dal runner
     }
@@ -921,7 +921,7 @@ if __name__ == "__main__":
     combinations = generate_parameter_combinations(
         param_grid,
         method='lhs',       # 'lhs' or 'full'
-        max_samples=2,    # Maximum number of samples
+        max_samples=1000,    # Maximum number of samples
         seed=42             # For reproducibility
     )
 

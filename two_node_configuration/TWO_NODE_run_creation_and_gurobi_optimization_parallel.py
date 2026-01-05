@@ -887,9 +887,9 @@ if __name__ == "__main__":
     #  Define Parameters
     # =======================================================
     param_grid = {
-        "demand_level_ratio": [2, 5, 10, 15, 20],
-        "total_demand_TWh": [2, 5, 10, 15, 20],
         "distance_between_nodes": [50, 100, 200, 300, 400, 500],
+        "total_demand_TWh": [2, 5, 10, 15, 20],
+        "demand_level_ratio": [2, 5, 10, 15, 20],
         "import_availability_ratio": [0.2, 0.3, 0.4, 0.5, 0.6],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
         "electricity_price_avg": [30, 50, 100, 150, 200, 250],

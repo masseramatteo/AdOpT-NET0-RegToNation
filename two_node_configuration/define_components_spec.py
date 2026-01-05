@@ -92,6 +92,7 @@ def define_hydrogen_storage(input_data_path):
 
         storage_data["size_min"] = 0
         storage_data["size_max"]  = 50
+        storage_data["Economics"]["unit_capex"] = 15000
 
         storage_data["Performance"]["allow_only_one_direction"] = 1
         storage_data["Performance"]["allow_only_one_direction_precise"] = 0
@@ -111,6 +112,7 @@ def define_hydrogen_storage(input_data_path):
 
         storage_data["size_min"] = 0
         storage_data["size_max"] = 500
+        storage_data["Economics"]["unit_capex"] = 35000
 
         storage_data["Performance"]["allow_only_one_direction"] = 1
         storage_data["Performance"]["allow_only_one_direction_precise"] = 0

@@ -921,7 +921,7 @@ if __name__ == "__main__":
     combinations = generate_parameter_combinations(
         param_grid,
         method='lhs',       # 'lhs' or 'full'
-        max_samples=1000,    # Maximum number of samples
+        max_samples=1,    # Maximum number of samples
         seed=42             # For reproducibility
     )
 

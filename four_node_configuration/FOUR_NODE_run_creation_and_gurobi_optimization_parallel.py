@@ -175,7 +175,7 @@ def solve_single_model(args):
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
         m = adopt.ModelHub()
-        m.read_data(input_data_path, start_period=0, end_period=8760)
+        m.read_data(input_data_path, start_period=0, end_period=1)
 
         # Solve
         m.quick_solve()

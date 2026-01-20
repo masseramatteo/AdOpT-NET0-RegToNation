@@ -883,7 +883,7 @@ if __name__ == "__main__":
     #  Define Parameters
     # =======================================================
     param_grid = {
-        "scenario":["000093"],
+        "scenario":["000094"],
         "total_demand_TWh": [2, 5, 10, 15, 20],
         "demand_level_ratio": [2, 5, 10, 15, 20],
         "import_availability_ratio": [0.2, 0.3, 0.4, 0.5, 0.6],

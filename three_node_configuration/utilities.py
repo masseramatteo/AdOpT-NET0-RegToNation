@@ -115,7 +115,7 @@ def define_nodes(input_data_path, params):
             json.dump(technologies, json_file, indent=4)
 
     # Add required technologies for BIG cluster nodes
-    big_nodes = ["Large_cluster1", "Large_cluster2"]
+    big_nodes = ["Large_cluster"]
     big_new_tech_list = params["big_cluster_new_technologies"]
     big_existing_tech_list = params["big_cluster_existing_technologies"]
 
@@ -141,7 +141,7 @@ def add_existing_distribution_network(input_data_path):
                 exist_ok=True)
 
     # Define node lists
-    big_nodes = ["Large_cluster1", "Large_cluster2"]
+    big_nodes = ["Large_cluster"]
     small_nodes = ["Small_cluster1", "Small_cluster2"]
     all_nodes = big_nodes + small_nodes
 
@@ -212,7 +212,7 @@ def add_existing_transmission_network(input_data_path):
                 exist_ok=True)
 
     # Define node lists
-    big_nodes = ["Large_cluster1", "Large_cluster2"]
+    big_nodes = ["Large_cluster"]
     small_nodes = ["Small_cluster1", "Small_cluster2"]
     all_nodes = big_nodes + small_nodes
 
@@ -221,9 +221,10 @@ def add_existing_transmission_network(input_data_path):
                              index_col=0)
 
     # Define existing connections for high pressure transmission network
-    # Connect big nodes to each other (backbone)
-    connection.loc["Large_cluster1", "Large_cluster2"] = 1
-    connection.loc["Large_cluster2", "Large_cluster1"] = 1
+    for i, node1 in enumerate(all_nodes):
+        for j, node2 in enumerate(all_nodes):
+            if i != j:
+                connection.loc[node1, node2] = 1
 
     connection.to_csv(
         input_data_path / "period1" / "network_topology" / "existing" / "hydrogenPipelineOnshore_highP" / "connection.csv",
@@ -244,9 +245,10 @@ def add_existing_transmission_network(input_data_path):
                        index_col=0)
 
     # Set existing sizes for high pressure connections (typically larger)
-    # Big to big backbone
-    size.loc["Large_cluster1", "Large_cluster2"] = 1000
-    size.loc["Large_cluster2", "Large_cluster1"] = 1000
+    for i, node1 in enumerate(all_nodes):
+        for j, node2 in enumerate(all_nodes):
+            if i != j:
+                size.loc[node1, node2] = 1000
 
     size.to_csv(
         input_data_path / "period1" / "network_topology" / "existing" / "hydrogenPipelineOnshore_highP" / "size.csv",
@@ -267,7 +269,7 @@ def add_new_distribution_network(input_data_path):
                 exist_ok=True)
 
     # Define node lists
-    big_nodes = ["Large_cluster1", "Large_cluster2"]
+    big_nodes = ["Large_cluster"]
     small_nodes = ["Small_cluster1", "Small_cluster2"]
     all_nodes = big_nodes + small_nodes
 
@@ -327,7 +329,7 @@ def add_new_transmission_network(input_data_path):
                 exist_ok=True)
 
     # Define node lists
-    big_nodes = ["Large_cluster1", "Large_cluster2"]
+    big_nodes = ["Large_cluster"]
     small_nodes = ["Small_cluster1", "Small_cluster2"]
     all_nodes = big_nodes + small_nodes
 

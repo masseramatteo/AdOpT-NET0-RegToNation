@@ -431,7 +431,7 @@ def add_new_transmission_network(input_data_path, scenario_to_use):
     print(f"✅ Transmission network created successfully\n")
 
 
-def add_new_network_H2(input_data_path, scenario_to_use):
+def add_new_network_H2(input_data_path):
     # Make a new folder for the new network
     os.makedirs(input_data_path / "period1" / "network_topology" / "new" / "hydrogenPipelineOnshore_lowP",
                 exist_ok=True)

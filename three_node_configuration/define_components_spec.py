@@ -54,7 +54,7 @@ def define_hydrogen_pipeline2(input_data_path):
     network_data["Economics"]["gamma4"] = 1700
 
     network_data["Performance"]["bidirectional_network"] = 1
-    network_data["Performance"]["bidirectional_network_precise"] = 1
+    network_data["Performance"]["bidirectional_network_precise"] = 0
 
     network_data["Performance"]["min_transport"] = 0
     network_data["Performance"]["loss"] = 0
@@ -75,7 +75,7 @@ def define_hydrogen_pipeline2(input_data_path):
     network_data["Economics"]["gamma4"] = 1000
 
     network_data["Performance"]["bidirectional_network"] = 1
-    network_data["Performance"]["bidirectional_network_precise"] = 1
+    network_data["Performance"]["bidirectional_network_precise"] = 0
 
     network_data["Performance"]["min_transport"] = 0
     network_data["Performance"]["loss"] = 0

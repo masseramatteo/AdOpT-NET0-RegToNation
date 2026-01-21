@@ -107,7 +107,7 @@ def define_excel_data(input_data_path, params):
     for node in node_big_cluster:
         file_path = input_data_path / f"data_network_{node}.xlsx"
 
-        hydrogen_use_TWh = hydrogen_data_big[node]["Hydrogen use (TWh)"]
+        hydrogen_use_TWh = hydrogen_data[node]
         average_MW = hydrogen_use_TWh * 1e6 / timesteps
 
         # seed = 42

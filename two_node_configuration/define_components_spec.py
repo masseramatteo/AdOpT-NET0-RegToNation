@@ -54,7 +54,7 @@ def define_hydrogen_pipeline2(input_data_path):
     network_data["Economics"]["gamma4"] = 1700
 
     network_data["Performance"]["bidirectional_network"] = 1
-    network_data["Performance"]["bidirectional_network_precise"] = 0
+    network_data["Performance"]["bidirectional_network_precise"] = 1
 
     network_data["Performance"]["min_transport"] = 0
     network_data["Performance"]["loss"] = 0
@@ -75,7 +75,7 @@ def define_hydrogen_pipeline2(input_data_path):
     network_data["Economics"]["gamma4"] = 1000
 
     network_data["Performance"]["bidirectional_network"] = 1
-    network_data["Performance"]["bidirectional_network_precise"] = 0
+    network_data["Performance"]["bidirectional_network_precise"] = 1
 
     network_data["Performance"]["min_transport"] = 0
     network_data["Performance"]["loss"] = 0
@@ -91,11 +91,17 @@ def define_hydrogen_storage(input_data_path):
             storage_data = json.load(json_file)
 
         storage_data["size_min"] = 0
-        storage_data["size_max"]  = 50
+        storage_data["size_max"] = 30
         storage_data["Economics"]["unit_capex"] = 15000
 
+        # storage_data["size_is_int"] = 1
+        # storage_data["size_max"] = 5
+        # storage_data["Economics"]["unit_capex"] = 450000
+        # storage_data["Performance"]["rated_power"] = 30
+
+
         storage_data["Performance"]["allow_only_one_direction"] = 1
-        storage_data["Performance"]["allow_only_one_direction_precise"] = 0
+        storage_data["Performance"]["allow_only_one_direction_precise"] = 1
         storage_data["Flexibility"]["charge_rate"] = 0.8
         storage_data["Flexibility"]["discharge_rate"] = 0.8
         storage_data["Performance"]["performance"]["eta_in"] = 0.95
@@ -111,11 +117,16 @@ def define_hydrogen_storage(input_data_path):
             storage_data = json.load(json_file)
 
         storage_data["size_min"] = 0
-        storage_data["size_max"] = 500
+        storage_data["size_max"] = 100
         storage_data["Economics"]["unit_capex"] = 35000
 
+        # storage_data["size_is_int"] = 1
+        # storage_data["size_max"] = 5
+        # storage_data["Economics"]["unit_capex"] = 3500000
+        # storage_data["Performance"]["rated_power"] = 100
+
         storage_data["Performance"]["allow_only_one_direction"] = 1
-        storage_data["Performance"]["allow_only_one_direction_precise"] = 0
+        storage_data["Performance"]["allow_only_one_direction_precise"] = 1
         storage_data["Flexibility"]["charge_rate"] = 0.9
         storage_data["Flexibility"]["discharge_rate"] = 0.9
         storage_data["Performance"]["performance"]["eta_in"] = 0.95

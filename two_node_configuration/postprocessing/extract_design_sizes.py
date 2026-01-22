@@ -254,7 +254,7 @@ def export_to_excel(df, output_path):
 
 if __name__ == "__main__":
     # Enter the path to your optimization folder
-    optimization_folder = r"C:\Users\Masse007\Documents\Code\AdOpT-NET0-RegToNation\two_node_configuration\results\parallel_creation_test_20251219_162930"
+    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\two_node_configuration\results\parallel_creation_test_20260106_112208"
 
     print("="*80)
     print("EXTRACTING OPTIMIZATION RESULTS")

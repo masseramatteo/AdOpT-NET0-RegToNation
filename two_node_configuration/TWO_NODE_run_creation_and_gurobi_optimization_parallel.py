@@ -892,8 +892,8 @@ if __name__ == "__main__":
         "demand_level_ratio": [2, 5, 10, 15, 20],
         "import_availability_ratio": [0.2, 0.3, 0.4, 0.5, 0.6],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
-        "electricity_price_avg": [30, 50, 100, 150, 200, 250],
-        "electricity_availability_small": [30, 50, 80, 100, 150, 200],
+        "electricity_price_avg": [30, 50, 100, 150, 200, 250, 300],
+        "electricity_availability_small": [30, 50, 80, 100, 150, 200, 350],
         "willingness_to_pay": [250],
         "hydrogen_import_price": [50, 100, 150, 200, 250, 300],
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
@@ -921,7 +921,7 @@ if __name__ == "__main__":
     combinations = generate_parameter_combinations(
         param_grid,
         method='lhs',       # 'lhs' or 'full'
-        max_samples=1,    # Maximum number of samples
+        max_samples=1500,    # Maximum number of samples
         seed=42             # For reproducibility
     )
 

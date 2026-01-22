@@ -1,6 +1,3 @@
-
-
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -13,7 +10,7 @@ import os
 
 # SETTINGS
 do_preprocessing = 1
-results_folder = r"C:\Users\Masse007\Documents\Code\AdOpT-NET0-RegToNation\two_node_configuration\results\parallel_creation_test_20251219_162930"
+results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\two_node_configuration\results\parallel_creation_test_20260106_112208"
 
 dependent_vars_selection = ["Electrolyzer_small_installed"]
 dependent_vars_size = ["Electrolyzer_small_size"]

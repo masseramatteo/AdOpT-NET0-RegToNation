@@ -271,7 +271,7 @@ class OptimizationRunner:
 
         # BIG nodes - hydrogen import availability
         for node in ["Large_cluster1", "Large_cluster2"]:
-            adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_limit,
+            adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_limit/2,
                                   columns=['Import limit'], carriers=['hydrogen'], nodes=[node])
             adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_price,
                                   columns=['Import price'], carriers=['hydrogen'], nodes=[node])

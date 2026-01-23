@@ -13,7 +13,8 @@ from utilities import (
     add_new_distribution_network,
     add_new_transmission_network,
     add_existing_distribution_network,
-    add_existing_transmission_network
+    add_existing_transmission_network,
+    tune_gurobi_model
 )
 from define_components_spec import (
     define_hydrogen_pipeline2,
@@ -175,7 +176,7 @@ def solve_single_model(args):
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
         m = adopt.ModelHub()
-        m.read_data(input_data_path, start_period=0, end_period=8760)
+        m.read_data(input_data_path, start_period=0, end_period=1)
 
         # Solve
         m.quick_solve()
@@ -882,8 +883,14 @@ if __name__ == "__main__":
     # =======================================================
     #  Define Parameters
     # =======================================================
-    param_grid = {
-        "scenario":["000267"],
+
+    # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
+    # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
+    all_scenarios = [f"{i:04d}" for i in range(1, 2)]
+
+    # OTHER PARAMETERS: These will be sampled using LHS
+    param_grid_for_sampling = {
+        "scenario": all_scenarios,  # Include in param_grid but handle separately
         "total_demand_TWh": [2, 5, 10, 15, 20],
         "demand_level_ratio": [2, 5, 10, 15, 20],
         "import_availability_ratio": [0.2, 0.3, 0.4],
@@ -903,21 +910,50 @@ if __name__ == "__main__":
         # "threads" viene aggiunto dal runner
     }
 
+    print(f"\n[INFO] Total scenarios: {len(all_scenarios)}")
+
     # ========================================================================
-    # CHOOSE SAMPLING METHOD
+    # SAMPLING METHOD
     # ========================================================================
-    # Option 1: Use Latin Hypercube Sampling (RECOMMENDED for large grids)
-    # Limits to max_samples (e.g., 100) using smart sampling
-    combinations = generate_parameter_combinations(
-        param_grid,
-        method='lhs',       # 'lhs' or 'full'
-        max_samples=3,    # Maximum number of samples
-        seed=42             # For reproducibility
+    # LHS is applied ONLY to non-scenario parameters
+    # Then each LHS sample is applied to EACH scenario
+    # Example: 100 scenarios × 5 LHS samples = 500 total runs
+
+    n_samples_per_scenario = 1  # Number of LHS samples per scenario (ADJUST THIS!)
+
+    print(f"\n[SAMPLING] Latin Hypercube Sampling on parameters (excluding scenarios)")
+    print(f"   LHS samples per scenario: {n_samples_per_scenario}")
+
+    # Separate scenario from other parameters for LHS
+    param_grid_without_scenario = {k: v for k, v in param_grid_for_sampling.items() if k != "scenario"}
+
+    # Generate LHS samples for non-scenario parameters
+    lhs_samples = generate_parameter_combinations(
+        param_grid_without_scenario,
+        method='lhs',
+        max_samples=n_samples_per_scenario,
+        seed=42
     )
 
-    # Option 2: Use full grid (all combinations)
-    # Uncomment this to use all possible combinations
-    # combinations = generate_parameter_combinations(param_grid, method='full')
+    # Combine: Each scenario gets ALL LHS samples
+    combinations = []
+    for scenario in all_scenarios:
+        for lhs_sample in lhs_samples:
+            combined = {"scenario": scenario}
+            combined.update(lhs_sample)
+            combinations.append(combined)
+
+    print(f"\n[INFO] Total runs to execute:")
+    print(f"   - Scenarios: {len(all_scenarios)}")
+    print(f"   - LHS samples per scenario: {len(lhs_samples)}")
+    print(f"   - TOTAL: {len(combinations)} runs ({len(all_scenarios)} × {len(lhs_samples)})")
+
+    # Full grid size (for comparison)
+    full_grid_size = 1
+    for values in param_grid_without_scenario.values():
+        full_grid_size *= len(values)
+    print(f"   - Full grid would be: {len(all_scenarios)} × {full_grid_size} = {len(all_scenarios) * full_grid_size} runs")
+    print(f"   - Reduction: {(1 - len(combinations)/(len(all_scenarios) * full_grid_size))*100:.1f}%")
 
     # Prepare run configs
     run_configs = [(f"parallel_run_{i:04d}", params) for i, params in enumerate(combinations, 1)]
@@ -927,6 +963,88 @@ if __name__ == "__main__":
     # Create timestamp for results folder
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     results_folder = base_path / "results" / f"parallel_creation_test_{timestamp}"
+
+    # ========================================================================
+    # OPTIONAL: GUROBI PARAMETER TUNING
+    # ========================================================================
+    # Uncomment the following section to run Gurobi tuning on a sample model
+    # before running the full optimization suite. This will help find optimal
+    # solver parameters for your specific problem.
+
+    ENABLE_TUNING = False  # Set to True to enable tuning
+
+    if ENABLE_TUNING:
+        print("\n" + "="*80)
+        print("GUROBI TUNING MODE")
+        print("="*80)
+        print("Creating a sample model for parameter tuning...")
+
+        # Create a sample model (first combination)
+        sample_run_id, sample_input, sample_results, sample_params, error = create_single_model(
+            (run_configs[0][0], run_configs[0][1], results_folder, base_path)
+        )
+
+        if error:
+            print(f"❌ Error creating sample model for tuning: {error}")
+        else:
+            print(f"✓ Sample model created: {sample_run_id}")
+            print("\nBuilding Gurobi model for tuning...")
+
+            try:
+                # Build the model using adopt ModelHub
+                import adopt_net0 as adopt
+                print("   Loading data...")
+                pyhub = adopt.ModelHub()
+                pyhub.read_data(Path(sample_input))
+
+                print("   Constructing optimization model...")
+                pyhub.construct_model()
+
+                print("   Getting solver instance...")
+                solver = pyhub.get_solver()
+
+                # Note: Direct Gurobi tuning from Pyomo model requires exporting
+                print("\n" + "="*80)
+                print("MODEL READY FOR TUNING")
+                print("="*80)
+                print("\nFor Gurobi parameter tuning, you have two options:")
+                print("\n1. MANUAL TUNING (Recommended):")
+                print(f"   a. Export the model to a file:")
+                print(f"      pyhub.model.write('model.lp')  # or .mps")
+                print(f"   b. Run Gurobi tuning tool:")
+                print(f"      gurobi_cl TuneTimeLimit=3600 model.lp")
+                print(f"   c. This creates tune0.prm, tune1.prm, etc.")
+                print("\n2. SOLVE ONE RUN FIRST:")
+                print("   Let the optimization run once, then analyze the solution")
+                print("   and adjust parameters in ConfigModel.json manually")
+                print("="*80 + "\n")
+
+                # Optionally export the model for tuning
+                export = input("Export model to .lp file for tuning? [y/N]: ")
+                if export.lower() == 'y':
+                    model_file = results_folder / "sample_model_for_tuning.lp"
+                    print(f"\nExporting model to: {model_file}")
+                    pyhub.model.write(str(model_file))
+                    print(f"✓ Model exported successfully")
+                    print(f"\nTo tune, run:")
+                    print(f"  cd {results_folder}")
+                    print(f"  gurobi_cl TuneTimeLimit=3600 sample_model_for_tuning.lp")
+                    print(f"\nThis will create tune0.prm with optimal parameters.")
+
+            except Exception as e:
+                print(f"❌ Error building model: {e}")
+                import traceback
+                traceback.print_exc()
+
+            # Ask if user wants to continue with optimization
+            response = input("\nContinue with full optimization? [y/N]: ")
+            if response.lower() != 'y':
+                print("Exiting. Set ENABLE_TUNING=False to skip tuning.")
+                exit(0)
+
+    # ========================================================================
+    # PARALLEL OPTIMIZATION
+    # ========================================================================
 
     # Create runner with explicit configuration
     # Option 1: Auto-detect everything (RECOMMENDED)

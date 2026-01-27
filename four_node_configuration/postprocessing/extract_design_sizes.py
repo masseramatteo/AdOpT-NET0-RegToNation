@@ -1,6 +1,15 @@
 import h5py
 import pandas as pd
 from pathlib import Path
+import sys
+import importlib.util
+
+# Import utilities from parent directory
+utilities_path = Path(__file__).parent.parent / "utilities.py"
+spec = importlib.util.spec_from_file_location("utilities", utilities_path)
+utilities = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(utilities)
+calculate_distance_between_coordinates = utilities.calculate_distance_between_coordinates
 
 
 def extract_optimization_results(h5_path):
@@ -23,23 +32,56 @@ def extract_optimization_results(h5_path):
     }
 
     with h5py.File(h5_path, 'r') as f:
-        # Extract network sizes
+        # Extract network sizes - individual arcs
         if 'design/networks/period1' in f:
             networks_group = f['design/networks/period1']
 
             for network_name in networks_group.keys():
-                network_arcs = {}
                 network_group = networks_group[network_name]
+
+                # Track processed pairs to avoid bidirectional duplicates
+                processed_pairs = set()
 
                 for arc_name in network_group.keys():
                     arc_group = network_group[arc_name]
                     if 'size' in arc_group:
                         size_value = arc_group['size'][()]
-                        network_arcs[arc_name] = size_value
 
-                results['networks'][network_name] = network_arcs
+                        # Parse arc name to identify nodes
+                        node1, node2 = None, None
+
+                        if '_to_' in arc_name:
+                            parts = arc_name.split('_to_')
+                            if len(parts) == 2:
+                                node1, node2 = parts[0], parts[1]
+                        else:
+                            # Format: "Large_cluster1Small_cluster2"
+                            known_nodes = ['Large_cluster1', 'Large_cluster2', 'Small_cluster1', 'Small_cluster2']
+                            for node in known_nodes:
+                                if arc_name.startswith(node):
+                                    node1 = node
+                                    remainder = arc_name[len(node):]
+                                    if remainder in known_nodes:
+                                        node2 = remainder
+                                        break
+
+                        if node1 and node2:
+                            # Create sorted pair to avoid duplicates
+                            node_pair = tuple(sorted([node1, node2]))
+                            pair_key = (node_pair, network_name)
+
+                            if pair_key not in processed_pairs:
+                                processed_pairs.add(pair_key)
+                                # Create standardized column name
+                                column_key = f'{node_pair[0]}_to_{node_pair[1]}_{network_name}'
+                                results['networks'][column_key] = size_value
+                        else:
+                            # Fallback: use arc name as-is
+                            column_key = f'{arc_name}_{network_name}'
+                            results['networks'][column_key] = size_value
 
         # Extract electrolyzer sizes
+        # ...existing code...
         if 'design/nodes/period1' in f:
             nodes_group = f['design/nodes/period1']
 
@@ -68,20 +110,30 @@ def extract_optimization_results(h5_path):
             for node_name in tech_op_group.keys():
                 node_group = tech_op_group[node_name]
 
+                # Track total hydrogen production per node
+                node_total_h2_production = 0
+
                 # Electrolyzer hydrogen output
                 for tech_name in node_group.keys():
                     if 'Electrolyzer' in tech_name:
                         tech_group = node_group[tech_name]
                         if 'hydrogen_output' in tech_group:
                             h2_output = tech_group['hydrogen_output'][()]
-                            results['operation'][f"{node_name}_{tech_name}_H2_output_sum"] = h2_output.sum()
+                            h2_output_sum = h2_output.sum()
+                            results['operation'][f"{node_name}_{tech_name}_H2_output_sum"] = h2_output_sum
+                            # Add to node total
+                            node_total_h2_production += h2_output_sum
 
-                    # Storage hydrogen input
-                    if 'Storage_H2' in tech_name:
+                    # Storage hydrogen input only
+                    if 'Storage' in tech_name:
                         tech_group = node_group[tech_name]
                         if 'hydrogen_input' in tech_group:
                             h2_input = tech_group['hydrogen_input'][()]
                             results['operation'][f"{node_name}_{tech_name}_H2_input_sum"] = h2_input.sum()
+
+                # Add total hydrogen production for this node
+                if node_total_h2_production > 0:
+                    results['operation'][f"{node_name}_TOTAL_H2_production"] = node_total_h2_production
 
         # Extract operational data - energy_balance
         if 'operation/energy_balance/period1' in f:
@@ -110,6 +162,51 @@ def extract_optimization_results(h5_path):
                         results['operation'][f"{node_name}_hydrogen_network_outflow_sum"] = outflow_data.sum()
 
     return results
+
+
+def extract_node_distances(input_data_path):
+    """
+    Extract distances between all node pairs from NodeLocations.csv.
+
+    Args:
+        input_data_path: Path to the input_data folder containing NodeLocations.csv
+
+    Returns:
+        Dictionary with distance values for each node pair
+    """
+    node_locations_file = input_data_path / "NodeLocations.csv"
+
+    if not node_locations_file.exists():
+        return {}
+
+    # Read node locations
+    node_locations = pd.read_csv(node_locations_file, sep=';')
+
+    # Create coordinate dictionary
+    coords = {}
+    for _, row in node_locations.iterrows():
+        node_name = row['index']
+        coords[node_name] = (row['lon'], row['lat'])
+
+    # Calculate distances between all node pairs
+    distances = {}
+    nodes = list(coords.keys())
+
+    for i, node1 in enumerate(nodes):
+        for j, node2 in enumerate(nodes):
+            if i < j:  # Only calculate once for each pair (avoid duplicates)
+                lon1, lat1 = coords[node1]
+                lon2, lat2 = coords[node2]
+
+                # Calculate distance using Haversine formula from utilities
+                distance_km = calculate_distance_between_coordinates(lon1, lat1, lon2, lat2)
+
+                # Create sorted pair key for consistency
+                node_pair = tuple(sorted([node1, node2]))
+                distance_key = f"distance_{node_pair[0]}_to_{node_pair[1]}_km"
+                distances[distance_key] = round(distance_km, 1)
+
+    return distances
 
 
 def extract_all_runs(optimization_folder):
@@ -155,6 +252,15 @@ def extract_all_runs(optimization_folder):
         if h5_file.exists():
             print(f"✓ Processing {run_folder.name}")
             results = extract_optimization_results(h5_file)
+
+            # Extract node distances from input_data folder
+            input_data_path = run_folder / "input_data"
+            if input_data_path.exists():
+                distances = extract_node_distances(input_data_path)
+                results['distances'] = distances
+            else:
+                results['distances'] = {}
+
             all_results[run_folder.name] = results
         else:
             print(f"⚠️  Skipping {run_folder.name}: h5 file not found")
@@ -174,22 +280,17 @@ def create_summary_dataframe(all_results):
     """
     summary_data = []
 
-    for run_name, run_results in all_results.items():
+    for run_idx, (run_name, run_results) in enumerate(all_results.items()):
         row = {'run': run_name}
 
-        # Extract network sizes (verify bidirectional arcs have same size)
-        for network_name, arcs in run_results['networks'].items():
-            arc_sizes = list(arcs.values())
+        # Assign archetype based on run index
+        # Every 300 simulations = 1 archetype (10 cases * 30 simulations)
+        archetype_number = (run_idx // 300) + 1
+        row['archetype'] = f'Archetype_{archetype_number}'
 
-            # Verify all arcs have the same size
-            if len(arc_sizes) > 0:
-                if len(set(arc_sizes)) > 1:
-                    print(f"⚠️  Warning in {run_name}: {network_name} has different arc sizes: {arc_sizes}")
-
-                # Use the first arc size (they should be equal)
-                row[network_name] = arc_sizes[0]
-            else:
-                row[network_name] = 0.0
+        # Extract network sizes - now individual arcs
+        for network_column, size in run_results['networks'].items():
+            row[network_column] = size
 
         # Extract electrolyzer sizes
         for electrolyzer_name, size in run_results['electrolyzers'].items():
@@ -203,37 +304,96 @@ def create_summary_dataframe(all_results):
         for op_name, value in run_results['operation'].items():
             row[op_name] = value
 
+        # Extract distances
+        for distance_name, value in run_results.get('distances', {}).items():
+            row[distance_name] = value
+
         summary_data.append(row)
 
     df = pd.DataFrame(summary_data)
 
     # Reorder columns for clarity
-    base_columns = ['run']
-    network_columns = ['hydrogenPipelineOnshore_highP', 'hydrogenPipelineOnshore_lowP']
-    electrolyzer_columns = ['Large_cluster_Electrolyzer_big', 'Small_cluster_Electrolyzer_small']
-    storage_columns = ['Large_cluster_Storage_H2_highP', 'Small_cluster_Storage_H2_lowP']
+    base_columns = ['run', 'archetype']
 
-    # Operational columns
+    # Electrolyzer columns for all 4 nodes
+    # ...existing code...
+    electrolyzer_columns = [
+        'Large_cluster1_Electrolyzer_big',
+        'Large_cluster2_Electrolyzer_big',
+        'Small_cluster1_Electrolyzer_small',
+        'Small_cluster2_Electrolyzer_small'
+    ]
+
+    # Storage columns for all 4 nodes
+    storage_columns = [
+        'Large_cluster1_Storage_H2_highP',
+        'Large_cluster1_Storage_H2_Cavern',
+        'Large_cluster1_Storage_H2_Cavern_existing',
+        'Large_cluster2_Storage_H2_highP',
+        'Large_cluster2_Storage_H2_Cavern',
+        'Small_cluster1_Storage_H2_lowP',
+        'Small_cluster2_Storage_H2_lowP'
+    ]
+
+    # Operational columns - Electrolyzer H2 output for all 4 nodes
     electrolyzer_op_columns = [
-        'Large_cluster_Electrolyzer_big_H2_output_sum',
-        'Small_cluster_Electrolyzer_small_H2_output_sum'
+        'Large_cluster1_Electrolyzer_big_H2_output_sum',
+        'Large_cluster2_Electrolyzer_big_H2_output_sum',
+        'Small_cluster1_Electrolyzer_small_H2_output_sum',
+        'Small_cluster2_Electrolyzer_small_H2_output_sum'
     ]
+
+    # Total H2 production per node
+    node_total_h2_columns = [
+        'Large_cluster1_TOTAL_H2_production',
+        'Large_cluster2_TOTAL_H2_production',
+        'Small_cluster1_TOTAL_H2_production',
+        'Small_cluster2_TOTAL_H2_production'
+    ]
+
+    # Storage H2 input only for all storage types
     storage_op_columns = [
-        'Large_cluster_Storage_H2_highP_H2_input_sum',
-        'Small_cluster_Storage_H2_lowP_H2_input_sum'
+        # Large_cluster1 - H2 input
+        'Large_cluster1_Storage_H2_highP_H2_input_sum',
+        'Large_cluster1_Storage_H2_Cavern_H2_input_sum',
+        'Large_cluster1_Storage_H2_Cavern_existing_H2_input_sum',
+        # Large_cluster2 - H2 input
+        'Large_cluster2_Storage_H2_highP_H2_input_sum',
+        'Large_cluster2_Storage_H2_Cavern_H2_input_sum',
+        # Small clusters - H2 input
+        'Small_cluster1_Storage_H2_lowP_H2_input_sum',
+        'Small_cluster2_Storage_H2_lowP_H2_input_sum'
     ]
+
+    # Energy balance for all 4 nodes
     energy_balance_columns = [
-        'Large_cluster_hydrogen_import_sum',
-        'Large_cluster_hydrogen_network_inflow_sum',
-        'Large_cluster_hydrogen_network_outflow_sum',
-        'Small_cluster_hydrogen_network_inflow_sum',
-        'Small_cluster_hydrogen_network_outflow_sum'
+        'Large_cluster1_hydrogen_import_sum',
+        'Large_cluster1_hydrogen_network_inflow_sum',
+        'Large_cluster1_hydrogen_network_outflow_sum',
+        'Large_cluster2_hydrogen_import_sum',
+        'Large_cluster2_hydrogen_network_inflow_sum',
+        'Large_cluster2_hydrogen_network_outflow_sum',
+        'Small_cluster1_hydrogen_network_inflow_sum',
+        'Small_cluster1_hydrogen_network_outflow_sum',
+        'Small_cluster2_hydrogen_network_inflow_sum',
+        'Small_cluster2_hydrogen_network_outflow_sum'
     ]
+
+    # Network arc columns - dynamically get all network columns
+    # These are in format: Node1_to_Node2_NetworkType
+    network_arc_columns = [col for col in df.columns
+                          if col not in base_columns + electrolyzer_columns + storage_columns +
+                          electrolyzer_op_columns + node_total_h2_columns + storage_op_columns + energy_balance_columns
+                          and '_to_' in col and col.endswith(('highP', 'lowP', 'Onshore', 'Offshore'))]
+
+    # Distance columns - dynamically get all distance columns
+    # These are in format: distance_Node1_to_Node2_km
+    distance_columns = [col for col in df.columns if col.startswith('distance_') and col.endswith('_km')]
 
     # Only include columns that exist
-    all_ordered_columns = (base_columns + network_columns + electrolyzer_columns +
-                          storage_columns + electrolyzer_op_columns + storage_op_columns +
-                          energy_balance_columns)
+    all_ordered_columns = (base_columns + distance_columns + electrolyzer_columns + storage_columns +
+                          electrolyzer_op_columns + node_total_h2_columns + storage_op_columns +
+                          energy_balance_columns + network_arc_columns)
     ordered_columns = [col for col in all_ordered_columns if col in df.columns]
 
     return df[ordered_columns]
@@ -254,7 +414,7 @@ def export_to_excel(df, output_path):
 
 if __name__ == "__main__":
     # Enter the path to your optimization folder
-    optimization_folder = r"C:\Users\Masse007\Documents\Code\AdOpT-NET0-RegToNation\two_node_configuration\results\parallel_creation_test_20251219_162930"
+    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260126_102914"
 
     print("="*80)
     print("EXTRACTING OPTIMIZATION RESULTS")

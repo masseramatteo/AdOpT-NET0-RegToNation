@@ -16,11 +16,11 @@ def define_excel_data(input_data_path, params):
     small_demand = total_demand / (1 + ratio)
     large_demand = total_demand - small_demand
 
-    # Large: equally divided
-    large_demand1 = large_demand/2
+    # Large: 2/3 and 1/3
+    large_demand1 = 2 * large_demand/3
     large_demand2 = large_demand - large_demand1
 
-    # SMALL: equally divided
+    # SMALL: 1/2 and 1/2
     small_demand1 = small_demand/2
     small_demand2 = small_demand - small_demand1
 
@@ -87,7 +87,7 @@ def define_excel_data(input_data_path, params):
         # hydrogen_profile = average_MW + fluctuation
 
         # Apply Other fluctuation factors
-        hydrogen_profile = average_MW #* Other_fluct_factors
+        hydrogen_profile = average_MW * Other_fluct_factors
 
         # #  to keep lower than capacity
         # scale_factor = capacity_MW / hydrogen_profile.max()
@@ -121,7 +121,7 @@ def define_excel_data(input_data_path, params):
         # hydrogen_profile = average_MW + fluctuation
 
         # Apply Chemicals fluctuation factors
-        hydrogen_profile = average_MW #* Chemicals_fluct_factors
+        hydrogen_profile = average_MW * Chemicals_fluct_factors
 
         df = pd.DataFrame({
             'Hydrogen': hydrogen_profile,

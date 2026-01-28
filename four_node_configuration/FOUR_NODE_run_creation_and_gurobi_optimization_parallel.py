@@ -176,7 +176,7 @@ def solve_single_model(args):
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
         m = adopt.ModelHub()
-        m.read_data(input_data_path, start_period=0, end_period=1)
+        m.read_data(input_data_path, start_period=0, end_period=8760)
 
         # Solve
         m.quick_solve()
@@ -886,25 +886,29 @@ if __name__ == "__main__":
 
     # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
     # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
-    all_scenarios = [f"{i:04d}" for i in range(1, 2)]
+    all_scenarios = [f"{i:04d}" for i in range(1, 41)]
 
     # OTHER PARAMETERS: These will be sampled using LHS
     param_grid_for_sampling = {
         "scenario": all_scenarios,  # Include in param_grid but handle separately
-        "total_demand_TWh": [2, 5, 10, 15, 20],
-        "demand_level_ratio": [2, 5, 10, 15, 20],
-        "import_availability_ratio": [0.2, 0.3, 0.4],
+        "total_demand_TWh": [5, 10, 15, 20],
+        "demand_level_ratio": [5, 10, 15, 20],
+        "import_availability_ratio": [0.2, 0.3, 0.4, 0.6],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
-        "electricity_price_avg": [50, 100, 150],
-        "electricity_availability_small": [30, 50, 80, 100],
+        "electricity_price_avg": [20, 50, 100, 150, 250],
+        "electricity_availability_small": [30, 50, 100],
         "willingness_to_pay": [250],
-        "hydrogen_import_price": [200, 250, 300],
+        "hydrogen_import_price": [150, 200, 250, 300],
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
+        # "small_cluster_new_technologies": [["Electrolyzer_small"]],
+        # "big_cluster_new_technologies": [["Electrolyzer_big"]],
         "small_cluster_existing_technologies": [{}],
         "big_cluster_existing_technologies": [{"Storage_H2_Cavern": 10000}],
+        # "big_cluster_existing_technologies": [{}],
+
         "mipgap": [0.0001],
         "time_limit": [50],
         # "threads" viene aggiunto dal runner
@@ -919,7 +923,7 @@ if __name__ == "__main__":
     # Then each LHS sample is applied to EACH scenario
     # Example: 100 scenarios × 5 LHS samples = 500 total runs
 
-    n_samples_per_scenario = 1  # Number of LHS samples per scenario (ADJUST THIS!)
+    n_samples_per_scenario = 30  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Latin Hypercube Sampling on parameters (excluding scenarios)")
     print(f"   LHS samples per scenario: {n_samples_per_scenario}")

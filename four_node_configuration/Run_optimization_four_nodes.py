@@ -161,15 +161,15 @@ class OptimizationRunner:
             configuration = json.load(f)
 
         # Set time aggregation settings:
-        configuration["optimization"]["typicaldays"]["N"]["value"] = 0
+        configuration["optimization"]["typicaldays"]["N"]["value"] = 8
         configuration["optimization"]["typicaldays"]["method"]["value"] = 1
         # Set MILP gap
         configuration["solveroptions"]["mipgap"]["value"] = 0.0001
-        configuration["solveroptions"]["mipfocus"]["value"] = 1
+        configuration["solveroptions"]["mipfocus"]["value"] = 2
         #configuration["solveroptions"]["presolve"]["value"] = -1
         configuration["solveroptions"]["presolve"]["value"] = 2
         configuration["solveroptions"]["heuristics"]["value"] = 0.05
-        configuration["solveroptions"]["cuts"]["value"] = -1
+        configuration["solveroptions"]["cuts"]["value"] = 2
         #configuration["solveroptions"]["lpwarmstart"]["value"] = -1
         configuration["solveroptions"]["NoRelHeurTime"] = 0
         configuration["solveroptions"]["timelim"]["value"] = 50

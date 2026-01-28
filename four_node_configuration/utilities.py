@@ -115,11 +115,12 @@ def define_nodes(input_data_path, params):
             json.dump(technologies, json_file, indent=4)
 
     # Add required technologies for BIG cluster nodes
-    big_nodes = ["Large_cluster1", "Large_cluster2"]
+    big_nodes1 = ["Large_cluster1"]
+    big_nodes2 = ["Large_cluster2"]
     big_new_tech_list = params["big_cluster_new_technologies"]
     big_existing_tech_list = params["big_cluster_existing_technologies"]
 
-    for node in big_nodes:
+    for node in big_nodes1:
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "r") as json_file:
             technologies = json.load(json_file)
 
@@ -128,6 +129,18 @@ def define_nodes(input_data_path, params):
 
         with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "w") as json_file:
             json.dump(technologies, json_file, indent=4)
+
+    for node in big_nodes2:
+        with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "r") as json_file:
+            technologies = json.load(json_file)
+
+        technologies["new"] = big_new_tech_list
+        technologies["existing"] = {}
+
+        with open(input_data_path / "period1" / "node_data" / node / "Technologies.json", "w") as json_file:
+            json.dump(technologies, json_file, indent=4)
+
+
 
 def add_existing_distribution_network(input_data_path):
     """
@@ -372,6 +385,73 @@ def add_new_transmission_network(input_data_path):
         sep=";")
     print(f"  ✓ Distance matrix saved")
     print(f"✅ Transmission network created successfully\n")
+
+def tune_gurobi_model(model, output_dir, time_limit=-1, trials_per_setting=3):
+    """
+    Tunes a Gurobi model with basic settings to find optimal solver parameters.
+    Parameter sets that Gurobi sees as an improvement are saved to tune0.prm, tune1.prm, etc.
+    Parameter sets are stored in order of decreasing quality, with parameter set 0 being the best.
+
+    Args:
+        model: an instance of a Gurobi model (pyomo model with embedded Gurobi)
+        output_dir: directory where to save tuning results (.prm files)
+        time_limit: total number of seconds to spend tuning. Default of -1 will
+                   choose a time limit automatically based on model size.
+        trials_per_setting: number of trials to use per parameter set to reduce
+                          the effects of randomness. Default is 3.
+
+    Returns:
+        Number of tuning results found
+    """
+    print("\n" + "="*80)
+    print("GUROBI MODEL TUNING")
+    print("="*80)
+    print(f"Time limit: {time_limit}s (-1 = automatic)")
+    print(f"Trials per setting: {trials_per_setting}")
+    print(f"Output directory: {output_dir}")
+    print("="*80 + "\n")
+
+    # Create output directory if it doesn't exist
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    # Set tuning parameters
+    model.setParam('TuneTimeLimit', time_limit)
+    model.setParam('TuneTrials', trials_per_setting)
+    model.update()
+
+    print("Starting tuning process...")
+    print("(This may take a while depending on model size and time limit)\n")
+
+    # Run tuning
+    model.tune()
+
+    # Get number of tuning results
+    result_count = model.tuneResultCount
+
+    print(f"\n✓ Tuning complete!")
+    print(f"Found {result_count} improved parameter set(s)\n")
+
+    if result_count == 0:
+        print("⚠️  No improved parameter sets found.")
+        print("The default parameters may already be optimal for this model.")
+        return 0
+
+    # Save each tuning result
+    print("Saving tuning results:")
+    for i in range(result_count):
+        model.getTuneResult(i)
+        param_file = output_path / f'tune{i}.prm'
+        model.write(str(param_file))
+        print(f"  [{i}] Saved to: {param_file}")
+
+    print(f"\n✅ Best parameter set saved as: {output_path / 'tune0.prm'}")
+    print("\nTo use the best parameters in future runs:")
+    print("  1. Copy tune0.prm to your input data folder")
+    print("  2. Load it before optimization with: model.read('tune0.prm')")
+    print("="*80 + "\n")
+
+    return result_count
 
 
 def tune_gurobi_model(model, output_dir, time_limit=-1, trials_per_setting=3):

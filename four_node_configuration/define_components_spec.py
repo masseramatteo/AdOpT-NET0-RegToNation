@@ -125,7 +125,7 @@ def define_hydrogen_storage(input_data_path):
                   "w") as json_file:
             json.dump(storage_data, json_file, indent=4)
 
-        with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Storage_H2_Cavern.json",
+        with open(input_data_path / "period1" / "node_data" / "Large_cluster1" / "technology_data" / "Storage_H2_Cavern.json",
                   "r") as json_file:
             storage_data = json.load(json_file)
 
@@ -136,7 +136,7 @@ def define_hydrogen_storage(input_data_path):
         storage_data["Performance"]["performance"]["eta_in"] = 0.95
         storage_data["Performance"]["performance"]["eta_out"] = 0.95
 
-        with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Storage_H2_Cavern.json",
+        with open(input_data_path / "period1" / "node_data" / "Large_cluster1" / "technology_data" / "Storage_H2_Cavern.json",
                   "w") as json_file:
             json.dump(storage_data, json_file, indent=4)
 

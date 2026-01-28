@@ -893,6 +893,7 @@ if __name__ == "__main__":
         "scenario": all_scenarios,  # Include in param_grid but handle separately
         "total_demand_TWh": [5, 10, 15, 20],
         "demand_level_ratio": [5, 10, 15, 20],
+        "unbalance_ratio": [1, 2, 4], # how large clusters are unbalanced demand large1/demand large2
         "import_availability_ratio": [0.2, 0.3, 0.4, 0.6],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
         "electricity_price_avg": [20, 50, 100, 150, 250],

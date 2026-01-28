@@ -30,7 +30,8 @@ class OptimizationRunner:
         self.wtp = None
         self.electricity_average_price = None
         self.electricity_availability_small = None
-        self.h2_import_limit = None
+        self.h2_import_limit_1 = None
+        self.h2_import_limit_2 = None
         self.h2_import_price = None
 
     def run_optimization(self, run_id, params, results_base_folder):
@@ -65,7 +66,8 @@ class OptimizationRunner:
         # Calcola parametri derivati
         derived_params = self._calculate_derived_parameters(params)
         params.update(derived_params)
-        self.h2_import_limit = params["h2_import_limit"]
+        self.h2_import_limit_1 = params["h2_import_limit1"]
+        self.h2_import_limit_2 = params["h2_import_limit2"]
         self.h2_import_price = params["hydrogen_import_price"]
 
         # Configure model
@@ -271,7 +273,17 @@ class OptimizationRunner:
 
         # BIG nodes - hydrogen import availability
         for node in ["Large_cluster1", "Large_cluster2"]:
-            adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_limit/2,
+            adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_limit_1,
+                                  columns=['Import limit'], carriers=['hydrogen'], nodes=[node])
+            adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_price,
+                                  columns=['Import price'], carriers=['hydrogen'], nodes=[node])
+            adopt.fill_carrier_data(input_data_path, value_or_data=6000,  # BIG nodes have 2000 MW
+                                  columns=['Import limit'], carriers=['electricity'], nodes=[node])
+            # Use dynamic electricity prices for BIG nodes too
+            adopt.fill_carrier_data(input_data_path, value_or_data=self.electricity_average_price, columns=['Import price'],
+                                    carriers=['electricity'], nodes=[node])
+        for node in ["Large_cluster2"]:
+            adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_limit_2,
                                   columns=['Import limit'], carriers=['hydrogen'], nodes=[node])
             adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_price,
                                   columns=['Import price'], carriers=['hydrogen'], nodes=[node])
@@ -287,17 +299,21 @@ class OptimizationRunner:
         total_demand = params["total_demand_TWh"]
         import_availability = params["import_availability_ratio"]
         el_price = params["electricity_price_avg"]
+        unbalance = params["unbalance_ratio"]
 
         # H2 import limit (MW) based on total demand and availability
         # Total demand in MW medio = TWh * 1e6 / 8760
         average_demand_MW = total_demand * 1e6 / 8760
         h2_import_limit = average_demand_MW * import_availability
+        h2_import_limit_2 = h2_import_limit / (unbalance +1 )
+        h2_import_limit_1 = h2_import_limit - h2_import_limit_2
 
         # H2 import price: electricity price * ratio
         h2_import_price = params["hydrogen_import_price"]
 
         return {
-            "h2_import_limit": h2_import_limit,
+            "h2_import_limit1": h2_import_limit_1,
+            "h2_import_limit2": h2_import_limit_2,
             "hydrogen_import_price": h2_import_price,
             "el_import_limit": params["electricity_availability_small"]
         }

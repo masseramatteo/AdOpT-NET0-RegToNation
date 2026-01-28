@@ -12,13 +12,14 @@ def define_excel_data(input_data_path, params):
 
     total_demand = params["total_demand_TWh"]
     ratio = params["demand_level_ratio"]
+    unbalance = params["unbalance_ratio"]
 
     small_demand = total_demand / (1 + ratio)
     large_demand = total_demand - small_demand
 
-    # Large: 2/3 and 1/3
-    large_demand1 = 2 * large_demand/3
-    large_demand2 = large_demand - large_demand1
+    # Split large demand based on unbalance ratio (large_demand1 / large_demand2 = unbalance)
+    large_demand2 = large_demand / (unbalance + 1)
+    large_demand1 = large_demand - large_demand2
 
     # SMALL: 1/2 and 1/2
     small_demand1 = small_demand/2

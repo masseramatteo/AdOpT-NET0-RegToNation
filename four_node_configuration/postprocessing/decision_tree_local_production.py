@@ -13,12 +13,14 @@ import os
 
 # SETTINGS
 do_preprocessing = 1
-results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260126_102914"
+results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260130_094107"
 
 # ============================================================================
 # FEATURE SELECTION SWITCHES - Set to True/False to include/exclude features
 # ============================================================================
 INCLUDE_ARCHETYPE = False  # Set to False to exclude archetype from analysis
+INCLUDE_DISTANCES = True   # Set to False to exclude all distances from analysis
+ANALYZE_BY_ARCHETYPE = False  # Set to True to create separate decision trees for each archetype (1, 2, 3, 4)
 
 # Dependent variables for 4-node configuration
 dependent_vars_selection = ["Electrolyzer_small1_installed", "Electrolyzer_small2_installed"]
@@ -36,16 +38,19 @@ independent_vars = []
 if INCLUDE_ARCHETYPE:
     independent_vars.append("archetype")
 
-# Add all other features
+# Add distances if enabled (using simplified distance features)
+if INCLUDE_DISTANCES:
+    independent_vars.extend([
+        "distance_from_large_cluster",  # Average distance from small clusters to nearest large
+        "distance_Small_cluster1_to_Small_cluster2_km"  # Distance between the two small clusters
+    ])
+
+# Add all other features (economic and system parameters)
 independent_vars.extend([
-    "distance_Large_cluster1_to_Small_cluster1_km",
-    "distance_Large_cluster1_to_Small_cluster2_km",
-    "distance_Large_cluster2_to_Small_cluster1_km",
-    "distance_Large_cluster2_to_Small_cluster2_km",
-    "distance_Small_cluster1_to_Small_cluster2_km",
-    "distance_Large_cluster1_to_Large_cluster2_km",
     "total_demand_TWh",
     "demand_level_ratio",
+    "unbalance_ratio",
+    "electricity_availability_small",
     "import_availability_ratio",
     "electricity_price_avg",
     "hydrogen_import_price"
@@ -54,6 +59,7 @@ independent_vars.extend([
 print(f"\n{'='*80}")
 print(f"FEATURE CONFIGURATION:")
 print(f"  - Include Archetype: {INCLUDE_ARCHETYPE}")
+print(f"  - Include Distances: {INCLUDE_DISTANCES}")
 print(f"  - Total features: {len(independent_vars)}")
 print(f"{'='*80}\n")
 
@@ -75,6 +81,40 @@ print(f"Loaded {len(df_extracted)} runs from extracted_results.xlsx")
 # Merge the two dataframes on 'run_id' and 'run'
 df_merged = pd.merge(df_summary, df_extracted, left_on='run_id', right_on='run', how='inner')
 print(f"Merged data: {len(df_merged)} runs")
+
+# =============================================================================
+# Create derived distance variables
+# =============================================================================
+print("\nCalculating distance to nearest large cluster for each small cluster...")
+
+# For each small cluster, calculate the minimum distance to the nearest large cluster
+df_merged['Small_cluster1_to_nearest_Large'] = df_merged[[
+    'distance_Large_cluster1_to_Small_cluster1_km',
+    'distance_Large_cluster2_to_Small_cluster1_km'
+]].min(axis=1)
+
+df_merged['Small_cluster2_to_nearest_Large'] = df_merged[[
+    'distance_Large_cluster1_to_Small_cluster2_km',
+    'distance_Large_cluster2_to_Small_cluster2_km'
+]].min(axis=1)
+
+# Calculate average distance from small clusters to nearest large cluster
+df_merged['distance_from_large_cluster'] = (df_merged['Small_cluster1_to_nearest_Large'] +
+                                              df_merged['Small_cluster2_to_nearest_Large']) / 2
+
+print(f"\nDistance statistics:")
+print(f"  Small_cluster1 to nearest Large: mean = {df_merged['Small_cluster1_to_nearest_Large'].mean():.2f} km, "
+      f"min = {df_merged['Small_cluster1_to_nearest_Large'].min():.2f} km, "
+      f"max = {df_merged['Small_cluster1_to_nearest_Large'].max():.2f} km")
+print(f"  Small_cluster2 to nearest Large: mean = {df_merged['Small_cluster2_to_nearest_Large'].mean():.2f} km, "
+      f"min = {df_merged['Small_cluster2_to_nearest_Large'].min():.2f} km, "
+      f"max = {df_merged['Small_cluster2_to_nearest_Large'].max():.2f} km")
+print(f"  Average distance from Large clusters: mean = {df_merged['distance_from_large_cluster'].mean():.2f} km, "
+      f"min = {df_merged['distance_from_large_cluster'].min():.2f} km, "
+      f"max = {df_merged['distance_from_large_cluster'].max():.2f} km")
+print(f"  Distance between Small clusters: mean = {df_merged['distance_Small_cluster1_to_Small_cluster2_km'].mean():.2f} km, "
+      f"min = {df_merged['distance_Small_cluster1_to_Small_cluster2_km'].min():.2f} km, "
+      f"max = {df_merged['distance_Small_cluster1_to_Small_cluster2_km'].max():.2f} km")
 
 # =============================================================================
 # Create dependent variables
@@ -251,6 +291,56 @@ else:
                                                       test_size=0.1,
                                                       random_state=42)
 
+# =============================================================================
+# Archetype-specific analysis setup
+# =============================================================================
+# Create list of datasets to analyze: always include combined, optionally add archetype-specific
+datasets_to_analyze = [
+    ('combined', data_train, data_test, results_folder)
+]
+
+if ANALYZE_BY_ARCHETYPE and 'archetype' in data_preprocessed["cap"].columns:
+    print("\n" + "="*80)
+    print("ARCHETYPE-SPECIFIC ANALYSIS ENABLED")
+    print("="*80)
+    print("Will create separate decision trees for each archetype in addition to combined analysis...")
+
+    archetypes = sorted(data_preprocessed["cap"]['archetype'].unique())
+    print(f"Found {len(archetypes)} archetypes: {archetypes}")
+
+    # Create datasets for each archetype
+    archetype_data = {}
+    for arch in archetypes:
+        arch_mask_train = data_train['archetype'] == arch
+        arch_mask_test = data_test['archetype'] == arch
+
+        arch_results_folder = os.path.join(results_folder, f"archetype_{arch}")
+        os.makedirs(arch_results_folder, exist_ok=True)
+
+        archetype_data[arch] = {
+            'train': data_train[arch_mask_train].copy(),
+            'test': data_test[arch_mask_test].copy(),
+            'results_folder': arch_results_folder
+        }
+
+        print(f"\nArchetype {arch}:")
+        print(f"  Training: {len(archetype_data[arch]['train'])} runs")
+        print(f"  Testing: {len(archetype_data[arch]['test'])} runs")
+        print(f"  Results folder: {arch_results_folder}")
+
+        # Add to datasets to analyze
+        datasets_to_analyze.append((
+            f'archetype_{arch}',
+            archetype_data[arch]['train'],
+            archetype_data[arch]['test'],
+            arch_results_folder
+        ))
+else:
+    print("\n" + "="*80)
+    print("ARCHETYPE-SPECIFIC ANALYSIS DISABLED")
+    print("Only combined analysis will be performed")
+    print("="*80)
+
 # Decision tree for local hydrogen production in small cluster
 
 def _select_existing_columns(df, cols: List[str]):
@@ -261,13 +351,31 @@ def _select_existing_columns(df, cols: List[str]):
     return existing
 
 
-# Prepare feature matrix with processed independent variables
-X_cols = _select_existing_columns(data_train, data_preprocessed["independent_vars"])
-X_train = data_train[X_cols].fillna(0)
-X_test = data_test[X_cols].fillna(0)
+# =============================================================================
+# MAIN ANALYSIS LOOP - Process each dataset (combined + archetype-specific)
+# =============================================================================
+for dataset_name, data_train, data_test, current_results_folder in datasets_to_analyze:
 
-print(f"\nUsing {len(X_cols)} features: {X_cols}")
-print(f"Training set size: {len(X_train)}, Test set size: {len(X_test)}")
+    print("\n" + "="*80)
+    print("="*80)
+    print(f"ANALYZING DATASET: {dataset_name.upper()}")
+    print("="*80)
+    print("="*80)
+
+    if len(data_train) == 0 or len(data_test) == 0:
+        print(f"\nWARNING: Skipping {dataset_name} - insufficient data")
+        print(f"  Training samples: {len(data_train)}, Test samples: {len(data_test)}")
+        continue
+
+    # Prepare feature matrix with processed independent variables
+    X_cols = _select_existing_columns(data_train, data_preprocessed["independent_vars"])
+    X_train = data_train[X_cols].fillna(0)
+    X_test = data_test[X_cols].fillna(0)
+
+    print(f"\nDataset: {dataset_name}")
+    print(f"Using {len(X_cols)} features: {X_cols}")
+    print(f"Training set size: {len(X_train)}, Test set size: {len(X_test)}")
+    print(f"Results will be saved to: {current_results_folder}")
 
 # =============================================================================
 # 1) DECISION TREE: Electrolyzer Installation in Small_cluster1
@@ -317,7 +425,7 @@ plot_tree(clf_install, feature_names=X_cols,
          filled=True, rounded=True, fontsize=13)
 plt.title("Decision Tree - Electrolyzer Installation in Small Cluster", fontsize=16)
 plt.tight_layout()
-save_path_1 = os.path.join(results_folder, "decision_tree_electrolyzer_install.png")
+save_path_1 = os.path.join(current_results_folder, "decision_tree_electrolyzer_install.png")
 plt.savefig(save_path_1, dpi=300, bbox_inches="tight")
 print(f"\nTree plot saved as: {save_path_1}")
 plt.close()
@@ -380,7 +488,7 @@ ax2.invert_yaxis()
 ax2.grid(axis='x', alpha=0.3)
 
 plt.tight_layout()
-save_path_rf1 = os.path.join(results_folder, "rf_comparison_electrolyzer_install_small1.png")
+save_path_rf1 = os.path.join(current_results_folder, "rf_comparison_electrolyzer_install_small1.png")
 plt.savefig(save_path_rf1, dpi=300, bbox_inches="tight")
 print(f"\nRandom Forest comparison plot saved as: {save_path_rf1}")
 plt.close()
@@ -481,7 +589,7 @@ plot_tree(clf_pipe, feature_names=X_cols,
          filled=True, rounded=True, fontsize=13)
 plt.title("Decision Tree - Pipeline Supply from Small to Large Cluster", fontsize=16)
 plt.tight_layout()
-save_path_2 = os.path.join(results_folder, "decision_tree_pipeline_supply_small_to_large.png")
+save_path_2 = os.path.join(current_results_folder, "decision_tree_pipeline_supply_small_to_large.png")
 plt.savefig(save_path_2, dpi=300, bbox_inches="tight")
 print(f"\nTree plot saved as: {save_path_2}")
 plt.close()
@@ -547,7 +655,7 @@ ax2.invert_yaxis()
 ax2.grid(axis='x', alpha=0.3)
 
 plt.tight_layout()
-save_path_rf2 = os.path.join(results_folder, "rf_comparison_pipeline_supply.png")
+save_path_rf2 = os.path.join(current_results_folder, "rf_comparison_pipeline_supply.png")
 plt.savefig(save_path_rf2, dpi=300, bbox_inches="tight")
 print(f"\nRandom Forest comparison plot saved as: {save_path_rf2}")
 plt.close()
@@ -760,7 +868,7 @@ if len(y_outflow_train.unique()) > 1:
              class_names=["Large Outflow > Small", "Small Outflow > Large"],
              filled=True, rounded=True, fontsize=13)
     plt.title("Decision Tree - Small Cluster Outflow vs Large Cluster Outflow", fontsize=16)
-    save_path_4 = os.path.join(results_folder, "decision_tree_outflow_comparison.png")
+    save_path_4 = os.path.join(current_results_folder, "decision_tree_outflow_comparison.png")
     plt.savefig(save_path_4, dpi=300, bbox_inches="tight")
     print(f"\nTree plot saved as: {save_path_4}")
     plt.close()
@@ -826,7 +934,7 @@ if len(y_outflow_train.unique()) > 1:
     ax2.grid(axis='x', alpha=0.3)
 
     plt.tight_layout()
-    save_path_rf4 = os.path.join(results_folder, "rf_comparison_outflow.png")
+    save_path_rf4 = os.path.join(current_results_folder, "rf_comparison_outflow.png")
     plt.savefig(save_path_rf4, dpi=300, bbox_inches="tight")
     print(f"\nRandom Forest comparison plot saved as: {save_path_rf4}")
     plt.close()
@@ -937,7 +1045,7 @@ if len(y_small_connect_train.unique()) > 1:
              class_names=["Not Connected", "Connected"],
              filled=True, rounded=True, fontsize=13)
     plt.title("Decision Tree - Small Clusters Interconnection (Pipeline between Small Clusters)", fontsize=16)
-    save_path_5 = os.path.join(results_folder, "decision_tree_small_clusters_connection.png")
+    save_path_5 = os.path.join(current_results_folder, "decision_tree_small_clusters_connection.png")
     plt.savefig(save_path_5, dpi=300, bbox_inches="tight")
     print(f"\nTree plot saved as: {save_path_5}")
     plt.close()
@@ -1003,7 +1111,7 @@ if len(y_small_connect_train.unique()) > 1:
     ax2.grid(axis='x', alpha=0.3)
 
     plt.tight_layout()
-    save_path_rf5 = os.path.join(results_folder, "rf_comparison_small_clusters_connection.png")
+    save_path_rf5 = os.path.join(current_results_folder, "rf_comparison_small_clusters_connection.png")
     plt.savefig(save_path_rf5, dpi=300, bbox_inches="tight")
     print(f"\nRandom Forest comparison plot saved as: {save_path_rf5}")
     plt.close()
@@ -1200,7 +1308,7 @@ if len(y_full_connect_train.unique()) > 1:
              class_names=["Not Fully Connected", "Fully Connected"],
              filled=True, rounded=True, fontsize=13)
     plt.title("Decision Tree - Full Network Connectivity (All 4 Nodes Interconnected)", fontsize=16)
-    save_path_6 = os.path.join(results_folder, "decision_tree_full_network_connectivity.png")
+    save_path_6 = os.path.join(current_results_folder, "decision_tree_full_network_connectivity.png")
     plt.savefig(save_path_6, dpi=300, bbox_inches="tight")
     print(f"\nTree plot saved as: {save_path_6}")
     plt.close()
@@ -1266,7 +1374,7 @@ if len(y_full_connect_train.unique()) > 1:
     ax2.grid(axis='x', alpha=0.3)
 
     plt.tight_layout()
-    save_path_rf6 = os.path.join(results_folder, "rf_comparison_full_network_connectivity.png")
+    save_path_rf6 = os.path.join(current_results_folder, "rf_comparison_full_network_connectivity.png")
     plt.savefig(save_path_rf6, dpi=300, bbox_inches="tight")
     print(f"\nRandom Forest comparison plot saved as: {save_path_rf6}")
     plt.close()
@@ -1278,7 +1386,532 @@ else:
     else:
         print("Network is NEVER fully connected.")
 
+# =============================================================================
+# 7) DECISION TREE: Small Cluster Net Export (Outflow > Inflow)
+# =============================================================================
 print("\n" + "="*80)
-print("ANALYSIS COMPLETE")
+print("DECISION TREE 7: Small Cluster Net Export (Outflow > Inflow)")
 print("="*80)
+
+def small_cluster_net_export_label(df):
+    """
+    Binary label: 1 if Small cluster exports more than it imports
+    Checks if outflow > inflow for at least one small cluster
+    """
+    small1_net_export = (df["Small_cluster1_hydrogen_network_outflow_sum"] >
+                         df["Small_cluster1_hydrogen_network_inflow_sum"])
+    small2_net_export = (df["Small_cluster2_hydrogen_network_outflow_sum"] >
+                         df["Small_cluster2_hydrogen_network_inflow_sum"])
+
+    return (small1_net_export | small2_net_export).astype(int)
+
+y_net_export_train = small_cluster_net_export_label(data_train)
+y_net_export_test = small_cluster_net_export_label(data_test)
+
+print(f"\nTarget distribution (train): {y_net_export_train.value_counts().to_dict()}")
+print(f"Target distribution (test): {y_net_export_test.value_counts().to_dict()}")
+print(f"\nSmall clusters are net exporters in {y_net_export_train.mean()*100:.1f}% of training runs")
+
+# Statistics
+print(f"\nSmall_cluster1 balance:")
+print(f"  Avg inflow: {data_train['Small_cluster1_hydrogen_network_inflow_sum'].mean():.2f} TWh")
+print(f"  Avg outflow: {data_train['Small_cluster1_hydrogen_network_outflow_sum'].mean():.2f} TWh")
+
+print(f"\nSmall_cluster2 balance:")
+print(f"  Avg inflow: {data_train['Small_cluster2_hydrogen_network_inflow_sum'].mean():.2f} TWh")
+print(f"  Avg outflow: {data_train['Small_cluster2_hydrogen_network_outflow_sum'].mean():.2f} TWh")
+
+if len(y_net_export_train.unique()) > 1:
+    clf_net_export = DecisionTreeClassifier(
+        max_depth=4,
+        min_samples_leaf=5,
+        min_samples_split=10,
+        random_state=0,
+        class_weight="balanced"
+    )
+    clf_net_export.fit(X_train, y_net_export_train)
+    pred_net_export = clf_net_export.predict(X_test)
+
+    print(f"\nAccuracy: {accuracy_score(y_net_export_test, pred_net_export):.4f}")
+    print("\nClassification Report:")
+    print(classification_report(y_net_export_test, pred_net_export,
+                               labels=[0, 1],
+                               target_names=["Net Importer", "Net Exporter"],
+                               zero_division=0))
+
+    print("\nTop 10 Feature Importances:")
+    feature_importance_net = sorted(zip(X_cols, clf_net_export.feature_importances_),
+                                   key=lambda x: -x[1])
+    for i, (feature, importance) in enumerate(feature_importance_net[:10], 1):
+        print(f"{i}. {feature}: {importance:.4f}")
+
+    tree_text_net = export_text(clf_net_export, feature_names=X_cols)
+    print("\nDecision Tree Structure:")
+    print(tree_text_net)
+
+    plt.figure(figsize=(40, 20))
+    plot_tree(clf_net_export, feature_names=X_cols,
+             class_names=["Net Importer", "Net Exporter"],
+             filled=True, rounded=True, fontsize=13)
+    plt.title("Decision Tree - Small Cluster Net Export (Outflow > Inflow)", fontsize=16)
+    save_path_7 = os.path.join(current_results_folder, "decision_tree_small_net_export.png")
+    plt.savefig(save_path_7, dpi=300, bbox_inches="tight")
+    print(f"\nTree plot saved as: {save_path_7}")
+    plt.close()
+
+    # Random Forest
+    print("\n" + "="*80)
+    print("RANDOM FOREST 7: Small Cluster Net Export")
+    print("="*80)
+
+    rf_net_export = RandomForestClassifier(
+        n_estimators=100,
+        max_depth=10,
+        min_samples_leaf=3,
+        min_samples_split=6,
+        random_state=0,
+        class_weight="balanced",
+        n_jobs=-1
+    )
+    rf_net_export.fit(X_train, y_net_export_train)
+    pred_rf_net = rf_net_export.predict(X_test)
+
+    print(f"\nAccuracy: {accuracy_score(y_net_export_test, pred_rf_net):.4f}")
+    print("\nClassification Report:")
+    print(classification_report(y_net_export_test, pred_rf_net,
+                               labels=[0, 1],
+                               target_names=["Net Importer", "Net Exporter"],
+                               zero_division=0))
+
+    print("\nTop 10 Feature Importances (Random Forest):")
+    feature_importance_rf_net = sorted(zip(X_cols, rf_net_export.feature_importances_),
+                                      key=lambda x: -x[1])
+    for i, (feature, importance) in enumerate(feature_importance_rf_net[:10], 1):
+        print(f"{i}. {feature}: {importance:.4f}")
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 8))
+
+    dt_imp_net = pd.Series(clf_net_export.feature_importances_, index=X_cols).sort_values(ascending=False)
+    dt_imp_net[:10].plot(kind='barh', ax=ax1, color='steelblue')
+    ax1.set_xlabel('Importance', fontsize=12)
+    ax1.set_title('Decision Tree\nSmall Cluster Net Export', fontsize=14, fontweight='bold')
+    ax1.invert_yaxis()
+    ax1.grid(axis='x', alpha=0.3)
+
+    rf_imp_net = pd.Series(rf_net_export.feature_importances_, index=X_cols).sort_values(ascending=False)
+    rf_imp_net[:10].plot(kind='barh', ax=ax2, color='forestgreen')
+    ax2.set_xlabel('Importance', fontsize=12)
+    ax2.set_title('Random Forest\nSmall Cluster Net Export', fontsize=14, fontweight='bold')
+    ax2.invert_yaxis()
+    ax2.grid(axis='x', alpha=0.3)
+
+    plt.tight_layout()
+    save_path_rf7 = os.path.join(current_results_folder, "rf_comparison_small_net_export.png")
+    plt.savefig(save_path_rf7, dpi=300, bbox_inches="tight")
+    print(f"\nRandom Forest comparison plot saved as: {save_path_rf7}")
+    plt.close()
+else:
+    print("\nWARNING: Only one class found. Cannot train decision tree.")
+
+# =============================================================================
+# 8) DECISION TREE: Small Cluster with Two Connections
+# =============================================================================
+print("\n" + "="*80)
+print("DECISION TREE 8: Small Cluster with Two Connections (Including Small-Small Connection)")
+print("="*80)
+
+def small_cluster_two_connections_label(df):
+    """
+    Binary label: 1 if at least one Small cluster has two connections
+    A Small cluster can have two connections if connected to:
+    - Both Large clusters, OR
+    - One Large cluster + the other Small cluster
+    """
+    # Connection between Small clusters
+    small1_to_small2_highP = df["Small_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_highP"] > 0.1
+    small1_to_small2_lowP = df["Small_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_lowP"] > 0.1
+    small_to_small_connected = small1_to_small2_highP | small1_to_small2_lowP
+
+    # Small_cluster1 connections to Large clusters
+    small1_to_large1_highP = df["Large_cluster1_to_Small_cluster1_hydrogenPipelineOnshore_highP"] > 0.1
+    small1_to_large1_lowP = df["Large_cluster1_to_Small_cluster1_hydrogenPipelineOnshore_lowP"] > 0.1
+    small1_to_large2_highP = df["Large_cluster2_to_Small_cluster1_hydrogenPipelineOnshore_highP"] > 0.1
+    small1_to_large2_lowP = df["Large_cluster2_to_Small_cluster1_hydrogenPipelineOnshore_lowP"] > 0.1
+
+    small1_connected_to_large1 = small1_to_large1_highP | small1_to_large1_lowP
+    small1_connected_to_large2 = small1_to_large2_highP | small1_to_large2_lowP
+    small1_connected_to_small2 = small_to_small_connected
+
+    # Count connections for Small_cluster1
+    small1_num_connections = (small1_connected_to_large1.astype(int) +
+                              small1_connected_to_large2.astype(int) +
+                              small1_connected_to_small2.astype(int))
+    small1_has_two_connections = small1_num_connections >= 2
+
+    # Small_cluster2 connections to Large clusters
+    small2_to_large1_highP = df["Large_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_highP"] > 0.1
+    small2_to_large1_lowP = df["Large_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_lowP"] > 0.1
+    small2_to_large2_highP = df["Large_cluster2_to_Small_cluster2_hydrogenPipelineOnshore_highP"] > 0.1
+    small2_to_large2_lowP = df["Large_cluster2_to_Small_cluster2_hydrogenPipelineOnshore_lowP"] > 0.1
+
+    small2_connected_to_large1 = small2_to_large1_highP | small2_to_large1_lowP
+    small2_connected_to_large2 = small2_to_large2_highP | small2_to_large2_lowP
+    small2_connected_to_small1 = small_to_small_connected
+
+    # Count connections for Small_cluster2
+    small2_num_connections = (small2_connected_to_large1.astype(int) +
+                              small2_connected_to_large2.astype(int) +
+                              small2_connected_to_small1.astype(int))
+    small2_has_two_connections = small2_num_connections >= 2
+
+    # At least one small cluster has two or more connections
+    return (small1_has_two_connections | small2_has_two_connections).astype(int)
+
+y_two_conn_train = small_cluster_two_connections_label(data_train)
+y_two_conn_test = small_cluster_two_connections_label(data_test)
+
+print(f"\nTarget distribution (train): {y_two_conn_train.value_counts().to_dict()}")
+print(f"Target distribution (test): {y_two_conn_test.value_counts().to_dict()}")
+print(f"\nAt least one Small cluster has two connections in {y_two_conn_train.mean()*100:.1f}% of training runs")
+
+# Detailed statistics
+small_to_small = ((data_train["Small_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_highP"] > 0.1) |
+                  (data_train["Small_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_lowP"] > 0.1))
+
+small1_to_large1 = ((data_train["Large_cluster1_to_Small_cluster1_hydrogenPipelineOnshore_highP"] > 0.1) |
+                    (data_train["Large_cluster1_to_Small_cluster1_hydrogenPipelineOnshore_lowP"] > 0.1))
+small1_to_large2 = ((data_train["Large_cluster2_to_Small_cluster1_hydrogenPipelineOnshore_highP"] > 0.1) |
+                    (data_train["Large_cluster2_to_Small_cluster1_hydrogenPipelineOnshore_lowP"] > 0.1))
+small2_to_large1 = ((data_train["Large_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_highP"] > 0.1) |
+                    (data_train["Large_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_lowP"] > 0.1))
+small2_to_large2 = ((data_train["Large_cluster2_to_Small_cluster2_hydrogenPipelineOnshore_highP"] > 0.1) |
+                    (data_train["Large_cluster2_to_Small_cluster2_hydrogenPipelineOnshore_lowP"] > 0.1))
+
+print(f"\nSmall-Small connection:")
+print(f"  Small_cluster1 <-> Small_cluster2: {small_to_small.sum()} cases")
+
+print(f"\nSmall_cluster1 connections:")
+print(f"  Connected to Large_cluster1: {small1_to_large1.sum()} cases")
+print(f"  Connected to Large_cluster2: {small1_to_large2.sum()} cases")
+print(f"  Connected to Small_cluster2: {small_to_small.sum()} cases")
+small1_num_conn = (small1_to_large1.astype(int) + small1_to_large2.astype(int) + small_to_small.astype(int))
+print(f"  Total with 2+ connections: {(small1_num_conn >= 2).sum()} cases")
+
+print(f"\nSmall_cluster2 connections:")
+print(f"  Connected to Large_cluster1: {small2_to_large1.sum()} cases")
+print(f"  Connected to Large_cluster2: {small2_to_large2.sum()} cases")
+print(f"  Connected to Small_cluster1: {small_to_small.sum()} cases")
+small2_num_conn = (small2_to_large1.astype(int) + small2_to_large2.astype(int) + small_to_small.astype(int))
+print(f"  Total with 2+ connections: {(small2_num_conn >= 2).sum()} cases")
+
+if len(y_two_conn_train.unique()) > 1:
+    clf_two_conn = DecisionTreeClassifier(
+        max_depth=4,
+        min_samples_leaf=5,
+        min_samples_split=10,
+        random_state=0,
+        class_weight="balanced"
+    )
+    clf_two_conn.fit(X_train, y_two_conn_train)
+    pred_two_conn = clf_two_conn.predict(X_test)
+
+    print(f"\nAccuracy: {accuracy_score(y_two_conn_test, pred_two_conn):.4f}")
+    print("\nClassification Report:")
+    print(classification_report(y_two_conn_test, pred_two_conn,
+                               labels=[0, 1],
+                               target_names=["No Two Connections", "Has Two Connections"],
+                               zero_division=0))
+
+    print("\nTop 10 Feature Importances:")
+    feature_importance_two_conn = sorted(zip(X_cols, clf_two_conn.feature_importances_),
+                                        key=lambda x: -x[1])
+    for i, (feature, importance) in enumerate(feature_importance_two_conn[:10], 1):
+        print(f"{i}. {feature}: {importance:.4f}")
+
+    tree_text_two_conn = export_text(clf_two_conn, feature_names=X_cols)
+    print("\nDecision Tree Structure:")
+    print(tree_text_two_conn)
+
+    plt.figure(figsize=(40, 20))
+    plot_tree(clf_two_conn, feature_names=X_cols,
+             class_names=["No Two Connections", "Has Two Connections"],
+             filled=True, rounded=True, fontsize=13)
+    plt.title("Decision Tree - Small Cluster with Two Connections (to Both Large Clusters)", fontsize=16)
+    save_path_8 = os.path.join(current_results_folder, "decision_tree_small_two_connections.png")
+    plt.savefig(save_path_8, dpi=300, bbox_inches="tight")
+    print(f"\nTree plot saved as: {save_path_8}")
+    plt.close()
+
+    # Random Forest
+    print("\n" + "="*80)
+    print("RANDOM FOREST 8: Small Cluster with Two Connections")
+    print("="*80)
+
+    rf_two_conn = RandomForestClassifier(
+        n_estimators=100,
+        max_depth=10,
+        min_samples_leaf=3,
+        min_samples_split=6,
+        random_state=0,
+        class_weight="balanced",
+        n_jobs=-1
+    )
+    rf_two_conn.fit(X_train, y_two_conn_train)
+    pred_rf_two_conn = rf_two_conn.predict(X_test)
+
+    print(f"\nAccuracy: {accuracy_score(y_two_conn_test, pred_rf_two_conn):.4f}")
+    print("\nClassification Report:")
+    print(classification_report(y_two_conn_test, pred_rf_two_conn,
+                               labels=[0, 1],
+                               target_names=["No Two Connections", "Has Two Connections"],
+                               zero_division=0))
+
+    print("\nTop 10 Feature Importances (Random Forest):")
+    feature_importance_rf_two_conn = sorted(zip(X_cols, rf_two_conn.feature_importances_),
+                                           key=lambda x: -x[1])
+    for i, (feature, importance) in enumerate(feature_importance_rf_two_conn[:10], 1):
+        print(f"{i}. {feature}: {importance:.4f}")
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 8))
+
+    dt_imp_two_conn = pd.Series(clf_two_conn.feature_importances_, index=X_cols).sort_values(ascending=False)
+    dt_imp_two_conn[:10].plot(kind='barh', ax=ax1, color='steelblue')
+    ax1.set_xlabel('Importance', fontsize=12)
+    ax1.set_title('Decision Tree\nSmall Cluster Two Connections', fontsize=14, fontweight='bold')
+    ax1.invert_yaxis()
+    ax1.grid(axis='x', alpha=0.3)
+
+    rf_imp_two_conn = pd.Series(rf_two_conn.feature_importances_, index=X_cols).sort_values(ascending=False)
+    rf_imp_two_conn[:10].plot(kind='barh', ax=ax2, color='forestgreen')
+    ax2.set_xlabel('Importance', fontsize=12)
+    ax2.set_title('Random Forest\nSmall Cluster Two Connections', fontsize=14, fontweight='bold')
+    ax2.invert_yaxis()
+    ax2.grid(axis='x', alpha=0.3)
+
+    plt.tight_layout()
+    save_path_rf8 = os.path.join(current_results_folder, "rf_comparison_small_two_connections.png")
+    plt.savefig(save_path_rf8, dpi=300, bbox_inches="tight")
+    print(f"\nRandom Forest comparison plot saved as: {save_path_rf8}")
+    plt.close()
+else:
+    print("\nWARNING: Only one class found. Cannot train decision tree.")
+    if y_two_conn_train.iloc[0] == 1:
+        print("At least one Small cluster ALWAYS has two connections.")
+    else:
+        print("Small clusters NEVER have two connections.")
+
+# =============================================================================
+# 9) DECISION TREE: High Pressure vs Low Pressure Pipeline Choice
+# =============================================================================
+print("\n" + "="*80)
+print("DECISION TREE 9: High Pressure vs Low Pressure Pipeline Choice")
+print("="*80)
+
+def pipeline_pressure_choice_label(df):
+    """
+    Binary label for cases where pipelines exist:
+    1 = High Pressure pipeline chosen
+    0 = Low Pressure pipeline chosen
+
+    Only considers cases where at least one pipeline exists.
+    Returns NaN for cases without pipelines (will be filtered out).
+    """
+    # All possible pipeline connections (High P)
+    highP_cols = [
+        "Large_cluster1_to_Large_cluster2_hydrogenPipelineOnshore_highP",
+        "Large_cluster1_to_Small_cluster1_hydrogenPipelineOnshore_highP",
+        "Large_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_highP",
+        "Large_cluster2_to_Small_cluster1_hydrogenPipelineOnshore_highP",
+        "Large_cluster2_to_Small_cluster2_hydrogenPipelineOnshore_highP",
+        "Small_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_highP"
+    ]
+
+    # All possible pipeline connections (Low P)
+    lowP_cols = [
+        "Large_cluster1_to_Large_cluster2_hydrogenPipelineOnshore_lowP",
+        "Large_cluster1_to_Small_cluster1_hydrogenPipelineOnshore_lowP",
+        "Large_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_lowP",
+        "Large_cluster2_to_Small_cluster1_hydrogenPipelineOnshore_lowP",
+        "Large_cluster2_to_Small_cluster2_hydrogenPipelineOnshore_lowP",
+        "Small_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_lowP"
+    ]
+
+    # Sum of all high pressure pipelines
+    highP_total = sum(df[col] for col in highP_cols if col in df.columns)
+    # Sum of all low pressure pipelines
+    lowP_total = sum(df[col] for col in lowP_cols if col in df.columns)
+
+    # Mask for cases with at least one pipeline
+    has_pipeline = (highP_total > 0.1) | (lowP_total > 0.1)
+
+    # Label: 1 if predominantly high pressure, 0 if predominantly low pressure
+    result = pd.Series(index=df.index, dtype=float)
+    result[has_pipeline] = (highP_total[has_pipeline] > lowP_total[has_pipeline]).astype(int)
+    result[~has_pipeline] = pd.NA
+
+    return result
+
+y_pipeline_pressure_train_full = pipeline_pressure_choice_label(data_train)
+y_pipeline_pressure_test_full = pipeline_pressure_choice_label(data_test)
+
+# Filter out cases without pipelines
+train_with_pipeline = y_pipeline_pressure_train_full.notna()
+test_with_pipeline = y_pipeline_pressure_test_full.notna()
+
+X_train_pipeline = X_train[train_with_pipeline]
+y_pipeline_pressure_train = y_pipeline_pressure_train_full[train_with_pipeline].astype(int)
+
+X_test_pipeline = X_test[test_with_pipeline]
+y_pipeline_pressure_test = y_pipeline_pressure_test_full[test_with_pipeline].astype(int)
+
+print(f"\nFiltering to cases with pipelines:")
+print(f"  Training: {len(X_train_pipeline)} out of {len(X_train)} runs have pipelines")
+print(f"  Testing: {len(X_test_pipeline)} out of {len(X_test)} runs have pipelines")
+
+print(f"\nTarget distribution (train): {y_pipeline_pressure_train.value_counts().to_dict()}")
+print(f"Target distribution (test): {y_pipeline_pressure_test.value_counts().to_dict()}")
+print(f"\nHigh Pressure chosen in {y_pipeline_pressure_train.mean()*100:.1f}% of training runs (with pipelines)")
+
+# Detailed statistics
+data_train_pipeline = data_train[train_with_pipeline]
+highP_cols = [
+    "Large_cluster1_to_Large_cluster2_hydrogenPipelineOnshore_highP",
+    "Large_cluster1_to_Small_cluster1_hydrogenPipelineOnshore_highP",
+    "Large_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_highP",
+    "Large_cluster2_to_Small_cluster1_hydrogenPipelineOnshore_highP",
+    "Large_cluster2_to_Small_cluster2_hydrogenPipelineOnshore_highP",
+    "Small_cluster1_to_Small_cluster2_hydrogenPipelineOnshore_highP"
+]
+lowP_cols = [col.replace('_highP', '_lowP') for col in highP_cols]
+
+print(f"\nPipeline statistics (cases with pipelines only):")
+for i, (hp_col, lp_col) in enumerate(zip(highP_cols, lowP_cols)):
+    connection_name = hp_col.replace('_hydrogenPipelineOnshore_highP', '')
+    hp_count = (data_train_pipeline[hp_col] > 0.1).sum()
+    lp_count = (data_train_pipeline[lp_col] > 0.1).sum()
+    print(f"  {connection_name}:")
+    print(f"    High P: {hp_count} cases, Low P: {lp_count} cases")
+
+if len(y_pipeline_pressure_train.unique()) > 1 and len(X_train_pipeline) > 10:
+    clf_pressure = DecisionTreeClassifier(
+        max_depth=4,
+        min_samples_leaf=5,
+        min_samples_split=10,
+        random_state=0,
+        class_weight="balanced"
+    )
+    clf_pressure.fit(X_train_pipeline, y_pipeline_pressure_train)
+    pred_pressure = clf_pressure.predict(X_test_pipeline)
+
+    print(f"\nAccuracy: {accuracy_score(y_pipeline_pressure_test, pred_pressure):.4f}")
+    print("\nClassification Report:")
+    print(classification_report(y_pipeline_pressure_test, pred_pressure,
+                               labels=[0, 1],
+                               target_names=["Low Pressure", "High Pressure"],
+                               zero_division=0))
+
+    print("\nTop 10 Feature Importances:")
+    feature_importance_pressure = sorted(zip(X_cols, clf_pressure.feature_importances_),
+                                        key=lambda x: -x[1])
+    for i, (feature, importance) in enumerate(feature_importance_pressure[:10], 1):
+        print(f"{i}. {feature}: {importance:.4f}")
+
+    tree_text_pressure = export_text(clf_pressure, feature_names=X_cols)
+    print("\nDecision Tree Structure:")
+    print(tree_text_pressure)
+
+    plt.figure(figsize=(40, 20))
+    plot_tree(clf_pressure, feature_names=X_cols,
+             class_names=["Low Pressure", "High Pressure"],
+             filled=True, rounded=True, fontsize=13)
+    plt.title("Decision Tree - High Pressure vs Low Pressure Pipeline Choice", fontsize=16)
+    save_path_9 = os.path.join(current_results_folder, "decision_tree_pipeline_pressure.png")
+    plt.savefig(save_path_9, dpi=300, bbox_inches="tight")
+    print(f"\nTree plot saved as: {save_path_9}")
+    plt.close()
+
+    # Random Forest
+    print("\n" + "="*80)
+    print("RANDOM FOREST 9: High Pressure vs Low Pressure Pipeline Choice")
+    print("="*80)
+
+    rf_pressure = RandomForestClassifier(
+        n_estimators=100,
+        max_depth=10,
+        min_samples_leaf=3,
+        min_samples_split=6,
+        random_state=0,
+        class_weight="balanced",
+        n_jobs=-1
+    )
+    rf_pressure.fit(X_train_pipeline, y_pipeline_pressure_train)
+    pred_rf_pressure = rf_pressure.predict(X_test_pipeline)
+
+    print(f"\nAccuracy: {accuracy_score(y_pipeline_pressure_test, pred_rf_pressure):.4f}")
+    print("\nClassification Report:")
+    print(classification_report(y_pipeline_pressure_test, pred_rf_pressure,
+                               labels=[0, 1],
+                               target_names=["Low Pressure", "High Pressure"],
+                               zero_division=0))
+
+    print("\nTop 10 Feature Importances (Random Forest):")
+    feature_importance_rf_pressure = sorted(zip(X_cols, rf_pressure.feature_importances_),
+                                           key=lambda x: -x[1])
+    for i, (feature, importance) in enumerate(feature_importance_rf_pressure[:10], 1):
+        print(f"{i}. {feature}: {importance:.4f}")
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 8))
+
+    dt_imp_pressure = pd.Series(clf_pressure.feature_importances_, index=X_cols).sort_values(ascending=False)
+    dt_imp_pressure[:10].plot(kind='barh', ax=ax1, color='steelblue')
+    ax1.set_xlabel('Importance', fontsize=12)
+    ax1.set_title('Decision Tree\nPipeline Pressure Choice', fontsize=14, fontweight='bold')
+    ax1.invert_yaxis()
+    ax1.grid(axis='x', alpha=0.3)
+
+    rf_imp_pressure = pd.Series(rf_pressure.feature_importances_, index=X_cols).sort_values(ascending=False)
+    rf_imp_pressure[:10].plot(kind='barh', ax=ax2, color='forestgreen')
+    ax2.set_xlabel('Importance', fontsize=12)
+    ax2.set_title('Random Forest\nPipeline Pressure Choice', fontsize=14, fontweight='bold')
+    ax2.invert_yaxis()
+    ax2.grid(axis='x', alpha=0.3)
+
+    plt.tight_layout()
+    save_path_rf9 = os.path.join(current_results_folder, "rf_comparison_pipeline_pressure.png")
+    plt.savefig(save_path_rf9, dpi=300, bbox_inches="tight")
+    print(f"\nRandom Forest comparison plot saved as: {save_path_rf9}")
+    plt.close()
+else:
+    print("\nWARNING: Insufficient data or only one class found. Cannot train decision tree.")
+    if len(X_train_pipeline) <= 10:
+        print(f"Only {len(X_train_pipeline)} cases with pipelines in training set.")
+    elif len(y_pipeline_pressure_train.unique()) == 1:
+        if y_pipeline_pressure_train.iloc[0] == 1:
+            print("High Pressure ALWAYS chosen when pipelines exist.")
+        else:
+            print("Low Pressure ALWAYS chosen when pipelines exist.")
+
+    print("\n" + "="*80)
+    print(f"DATASET '{dataset_name.upper()}' ANALYSIS COMPLETE")
+    print("="*80)
+
+# =============================================================================
+# END OF MAIN LOOP
+# =============================================================================
+
+print("\n" + "="*80)
+print("="*80)
+print("ALL ANALYSES COMPLETE")
+print("="*80)
+print("="*80)
+
+if ANALYZE_BY_ARCHETYPE and 'archetype' in data_preprocessed["cap"].columns:
+    archetypes_list = sorted(data_preprocessed["cap"]['archetype'].unique())
+    print("\nResults saved in:")
+    print(f"  - Combined analysis: {results_folder}")
+    for arch in archetypes_list:
+        arch_folder = os.path.join(results_folder, f"archetype_{arch}")
+        print(f"  - Archetype {arch}: {arch_folder}")
+else:
+    print(f"\nAll results saved in: {results_folder}")
 

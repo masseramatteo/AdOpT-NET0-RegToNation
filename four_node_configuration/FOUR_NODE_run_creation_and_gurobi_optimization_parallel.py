@@ -926,7 +926,7 @@ if __name__ == "__main__":
     fixed_params_grid = {
         "mipgap": [0.0001],
         "time_limit": [50],
-        "N_typical_days": [2],  # All 6 values will be tested
+        "N_typical_days": [4, 6, 10, 15, 30, 0],  # All 6 values will be tested
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
@@ -962,7 +962,7 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 1  # Number of LHS samples per scenario
+    n_samples_per_scenario = 5  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID (all combinations)")

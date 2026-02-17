@@ -1,0 +1,121 @@
+
+Gurobi 12.0.3 (win64) logging started Wed Nov 12 20:55:29 2025
+
+Set parameter LogFile to value "Z:\AdOpT-NET0-RegToNation\generic_node_optimization\userData\20251112205421-1\solver_log.txt"
+Set parameter TimeLimit to value 180000
+Set parameter MIPGap to value 0.01
+Set parameter MIPFocus to value 0
+Set parameter Threads to value 0
+Set parameter NodefileStart to value 60
+Set parameter Method to value -1
+Set parameter Heuristics to value 0.05
+Set parameter Presolve to value -1
+Set parameter BranchDir to value 0
+Set parameter LPWarmStart to value 0
+Set parameter IntFeasTol to value 1e-05
+Set parameter FeasibilityTol to value 1e-06
+Set parameter Cuts to value -1
+Set parameter NumericFocus to value 0
+Set parameter NoRelHeurTime to value 0
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (win64 - Windows Server 2016.0 (14393.2))
+
+CPU model: QEMU Virtual CPU version 2.5+, instruction set [SSE2]
+Thread count: 48 physical cores, 48 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  180000
+MIPGap  0.01
+LPWarmStart  0
+NodefileStart  60
+
+Optimize a model with 769480 rows, 572252 columns and 1818030 nonzeros
+Model fingerprint: 0x0ee87ea8
+Variable types: 499168 continuous, 73084 integer (73084 binary)
+Coefficient statistics:
+  Matrix range     [1e-04, 5e+04]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [4e-03, 1e+07]
+  RHS range        [1e+00, 3e+08]
+Presolve removed 474023 rows and 355601 columns (presolve time = 5s)...
+Presolve removed 474023 rows and 355601 columns
+Presolve time: 6.15s
+Presolved: 295457 rows, 216651 columns, 975663 nonzeros
+Variable types: 180151 continuous, 36500 integer (36500 binary)
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Ordering time: 0.41s
+
+Barrier statistics:
+ Dense cols : 103
+ AA' NZ     : 1.308e+06
+ Factor NZ  : 5.602e+06 (roughly 220 MB of memory)
+ Factor Ops : 3.861e+08 (less than 1 second per iteration)
+ Threads    : 29
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0   8.63416561e+08 -6.31727056e+09  2.63e+08 6.83e+00  1.05e+07    12s
+   1   1.04812415e+09 -9.64750333e+09  2.48e+08 1.61e+01  9.31e+06    12s
+   2   6.15929319e+08 -9.34984920e+09  1.40e+08 3.18e-08  5.32e+06    13s
+   3   7.03968629e+07 -8.52783604e+09  5.07e+06 5.13e-07  2.07e+05    13s
+   4   5.63327850e+07 -6.26974308e+09  1.12e+06 1.90e-07  5.25e+04    13s
+   5   5.41018321e+07 -4.71846832e+09  7.38e+05 2.19e-07  3.48e+04    14s
+   6   5.36753343e+07 -2.92617169e+09  6.55e+05 1.58e-07  2.79e+04    14s
+   7   4.97961559e+07 -2.01186930e+09  5.63e+05 1.60e-07  2.22e+04    14s
+   8   3.38279497e+07 -1.03595675e+09  4.37e+05 1.16e-07  1.68e+04    15s
+   9   1.39516095e+07 -6.66422910e+08  1.95e+05 2.80e-10  7.95e+03    15s
+  10   6.11755134e+06 -9.45187786e+07  1.22e+05 2.50e-08  5.09e+03    15s
+  11   3.39662286e+06  6.31931821e+08  9.88e+04 5.50e-07  4.28e+03    16s
+  12   1.71179586e+06  1.28248486e+09  8.47e+04 6.04e-07  3.99e+03    16s
+  13   9.18756292e+05  3.40818104e+09  7.04e+04 6.04e-07  3.60e+03    16s
+  14   4.90353701e+05  8.05044856e+09  6.58e+04 5.74e-07  3.92e+03    17s
+  15   3.31977543e+05  1.54858884e+10  6.36e+04 4.85e-07  4.29e+03    17s
+  16   2.23849988e+05  3.44395595e+10  6.16e+04 9.97e-09  4.64e+03    17s
+  17   1.76358862e+05  6.04278392e+10  6.08e+04 3.02e-08  4.87e+03    18s
+  18   1.44591577e+05  1.15881658e+11  6.02e+04 2.22e-08  5.36e+03    18s
+  19   1.32360691e+05  2.21223093e+11  6.00e+04 4.43e-08  6.97e+03    18s
+  20   1.25922023e+05  2.38469469e+11  5.99e+04 5.52e-08  6.72e+03    18s
+  21   1.14054149e+05  2.92991264e+11  5.97e+04 5.60e-08  6.06e+03    19s
+  22   1.10162252e+05  3.32182481e+11  5.97e+04 5.71e-08  5.95e+03    19s
+  23   1.05238043e+05  5.43047026e+11  5.96e+04 9.35e-08  7.09e+03    19s
+
+Barrier performed 23 iterations in 19.37 seconds (9.79 work units)
+Numerical trouble encountered
+
+Model may be infeasible or unbounded.  Consider using the
+homogeneous algorithm (through parameter 'BarHomogeneous')
+
+Waiting for other threads to finish...          87s
+Waiting for other threads to finish...         151s
+Waiting for other threads to finish...         215s
+Waiting for other threads to finish...         280s
+Waiting for other threads to finish...         343s
+Waiting for other threads to finish...         405s
+Waiting for other threads to finish...         467s
+Waiting for other threads to finish...         531s
+Waiting for other threads to finish...         593s
+Waiting for other threads to finish...         658s
+Waiting for other threads to finish...         723s
+Waiting for other threads to finish...         788s
+Waiting for other threads to finish...         853s
+Concurrent spin time: 0.13s
+
+Solved with dual simplex
+
+Root relaxation: infeasible, 417074 iterations, 897.39 seconds (628.22 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 infeasible    0               - infeasible      -     -  906s
+
+Explored 1 nodes (417074 simplex iterations) in 906.14 seconds (634.53 work units)
+Thread count was 32 (of 48 available processors)
+
+Solution count 0
+
+Model is infeasible or unbounded
+Best objective -, best bound -, gap -

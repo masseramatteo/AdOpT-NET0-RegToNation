@@ -4,6 +4,108 @@ import json
 from pathlib import Path
 
 
+def find_h5_files_in_results_folder(results_folder_path):
+    """
+    Automatically find all optimization_results.h5 files in a results folder.
+    Searches through all parallel_run_XXXX subdirectories.
+
+    Args:
+        results_folder_path: Path to the results folder (e.g., parallel_creation_test_20260122_102337)
+
+    Returns:
+        List of paths to optimization_results.h5 files, sorted by run number
+    """
+    results_folder = Path(results_folder_path)
+
+    if not results_folder.exists():
+        raise ValueError(f"Results folder does not exist: {results_folder_path}")
+
+    print(f"\n🔍 Scanning folder: {results_folder}")
+
+    # Find all parallel_run_XXXX folders
+    parallel_run_folders = sorted(results_folder.glob("parallel_run_*"))
+
+    if not parallel_run_folders:
+        print(f"⚠️  No parallel_run_XXXX folders found in {results_folder}")
+        return []
+
+    print(f"   Found {len(parallel_run_folders)} parallel_run folders")
+
+    h5_files = []
+
+    for run_folder in parallel_run_folders:
+        # Look for userData folder
+        userdata_folder = run_folder / "userData"
+
+        if not userdata_folder.exists():
+            print(f"   ⚠️  Skipping {run_folder.name}: no userData folder")
+            continue
+
+        # Find all timestamp folders (format: YYYYMMDDHHMMSS-N)
+        timestamp_folders = list(userdata_folder.glob("*"))
+        timestamp_folders = [f for f in timestamp_folders if f.is_dir()]
+
+        if not timestamp_folders:
+            print(f"   ⚠️  Skipping {run_folder.name}: no timestamp folders in userData")
+            continue
+
+        # Take the most recent timestamp folder (last one alphabetically)
+        timestamp_folder = sorted(timestamp_folders)[-1]
+
+        # Look for optimization_results.h5
+        h5_file = timestamp_folder / "optimization_results.h5"
+
+        if h5_file.exists():
+            h5_files.append(h5_file)
+            print(f"   ✓ {run_folder.name}: {h5_file.name}")
+        else:
+            print(f"   ⚠️  Skipping {run_folder.name}: optimization_results.h5 not found")
+
+    print(f"\n   Total h5 files found: {len(h5_files)}")
+
+    return h5_files
+
+
+def find_h5_files_in_multiple_folders(folder_paths):
+    """
+    Find all h5 files in multiple results folders.
+
+    Args:
+        folder_paths: List of paths to results folders or list of tuples (comment, path)
+
+    Returns:
+        List of tuples (comment, h5_path) for all found h5 files
+    """
+    all_h5_files = []
+
+    for item in folder_paths:
+        # Check if item is a tuple (comment, path) or just a path
+        if isinstance(item, tuple):
+            base_comment, folder_path = item
+        else:
+            base_comment = ""
+            folder_path = item
+
+        folder_path = Path(folder_path)
+
+        # Find all h5 files in this folder
+        h5_files = find_h5_files_in_results_folder(folder_path)
+
+        # Add to results with comment
+        for h5_file in h5_files:
+            # Extract run number from parallel_run_XXXX
+            run_name = h5_file.parent.parent.parent.name  # e.g., parallel_run_0001
+
+            if base_comment:
+                comment = f"{base_comment} - {run_name}"
+            else:
+                comment = run_name
+
+            all_h5_files.append((comment, str(h5_file)))
+
+    return all_h5_files
+
+
 def extract_scenario_info(h5_path):
     """
     Extract comprehensive scenario information from h5 file and associated files.
@@ -21,6 +123,7 @@ def extract_scenario_info(h5_path):
 
     results = {
         'scenario_name': h5_path.parent.name,
+        'scenario': None,  # Will be populated from run_params.json
         'mip_gap': None,
         'typical_days': None,
         'npv': None,
@@ -30,11 +133,30 @@ def extract_scenario_info(h5_path):
         'h2_network_outflow': {}  # Total H2 network outflow per node
     }
 
-    # Try to extract MIP gap and typical days from ConfigModel.json
-    # ConfigModel.json is in: parallel_run_XXXX/input_data/ConfigModel.json
+    # Extract scenario and parameters from run_params.json
+    # run_params.json is in: parallel_run_XXXX/run_params.json
     # h5 file is in: parallel_run_XXXX/userData/TIMESTAMP/optimization_results.h5
-    # So we need to go up 2 folders from h5, then into input_data
     parallel_run_folder = h5_path.parent.parent.parent  # Go up from TIMESTAMP -> userData -> parallel_run_XXXX
+    run_params_path = parallel_run_folder / "run_params.json"
+
+    if run_params_path.exists():
+        try:
+            with open(run_params_path, 'r') as f:
+                run_params = json.load(f)
+                # Extract scenario (e.g., "0035")
+                results['scenario'] = run_params.get('scenario', None)
+                # Also store all run parameters for reference
+                results['run_params'] = run_params
+                # Extract key parameters to top level for easier access
+                results['mip_gap'] = run_params.get('mipgap', None)
+                results['typical_days'] = run_params.get('N_typical_days', None)
+        except Exception as e:
+            print(f"⚠️  Warning: Could not read run_params.json: {e}")
+    else:
+        print(f"⚠️  Warning: run_params.json not found at: {run_params_path}")
+
+    # Try to extract additional info from ConfigModel.json if needed
+    # ConfigModel.json is in: parallel_run_XXXX/input_data/ConfigModel.json
     config_path = parallel_run_folder / "input_data" / "ConfigModel.json"
 
     if config_path.exists():
@@ -185,12 +307,24 @@ def create_comparison_dataframe(h5_paths):
             # Build a flat dictionary for DataFrame
             row = {
                 'comment': comment,
-                'scenario': scenario_data['scenario_name'],
+                'scenario': scenario_data.get('scenario', 'Unknown'),  # From run_params.json
+                'scenario_name': scenario_data['scenario_name'],  # Timestamp folder name
                 'mip_gap': scenario_data['mip_gap'],
                 'typical_days': scenario_data['typical_days'],
                 'npv': scenario_data['npv'],
                 'objective_value': scenario_data['objective_value']
             }
+
+            # Add all run parameters if available
+            if 'run_params' in scenario_data:
+                run_params = scenario_data['run_params']
+                # Add key parameters
+                for param_name in ['total_demand_TWh', 'demand_level_ratio', 'unbalance_ratio',
+                                   'import_availability_ratio', 'electricity_price_avg',
+                                   'electricity_availability_small', 'hydrogen_import_price',
+                                   'willingness_to_pay', 'time_limit', 'threads']:
+                    if param_name in run_params:
+                        row[param_name] = run_params[param_name]
 
             # Add node information (only technologies, not exists flag)
             for node_name in ['Large_cluster1', 'Large_cluster2', 'Small_cluster1', 'Small_cluster2']:
@@ -331,36 +465,35 @@ def export_to_excel(df, output_path):
 
 if __name__ == "__main__":
     # ========================================================================
-    # CONFIGURATION: Add your h5 file paths here
+    # CONFIGURATION: Choose one of the two methods below
     # ========================================================================
 
-    h5_paths = [
-        # IMPORTANT: Specify the full path to the optimization_results.h5 file
+    # METHOD 1: Manually specify individual h5 file paths
+    # -----------------------------------------------------------------------
+    USE_MANUAL_PATHS = False  # Set to True to use manual paths
+
+    manual_h5_paths = [
         # Format option 1 (with comment): ("Your description", r"path\to\optimization_results.h5")
         # Format option 2 (without comment): r"path\to\optimization_results.h5"
         ("no flactuations",
          r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260122_102337 - no flactuations\parallel_run_0002\userData\20260122102553-1\optimization_results.h5"),
         ("0 typical days, no storage",
          r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260122_103924 - fluctations no typical day\parallel_run_0002\userData\20260122104113-1\optimization_results.h5"),
-        ("15 typical days, no storage",
-         r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260122_134308 - 15 typical days\parallel_run_0002\userData\20260122134444-1\optimization_results.h5"),
-        ("30 typical days, no storage storage",
-         r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260122_135433 - 30 typical days\parallel_run_0002\userData\20260122135641-1\optimization_results.h5"),
-        ("15 typical days, with storage", r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260123_093537 -15 typical days with storage\parallel_run_0002\userData\20260123093719-1\optimization_results.h5"),
-        ("30 typical days, with storage",
-         r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260122_140100 - 30 typical days with storage\parallel_run_0002\userData\20260122140428-1\optimization_results.h5"),
-        ("15 typical days, with storage, network precise",
-         r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260123_105916 - 15 strorage precise\parallel_run_0002\userData\20260123110106-1\optimization_results.h5"),
-        ("10 typical days, with storage",
-         r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260123_130520 - 10 typical days with storage\parallel_run_0002\userData\20260123130708-1\optimization_results.h5"),
-        ("15 typical days, with storage higher gap 0.01",
-         r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260123_134510 - 15 typical bigger gap\parallel_run_0002\userData\20260123134709-1\optimization_results.h5"),
-        ("15 typical days, with storage higher gap 0.001 ",
-         r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260123_140741 - 15 typical small bigger gap\parallel_run_0002\userData\20260123141048-1\optimization_results.h5"),
-        ("5 typical days, with storage ",
-         r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260123_151604 - 5 typical day with storage\parallel_run_0002\userData\20260123151822-1\optimization_results.h5"),
-
         # Add more paths as needed
+    ]
+
+    # METHOD 2: Automatically scan entire results folders
+    # -----------------------------------------------------------------------
+    # This will find ALL parallel_run_XXXX folders and their h5 files automatically
+    USE_FOLDER_SCANNING = True  # Set to True to use automatic folder scanning
+
+    results_folders = [
+        # You can specify just the folder path, or add a comment like this:
+        # Format option 1 (with comment): ("Description", r"path\to\results_folder")
+        # Format option 2 (without comment): r"path\to\results_folder"
+
+        ("Test run 1", r"C:\Users\Masse007\Documents\Code\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260217_145403"),
+        # Add more results folders as needed
     ]
 
     # Optional: Output file path (defaults to current directory)
@@ -374,6 +507,26 @@ if __name__ == "__main__":
     print("SCENARIO COMPARISON TOOL")
     print("="*80)
     print()
+
+    # Determine which method to use
+    if USE_FOLDER_SCANNING:
+        print("🔧 MODE: Automatic folder scanning")
+        print("="*80)
+
+        # Find all h5 files in the specified folders
+        h5_paths = find_h5_files_in_multiple_folders(results_folders)
+
+        if not h5_paths:
+            print("\n❌ No h5 files found in the specified folders.")
+            exit(1)
+
+    elif USE_MANUAL_PATHS:
+        print("🔧 MODE: Manual h5 file paths")
+        print("="*80)
+        h5_paths = manual_h5_paths
+    else:
+        print("❌ Error: Please set either USE_FOLDER_SCANNING or USE_MANUAL_PATHS to True")
+        exit(1)
 
     # Filter out any non-existent paths
     valid_paths = []

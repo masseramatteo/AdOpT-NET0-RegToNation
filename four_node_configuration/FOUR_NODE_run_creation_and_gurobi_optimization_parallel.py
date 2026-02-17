@@ -64,7 +64,8 @@ def create_single_model(args):
         # Calculate derived parameters
         derived_params = runner._calculate_derived_parameters(params)
         params.update(derived_params)
-        runner.h2_import_limit = params["h2_import_limit"]
+        runner.h2_import_limit_1 = params["h2_import_limit1"]
+        runner.h2_import_limit_2 = params["h2_import_limit2"]
         runner.h2_import_price = params["hydrogen_import_price"]
 
         # Configure model
@@ -886,32 +887,68 @@ if __name__ == "__main__":
 
     # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
     # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
-    all_scenarios = [f"{i:04d}" for i in range(1, 41)]
+    #all_scenarios = [f"{i:04d}" for i in range(1, 41)]
+    all_scenarios = [f"{i:04d}" for i in [5, 15, 25, 35]]
 
     # OTHER PARAMETERS: These will be sampled using LHS
-    param_grid_for_sampling = {
-        "scenario": all_scenarios,  # Include in param_grid but handle separately
-        "total_demand_TWh": [5, 10, 15, 20],
-        "demand_level_ratio": [5, 10, 15, 20],
-        "unbalance_ratio": [1, 2, 4], # how large clusters are unbalanced demand large1/demand large2
-        "import_availability_ratio": [0.2, 0.3, 0.4, 0.6],
-        #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
-        "electricity_price_avg": [20, 50, 100, 150, 250],
-        "electricity_availability_small": [30, 50, 100],
-        "willingness_to_pay": [250],
-        "hydrogen_import_price": [150, 200, 250, 300],
+    # param_grid_for_sampling = {
+    #     "scenario": all_scenarios,  # Include in param_grid but handle separately
+    #     "total_demand_TWh": [5, 10, 15, 20],
+    #     "demand_level_ratio": [5, 10, 15, 20],
+    #     "unbalance_ratio": [1, 2, 4], # how large clusters are unbalanced demand large1/demand large2
+    #     "import_availability_ratio": [0.2, 0.3, 0.4, 0.6],
+    #     #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
+    #     "electricity_price_avg": [20, 50, 100, 150, 250],
+    #     "electricity_availability_small": [30, 50, 100],
+    #     "willingness_to_pay": [250],
+    #     "hydrogen_import_price": [150, 200, 250, 300],
+    #     "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
+    #     "networks_existing": [[]],
+    #     "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
+    #     "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
+    #     # "small_cluster_new_technologies": [["Electrolyzer_small"]],
+    #     # "big_cluster_new_technologies": [["Electrolyzer_big"]],
+    #     "small_cluster_existing_technologies": [{}],
+    #     "big_cluster_existing_technologies": [{"Storage_H2_Cavern": 10000}],
+    #     # "big_cluster_existing_technologies": [{}],
+    #
+    #     "mipgap": [0.0001],
+    #     "time_limit": [50],
+    #     "N_typical_days":[6]
+    #     # "threads" viene aggiunto dal runner
+    # }
+
+    # ========================================================================
+    # FIXED PARAMETERS - Full Grid (all combinations will be tested)
+    # ========================================================================
+    # These parameters use FULL GRID exploration (not LHS)
+    # Each combination will be paired with each scenario and each LHS sample
+    fixed_params_grid = {
+        "mipgap": [0.0001],
+        "time_limit": [50],
+        "N_typical_days": [2],  # All 6 values will be tested
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
-        # "small_cluster_new_technologies": [["Electrolyzer_small"]],
-        # "big_cluster_new_technologies": [["Electrolyzer_big"]],
         "small_cluster_existing_technologies": [{}],
         "big_cluster_existing_technologies": [{"Storage_H2_Cavern": 10000}],
-        # "big_cluster_existing_technologies": [{}],
+        "willingness_to_pay": [250]
+    }
 
-        "mipgap": [0.0001],
-        "time_limit": [50],
+    # ========================================================================
+    # PARAMETERS TO BE SAMPLED
+    # ========================================================================
+    param_grid_for_sampling = {
+        "scenario": all_scenarios,  # Include in param_grid but handle separately
+        "total_demand_TWh": [5, 15],
+        "demand_level_ratio": [5, 15],
+        "unbalance_ratio": [1, 4], # how large clusters are unbalanced demand large1/demand large2
+        "import_availability_ratio": [0.2, 0.4],
+        #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
+        "electricity_price_avg": [50, 150],
+        "electricity_availability_small": [50, 100],
+        "hydrogen_import_price":  [200, 300]
         # "threads" viene aggiunto dal runner
     }
 
@@ -920,14 +957,28 @@ if __name__ == "__main__":
     # ========================================================================
     # SAMPLING METHOD
     # ========================================================================
-    # LHS is applied ONLY to non-scenario parameters
-    # Then each LHS sample is applied to EACH scenario
-    # Example: 100 scenarios × 5 LHS samples = 500 total runs
+    # Strategy:
+    # 1. Fixed params: FULL GRID (all combinations)
+    # 2. LHS params: Latin Hypercube Sampling
+    # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 30  # Number of LHS samples per scenario
+    n_samples_per_scenario = 1  # Number of LHS samples per scenario
 
-    print(f"\n[SAMPLING] Latin Hypercube Sampling on parameters (excluding scenarios)")
-    print(f"   LHS samples per scenario: {n_samples_per_scenario}")
+    print(f"\n[SAMPLING] Hybrid approach:")
+    print(f"   - Fixed parameters: FULL GRID (all combinations)")
+    print(f"   - Other parameters: Latin Hypercube Sampling")
+    print(f"   - LHS samples per (scenario × fixed_config): {n_samples_per_scenario}")
+
+    # Generate all combinations of fixed parameters (full grid)
+    import itertools
+    fixed_keys = list(fixed_params_grid.keys())
+    fixed_values = list(fixed_params_grid.values())
+    fixed_combinations = [dict(zip(fixed_keys, combo)) for combo in itertools.product(*fixed_values)]
+
+    print(f"\n[FIXED GRID] Fixed parameter combinations: {len(fixed_combinations)}")
+    for key, values in fixed_params_grid.items():
+        if len(values) > 1:
+            print(f"   - {key}: {len(values)} values")
 
     # Separate scenario from other parameters for LHS
     param_grid_without_scenario = {k: v for k, v in param_grid_for_sampling.items() if k != "scenario"}
@@ -940,25 +991,32 @@ if __name__ == "__main__":
         seed=42
     )
 
-    # Combine: Each scenario gets ALL LHS samples
+    # Combine: Scenarios × Fixed Grid × LHS Samples
     combinations = []
     for scenario in all_scenarios:
-        for lhs_sample in lhs_samples:
-            combined = {"scenario": scenario}
-            combined.update(lhs_sample)
-            combinations.append(combined)
+        for fixed_combo in fixed_combinations:
+            for lhs_sample in lhs_samples:
+                combined = {"scenario": scenario}
+                combined.update(fixed_combo)  # Add fixed parameters (full grid)
+                combined.update(lhs_sample)  # Add sampled parameters (LHS)
+                combinations.append(combined)
 
     print(f"\n[INFO] Total runs to execute:")
     print(f"   - Scenarios: {len(all_scenarios)}")
-    print(f"   - LHS samples per scenario: {len(lhs_samples)}")
-    print(f"   - TOTAL: {len(combinations)} runs ({len(all_scenarios)} × {len(lhs_samples)})")
+    print(f"   - Fixed param combinations: {len(fixed_combinations)}")
+    print(f"   - LHS samples per config: {len(lhs_samples)}")
+    print(f"   - TOTAL: {len(combinations)} runs ({len(all_scenarios)} × {len(fixed_combinations)} × {len(lhs_samples)})")
 
     # Full grid size (for comparison)
-    full_grid_size = 1
+    full_grid_size_lhs = 1
     for values in param_grid_without_scenario.values():
-        full_grid_size *= len(values)
-    print(f"   - Full grid would be: {len(all_scenarios)} × {full_grid_size} = {len(all_scenarios) * full_grid_size} runs")
-    print(f"   - Reduction: {(1 - len(combinations)/(len(all_scenarios) * full_grid_size))*100:.1f}%")
+        full_grid_size_lhs *= len(values)
+    full_grid_size_fixed = len(fixed_combinations)
+    total_full_grid = len(all_scenarios) * full_grid_size_fixed * full_grid_size_lhs
+
+    print(f"\n[COMPARISON] Full grid would be:")
+    print(f"   - Scenarios × Fixed × LHS_full: {len(all_scenarios)} × {full_grid_size_fixed} × {full_grid_size_lhs} = {total_full_grid} runs")
+    print(f"   - Reduction from LHS: {(1 - len(combinations)/total_full_grid)*100:.1f}%")
 
     # Prepare run configs
     run_configs = [(f"parallel_run_{i:04d}", params) for i, params in enumerate(combinations, 1)]

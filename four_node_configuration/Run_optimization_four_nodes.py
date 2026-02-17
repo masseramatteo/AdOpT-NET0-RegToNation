@@ -162,8 +162,10 @@ class OptimizationRunner:
         with open(input_data_path / "ConfigModel.json", "r") as f:
             configuration = json.load(f)
 
+        typical_days = params["N_typical_days"]
+
         # Set time aggregation settings:
-        configuration["optimization"]["typicaldays"]["N"]["value"] = 6
+        configuration["optimization"]["typicaldays"]["N"]["value"] = typical_days
         configuration["optimization"]["typicaldays"]["method"]["value"] = 1
         # Set MILP gap
         configuration["solveroptions"]["mipgap"]["value"] = 0.0001

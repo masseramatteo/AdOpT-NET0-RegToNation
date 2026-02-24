@@ -126,6 +126,7 @@ def extract_scenario_info(h5_path):
         'scenario': None,  # Will be populated from run_params.json
         'mip_gap': None,
         'typical_days': None,
+        'time_total': None,  # Total computation time
         'npv': None,
         'objective_value': None,
         'nodes': {},
@@ -173,13 +174,15 @@ def extract_scenario_info(h5_path):
 
     # Extract node information from h5 file
     with h5py.File(h5_path, 'r') as f:
-        # Extract NPV and objective value from summary group in h5 file
+        # Extract NPV, objective value, and time_total from summary group in h5 file
         if 'summary' in f:
             summary_group = f['summary']
             if 'total_npv' in summary_group:
                 results['npv'] = summary_group['total_npv'][()]
             if 'objective' in summary_group:
                 results['objective_value'] = summary_group['objective'][()]
+            if 'time_total' in summary_group:
+                results['time_total'] = summary_group['time_total'][()]
 
         # Get list of nodes
         node_names = []
@@ -311,6 +314,7 @@ def create_comparison_dataframe(h5_paths):
                 'scenario_name': scenario_data['scenario_name'],  # Timestamp folder name
                 'mip_gap': scenario_data['mip_gap'],
                 'typical_days': scenario_data['typical_days'],
+                'time_total': scenario_data['time_total'],  # Total computation time
                 'npv': scenario_data['npv'],
                 'objective_value': scenario_data['objective_value']
             }
@@ -417,7 +421,15 @@ def create_comparison_dataframe(h5_paths):
     df = pd.DataFrame(all_data)
 
     # Reorder columns for better readability
-    base_columns = ['comment', 'scenario', 'mip_gap', 'typical_days', 'npv', 'objective_value']
+    base_columns = ['comment', 'scenario', 'mip_gap', 'typical_days', 'time_total', 'npv', 'objective_value']
+
+    # Add run parameter columns (from run_params.json)
+    param_columns = ['total_demand_TWh', 'demand_level_ratio', 'unbalance_ratio',
+                     'import_availability_ratio', 'electricity_price_avg',
+                     'electricity_availability_small', 'hydrogen_import_price',
+                     'willingness_to_pay', 'time_limit', 'threads']
+    # Only include columns that exist in the dataframe
+    param_columns = [col for col in param_columns if col in df.columns]
 
     # Only include technology columns, not _exists columns
     node_columns = []
@@ -439,11 +451,11 @@ def create_comparison_dataframe(h5_paths):
     # Add all network arc columns (format: arcname_networktype)
     # Get all columns that contain network information (excluding networks_summary)
     network_arc_columns = [col for col in df.columns
-                          if col not in base_columns + node_columns + h2_production_columns + h2_outflow_columns + network_columns
+                          if col not in base_columns + param_columns + node_columns + h2_production_columns + h2_outflow_columns + network_columns
                           and '_' in col and col.endswith(('highP', 'lowP', 'Onshore', 'Offshore'))]
 
     # Combine all columns, keeping only those that exist
-    ordered_columns = base_columns + node_columns + h2_production_columns + h2_outflow_columns + network_columns + network_arc_columns
+    ordered_columns = base_columns + param_columns + node_columns + h2_production_columns + h2_outflow_columns + network_columns + network_arc_columns
     ordered_columns = [col for col in ordered_columns if col in df.columns]
 
     return df[ordered_columns]
@@ -492,7 +504,7 @@ if __name__ == "__main__":
         # Format option 1 (with comment): ("Description", r"path\to\results_folder")
         # Format option 2 (without comment): r"path\to\results_folder"
 
-        ("Test run 1", r"C:\Users\Masse007\Documents\Code\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260217_145403"),
+        ("Test run 1", r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260218_134327"),
         # Add more results folders as needed
     ]
 

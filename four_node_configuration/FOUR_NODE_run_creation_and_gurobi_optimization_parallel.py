@@ -888,7 +888,7 @@ if __name__ == "__main__":
     # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
     # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
     #all_scenarios = [f"{i:04d}" for i in range(1, 41)]
-    all_scenarios = [f"{i:04d}" for i in [5, 15, 25, 35]]
+    all_scenarios = [f"{i:04d}" for i in [5]]
 
     # OTHER PARAMETERS: These will be sampled using LHS
     # param_grid_for_sampling = {
@@ -926,7 +926,7 @@ if __name__ == "__main__":
     fixed_params_grid = {
         "mipgap": [0.0001],
         "time_limit": [50],
-        "N_typical_days": [4, 6, 10, 15, 30, 0],  # All 6 values will be tested
+        "N_typical_days": [0],  # All 6 values will be tested
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
@@ -946,7 +946,7 @@ if __name__ == "__main__":
         "unbalance_ratio": [1, 4], # how large clusters are unbalanced demand large1/demand large2
         "import_availability_ratio": [0.2, 0.4],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
-        "electricity_price_avg": [50, 150],
+        "electricity_price_avg": [150, 300],
         "electricity_availability_small": [50, 100],
         "hydrogen_import_price":  [200, 300]
         # "threads" viene aggiunto dal runner
@@ -962,7 +962,7 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 5  # Number of LHS samples per scenario
+    n_samples_per_scenario = 1  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID (all combinations)")

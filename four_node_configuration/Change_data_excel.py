@@ -45,7 +45,6 @@ def define_excel_data(input_data_path, params):
 
     df_example = pd.read_excel(
         demand_example,
-        usecols=[0, 1, 2],
         header=0,
         thousands=','
     )
@@ -55,9 +54,9 @@ def define_excel_data(input_data_path, params):
     df_example = df_example.iloc[:8760]
 
     # Extract each column
-    chemicals_series = df_example.iloc[:, 0].astype(float).to_numpy()
-    refineries_series = df_example.iloc[:, 1].astype(float).to_numpy()
-    other_series = df_example.iloc[:, 2].astype(float).to_numpy()
+    chemicals_series = df_example["Industry_chemicals"].astype(float).to_numpy()
+    refineries_series = df_example["Industry_refineries"].astype(float).to_numpy()
+    other_series = df_example["Industry_other"].astype(float).to_numpy()
 
     # Calculate means
     chemicals_mean = float(np.mean(chemicals_series))

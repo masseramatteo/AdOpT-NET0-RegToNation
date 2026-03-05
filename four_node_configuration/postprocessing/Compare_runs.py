@@ -171,6 +171,60 @@ def extract_scenario_info(h5_path):
     else:
         print(f"⚠️  Warning: ConfigModel.json not found at: {config_path}")
 
+    # -----------------------------------------------------------------
+    # Profiling: look for memory_peak_create.json and memory_peak_solve.json
+    # -----------------------------------------------------------------
+    # Default profiling values
+    results['create_avg_rss_mb'] = None
+    results['create_peak_rss_mb'] = None
+    results['solve_avg_rss_mb'] = None
+    results['solve_peak_rss_mb'] = None
+    # Default cpu profiling values
+    results['create_cpu_avg_percent'] = None
+    results['create_cpu_peak_percent'] = None
+    results['create_cpu_time_s'] = None
+    results['solve_cpu_avg_percent'] = None
+    results['solve_cpu_peak_percent'] = None
+    results['solve_cpu_time_s'] = None
+
+    profiling_folder = parallel_run_folder / 'profiling'
+    if profiling_folder.exists() and profiling_folder.is_dir():
+        # Support multiple possible file names produced by profiling step
+        candidates = {
+            'create': ['memory_peak_create.json', 'proc_create.json', 'proc_create.json', 'memory_peak_create.json'],
+            'solve': ['memory_peak_solve.json', 'proc_solve.json', 'proc_solve.json', 'memory_peak_solve.json']
+        }
+
+        # Helper to try reading a list of possible file names
+        def _read_profile_file(folder, names):
+            for nm in names:
+                fp = folder / nm
+                if fp.exists():
+                    try:
+                        with open(fp, 'r') as pf:
+                            return json.load(pf)
+                    except Exception as e:
+                        print(f"⚠️  Warning: Could not read profiling file {fp}: {e}")
+            return None
+
+        # Read create profiling (if any)
+        p_create = _read_profile_file(profiling_folder, candidates['create'])
+        if p_create:
+            results['create_avg_rss_mb'] = p_create.get('avg_rss_mb', results['create_avg_rss_mb'])
+            results['create_peak_rss_mb'] = p_create.get('peak_rss_mb', results['create_peak_rss_mb'])
+            # CPU metrics (some profiling files include these)
+            results['create_cpu_avg_percent'] = p_create.get('cpu_avg_percent', results['create_cpu_avg_percent'])
+            results['create_cpu_peak_percent'] = p_create.get('cpu_peak_percent', results['create_cpu_peak_percent'])
+            results['create_cpu_time_s'] = p_create.get('cpu_time_s', results['create_cpu_time_s'])
+
+        # Read solve profiling (if any)
+        p_solve = _read_profile_file(profiling_folder, candidates['solve'])
+        if p_solve:
+            results['solve_avg_rss_mb'] = p_solve.get('avg_rss_mb', results['solve_avg_rss_mb'])
+            results['solve_peak_rss_mb'] = p_solve.get('peak_rss_mb', results['solve_peak_rss_mb'])
+            results['solve_cpu_avg_percent'] = p_solve.get('cpu_avg_percent', results['solve_cpu_avg_percent'])
+            results['solve_cpu_peak_percent'] = p_solve.get('cpu_peak_percent', results['solve_cpu_peak_percent'])
+            results['solve_cpu_time_s'] = p_solve.get('cpu_time_s', results['solve_cpu_time_s'])
 
     # Extract node information from h5 file
     with h5py.File(h5_path, 'r') as f:
@@ -319,6 +373,20 @@ def create_comparison_dataframe(h5_paths):
                 'objective_value': scenario_data['objective_value']
             }
 
+            # Add profiling metrics (if present)
+            row['create_avg_rss_mb'] = scenario_data.get('create_avg_rss_mb', None)
+            row['create_peak_rss_mb'] = scenario_data.get('create_peak_rss_mb', None)
+            row['solve_avg_rss_mb'] = scenario_data.get('solve_avg_rss_mb', None)
+            row['solve_peak_rss_mb'] = scenario_data.get('solve_peak_rss_mb', None)
+
+            # Add CPU profiling metrics (if present)
+            row['create_cpu_avg_percent'] = scenario_data.get('create_cpu_avg_percent', None)
+            row['create_cpu_peak_percent'] = scenario_data.get('create_cpu_peak_percent', None)
+            row['create_cpu_time_s'] = scenario_data.get('create_cpu_time_s', None)
+            row['solve_cpu_avg_percent'] = scenario_data.get('solve_cpu_avg_percent', None)
+            row['solve_cpu_peak_percent'] = scenario_data.get('solve_cpu_peak_percent', None)
+            row['solve_cpu_time_s'] = scenario_data.get('solve_cpu_time_s', None)
+
             # Add all run parameters if available
             if 'run_params' in scenario_data:
                 run_params = scenario_data['run_params']
@@ -422,6 +490,12 @@ def create_comparison_dataframe(h5_paths):
 
     # Reorder columns for better readability
     base_columns = ['comment', 'scenario', 'mip_gap', 'typical_days', 'time_total', 'npv', 'objective_value']
+    # Insert profiling columns after time_total
+    profiling_columns = ['create_avg_rss_mb', 'create_peak_rss_mb', 'solve_avg_rss_mb', 'solve_peak_rss_mb']
+
+    # Add CPU profiling columns
+    cpu_profiling_columns = ['create_cpu_avg_percent', 'create_cpu_peak_percent', 'create_cpu_time_s',
+                             'solve_cpu_avg_percent', 'solve_cpu_peak_percent', 'solve_cpu_time_s']
 
     # Add run parameter columns (from run_params.json)
     param_columns = ['total_demand_TWh', 'demand_level_ratio', 'unbalance_ratio',
@@ -455,10 +529,11 @@ def create_comparison_dataframe(h5_paths):
                           and '_' in col and col.endswith(('highP', 'lowP', 'Onshore', 'Offshore'))]
 
     # Combine all columns, keeping only those that exist
-    ordered_columns = base_columns + param_columns + node_columns + h2_production_columns + h2_outflow_columns + network_columns + network_arc_columns
+    ordered_columns = base_columns + profiling_columns + cpu_profiling_columns + param_columns + node_columns + h2_production_columns + h2_outflow_columns + network_columns + network_arc_columns
     ordered_columns = [col for col in ordered_columns if col in df.columns]
 
     return df[ordered_columns]
+
 
 
 def export_to_excel(df, output_path):
@@ -504,7 +579,7 @@ if __name__ == "__main__":
         # Format option 1 (with comment): ("Description", r"path\to\results_folder")
         # Format option 2 (without comment): r"path\to\results_folder"
 
-        ("Test run 1", r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260218_134327"),
+        ("Test run 1", r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260302_115300"),
         # Add more results folders as needed
     ]
 

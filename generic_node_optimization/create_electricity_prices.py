@@ -8,6 +8,8 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
+BASE_PATH = Path(__file__).parent
+
 def create_electricity_prices(input_data_path, nodes, params):
     """
     Create electricity price data for each node.
@@ -21,7 +23,7 @@ def create_electricity_prices(input_data_path, nodes, params):
 
     input_data_path = Path(input_data_path)
 
-    electricity_example_folder = (input_data_path.parents[4] / "data")
+    electricity_example_folder = BASE_PATH / "data"
     electricity_example = electricity_example_folder/"Example_electricity_prices.xlsx"
 
     example_series = pd.read_excel(

@@ -900,10 +900,10 @@ if __name__ == "__main__":
     # ==========================================================================
     # 5) Build run_configs with task-aware prefix to avoid name collisions
     # ==========================================================================
-    prefix = f"t{task_index:03d}_" if task_count > 1 else ""
     run_configs = [
-        (f"{prefix}parallel_run_{i:04d}", params)
-        for i, params in enumerate(my_combinations, 1)
+        (f"parallel_run_{i:04d}", params)
+        for i, params in enumerate(combinations, 1)
+        if (i - 1) % max(task_count, 1) == task_index
     ]
     print(f"[OK] Runs in this job: {len(run_configs)}")
 

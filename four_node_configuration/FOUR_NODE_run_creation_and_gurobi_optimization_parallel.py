@@ -826,7 +826,7 @@ if __name__ == "__main__":
         "hydrogen_import_price": [150, 200, 250, 300],
     }
 
-    n_samples_per_scenario = 3
+    n_samples_per_scenario = 30
 
     # ==========================================================================
     # 3) Build full combination list

@@ -27,7 +27,7 @@ def create_electricity_prices(input_data_path, nodes, params):
     example_series = pd.read_excel(
         electricity_example,
         header=0
-        )["Last paper 2040"].astype(float).to_numpy() #E-MBT (ammonia)	Last paper 2040
+        )["E-MBT (ammonia)"].astype(float).to_numpy() #E-MBT (ammonia)	Last paper 2040
 
     if len(example_series) < 8760:
         raise ValueError(f"Example series too short: {len(example_series)} < 8760")

@@ -1,6 +1,3 @@
-
-
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -13,7 +10,7 @@ import os
 
 # SETTINGS
 do_preprocessing = 1
-results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260130_094107"
+results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_1200_with_latest_electricity_fluctu_in_small"
 
 # ============================================================================
 # FEATURE SELECTION SWITCHES - Set to True/False to include/exclude features

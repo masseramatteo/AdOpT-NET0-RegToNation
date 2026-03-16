@@ -156,8 +156,8 @@ class Compressor(ModelComponent):
 
             time_independent["energy_consumption"] = (
                 time_independent["mean_compressibility_factor"]
-                / 120
-                / 2
+                / 120 #MJ/kg
+                / 2.02 # kg/kmol
                 * T_in
                 * (R / 1000)
                 * time_independent["n_stages"]

@@ -579,7 +579,7 @@ if __name__ == "__main__":
         # Format option 1 (with comment): ("Description", r"path\to\results_folder")
         # Format option 2 (without comment): r"path\to\results_folder"
 
-        ("Test run 1", r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260302_115300"),
+        ("Test run 1", r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260311_164411"),
         # Add more results folders as needed
     ]
 

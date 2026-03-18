@@ -54,7 +54,7 @@ def create_electricity_prices(input_data_path, nodes, params):
             base = base_price_small
 
         elif node.startswith("Large"):
-            mode = "constant"  # change manually if you want
+            mode = "fluctuating"  # change manually if you want
             base = base_price_big
 
         elif node == "STORAGE":

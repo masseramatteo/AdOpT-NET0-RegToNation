@@ -1,4 +1,5 @@
 import h5py
+import os
 import pandas as pd
 from pathlib import Path
 import sys
@@ -31,7 +32,7 @@ def extract_optimization_results(h5_path):
         'operation': {}
     }
 
-    with h5py.File(h5_path, 'r') as f:
+    with h5py.File(str(h5_path), 'r') as f:
         # Extract network sizes - individual arcs
         if 'design/networks/period1' in f:
             networks_group = f['design/networks/period1']
@@ -176,7 +177,7 @@ def extract_node_distances(input_data_path):
     """
     node_locations_file = input_data_path / "NodeLocations.csv"
 
-    if not node_locations_file.exists():
+    if not os.path.exists(str(node_locations_file)):
         return {}
 
     # Read node locations
@@ -221,14 +222,17 @@ def extract_all_runs(optimization_folder):
     """
     optimization_path = Path(optimization_folder)
 
-    if not optimization_path.exists():
+    if not os.path.exists(str(optimization_path)):
         raise ValueError(f"Path does not exist: {optimization_path}")
 
     all_results = {}
 
-    # Find all parallel_run_* folders
-    parallel_runs = sorted([d for d in optimization_path.iterdir()
-                           if d.is_dir() and d.name.startswith("parallel_run_")])
+    # Find all parallel_run_* folders (use os.listdir for UNC compatibility)
+    parallel_runs = sorted([
+        optimization_path / name
+        for name in os.listdir(str(optimization_path))
+        if os.path.isdir(str(optimization_path / name)) and name.startswith("parallel_run_")
+    ])
 
     print(f"Found {len(parallel_runs)} parallel run folders\n")
 
@@ -236,12 +240,16 @@ def extract_all_runs(optimization_folder):
         # Navigate to userData/<timestamp_folder>/optimization_results.h5
         user_data = run_folder / "userData"
 
-        if not user_data.exists():
+        if not os.path.isdir(str(user_data)):
             print(f"⚠️  Skipping {run_folder.name}: userData not found")
             continue
 
-        # Find timestamp folder
-        subfolders = [d for d in user_data.iterdir() if d.is_dir()]
+        # Find timestamp folder (use os.listdir for UNC compatibility)
+        subfolders = [
+            user_data / name
+            for name in os.listdir(str(user_data))
+            if os.path.isdir(str(user_data / name))
+        ]
 
         if not subfolders:
             print(f"⚠️  Skipping {run_folder.name}: No timestamp folder found")
@@ -249,13 +257,13 @@ def extract_all_runs(optimization_folder):
 
         h5_file = subfolders[0] / "optimization_results.h5"
 
-        if h5_file.exists():
+        if os.path.isfile(str(h5_file)):
             print(f"✓ Processing {run_folder.name}")
             results = extract_optimization_results(h5_file)
 
             # Extract node distances from input_data folder
             input_data_path = run_folder / "input_data"
-            if input_data_path.exists():
+            if os.path.isdir(str(input_data_path)):
                 distances = extract_node_distances(input_data_path)
                 results['distances'] = distances
             else:
@@ -263,7 +271,7 @@ def extract_all_runs(optimization_folder):
 
             all_results[run_folder.name] = results
         else:
-            print(f"⚠️  Skipping {run_folder.name}: h5 file not found")
+            print(f"⚠️  Skipping {run_folder.name}: h5 file not found at {h5_file}")
 
     return all_results
 
@@ -414,7 +422,7 @@ def export_to_excel(df, output_path):
 
 if __name__ == "__main__":
     # Enter the path to your optimization folder
-    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260130_094107"
+    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_1200_with_latest_electricity_fluctu_in_small"
 
     print("="*80)
     print("EXTRACTING OPTIMIZATION RESULTS")

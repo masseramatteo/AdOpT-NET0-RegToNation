@@ -10,8 +10,16 @@ import os
 
 # SETTINGS
 do_preprocessing = 1
-results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_1200_with_latest_electricity_fluctu_in_small"
+results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_old_prices_fluctuation_in_small_clusters"
 
+# results_folders = {
+#     # "New price, small": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_1200_with_latest_electricity_fluctu_in_small",
+#     # "New price, large": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_latest_prices_fluct_in_large",
+#     # "New price, all": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_latest_prices_fluctuation_in_all",
+#     # "Old price, small": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_old_prices_fluctuation_in_small_clusters",
+#     # "Old price, large": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_old_prices_in_large_clusters",
+#     #"Old price, all": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_old_prices_fluctuation_in_all_clusters"
+# }
 # ============================================================================
 # FEATURE SELECTION SWITCHES - Set to True/False to include/exclude features
 # ============================================================================
@@ -65,19 +73,10 @@ print(f"{'='*80}\n")
 # =============================================================================
 print("Loading data from Excel files...")
 
-# Load the two Excel files
-parallel_summary_path = os.path.join(results_folder, "parallel_results_summary.xlsx")
+# Load data
 extracted_results_path = os.path.join(results_folder, "extracted_results.xlsx")
-
-df_summary = pd.read_excel(parallel_summary_path)
-df_extracted = pd.read_excel(extracted_results_path)
-
-print(f"Loaded {len(df_summary)} runs from parallel_results_summary.xlsx")
-print(f"Loaded {len(df_extracted)} runs from extracted_results.xlsx")
-
-# Merge the two dataframes on 'run_id' and 'run'
-df_merged = pd.merge(df_summary, df_extracted, left_on='run_id', right_on='run', how='inner')
-print(f"Merged data: {len(df_merged)} runs")
+df_merged = pd.read_excel(extracted_results_path)
+print(f"Loaded {len(df_merged)} runs from extracted_results.xlsx")
 
 # =============================================================================
 # Create derived distance variables
@@ -233,9 +232,8 @@ print(f"  - HighP_vs_LowP (where pipeline exists): {(df_merged['HighP_vs_LowP'] 
 if do_preprocessing:
     print("\nPreprocessing data...")
 
-    # Filter only successful runs
-    df_filtered = df_merged[df_merged['status'] == 'SUCCESS'].copy()
-    print(f"Filtered to {len(df_filtered)} successful runs")
+    df_filtered = df_merged.copy()
+    print(f"Using {len(df_filtered)} runs")
 
     # Check for missing values in independent variables
     print("\nChecking missing values in independent variables:")

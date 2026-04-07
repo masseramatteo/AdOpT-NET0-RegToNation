@@ -16,6 +16,7 @@ from utilities import (
     add_existing_transmission_network,
     tune_gurobi_model
 )
+
 from define_components_spec import (
     define_hydrogen_pipeline2,
     define_hydrogen_storage,
@@ -23,7 +24,7 @@ from define_components_spec import (
 )
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing as mp
-import pandas as pd
+# import pandas as pd
 from datetime import datetime
 from Run_optimization_four_nodes import OptimizationRunner
 
@@ -33,10 +34,20 @@ def create_single_model(args):
     run_id, params, results_base_folder, base_path = args
 
     print(f"[CREATE] Creating model: {run_id}")
+    # from memmon import ProcMonitor
+    #
+    # mem_mon = None
 
     try:
         runner = OptimizationRunner(base_path)
         run_folder = results_base_folder / run_id
+        # profiling_dir = run_folder / "profiling"
+        # mem_mon = ProcMonitor(
+        #     out_json=profiling_dir / "proc_create.json",
+        #     sample_s=0.2,
+        #     meta={"run_id": run_id, "phase": "create"}
+        # )
+        # mem_mon.start()
         input_data_path = run_folder / "input_data"
         results_data_path = run_folder / "userData"
 
@@ -131,6 +142,12 @@ def create_single_model(args):
         import traceback
         traceback.print_exc()
         return run_id, None, None, params, str(e)
+    # finally:
+    #     if mem_mon is not None:
+    #         try:
+    #             mem_mon.stop_and_write()
+    #         except Exception:
+    #             pass
 
 
 def solve_single_model(args):
@@ -142,8 +159,26 @@ def solve_single_model(args):
     preventing resource conflicts between parallel solves.
     """
     run_id, input_data_path, results_data_path, params = args
+    # from memmon import ProcMonitor
+    #
+    # mem_mon = None
 
     try:
+        # # -------------------------
+        # # Peak RSS monitor (worker)
+        # # -------------------------
+        # results_data_path = Path(results_data_path)
+        # run_folder = results_data_path.parent  # perché results_data_path = run_folder / "userData"
+        # profiling_dir = run_folder / "profiling"
+        #
+        # mem_mon = ProcMonitor(
+        #     out_json=profiling_dir / "proc_solve.json",
+        #     sample_s=0.2,
+        #     meta={"run_id": run_id, "phase": "solve"},
+        #     include_children=False
+        # )
+        # mem_mon.start()
+
         print(f"[SOLVING] {run_id}")
 
         # Import Gurobi and set per-process parameters
@@ -172,7 +207,6 @@ def solve_single_model(args):
         import pyomo.environ as pyo
 
         input_data_path = Path(input_data_path)
-        results_data_path = Path(results_data_path)
 
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
@@ -265,6 +299,13 @@ def solve_single_model(args):
         import traceback
         traceback.print_exc()
         return run_id, None, str(e)
+
+    # finally:
+        # if mem_mon is not None:
+        #     try:
+        #         mem_mon.stop_and_write()
+        #     except Exception:
+        #         pass
 
 
 class ParallelCreationAndGurobiOptimizationRunner:
@@ -526,6 +567,27 @@ class ParallelCreationAndGurobiOptimizationRunner:
         results_base_folder = Path(results_base_folder)
         results_base_folder.mkdir(parents=True, exist_ok=True)
 
+        # profiling_dir = results_base_folder / "profiling"
+        # profiling_dir.mkdir(parents=True, exist_ok=True)
+        #
+        # from memmon import ProcMonitor, SystemMonitor
+        #
+        # total_mon = ProcMonitor(
+        #     out_json=profiling_dir / "proc__total_overall.json",
+        #     sample_s=0.5,
+        #     meta={"phase": "overall"},
+        #     include_children=True
+        # )
+        # total_mon.start()
+        #
+        # # (B) system monitor
+        # sys_mon = SystemMonitor(
+        #     out_json=profiling_dir / "system__total_overall.json",
+        #     sample_s=0.5,
+        #     meta={"phase": "overall"}
+        # )
+        # sys_mon.start()
+
         print(f"\n{'='*80}")
         print(f"PARALLEL CREATION + GUROBI-ENV OPTIMIZATION RUNNER")
         print(f"{'='*80}")
@@ -684,6 +746,7 @@ class ParallelCreationAndGurobiOptimizationRunner:
         # =====================================================================
         # SAVE RESULTS SUMMARY
         # =====================================================================
+        import pandas as pd
         df_summary = pd.DataFrame(results_summary)
         df_summary.to_csv(results_base_folder / "parallel_results_summary.csv", index=False, sep=';')
         df_summary.to_excel(results_base_folder / "parallel_results_summary.xlsx", index=False)
@@ -718,6 +781,16 @@ class ParallelCreationAndGurobiOptimizationRunner:
             print("[WARNING] Failed runs:")
             for item in (creation_errors + solve_errors):
                 print(f"  {item['run_id']}: {item.get('error', 'Unknown error')}")
+
+        # try:
+        #     total_mon.stop_and_write()
+        # except Exception:
+        #     pass
+        #
+        # try:
+        #     sys_mon.stop_and_write()
+        # except Exception:
+        #     pass
 
         return results_summary
 
@@ -887,8 +960,8 @@ if __name__ == "__main__":
 
     # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
     # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
-    #all_scenarios = [f"{i:04d}" for i in range(1, 41)]
-    all_scenarios = [f"{i:04d}" for i in [5]]
+    all_scenarios = [f"{i:04d}" for i in range(1, 41)]
+    #all_scenarios = [f"{i:04d}" for i in [5, 15, 25, 35]]
 
     # OTHER PARAMETERS: These will be sampled using LHS
     # param_grid_for_sampling = {
@@ -926,7 +999,7 @@ if __name__ == "__main__":
     fixed_params_grid = {
         "mipgap": [0.0001],
         "time_limit": [50],
-        "N_typical_days": [0],  # All 6 values will be tested
+        "N_typical_days": [20],
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
         "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
@@ -941,14 +1014,14 @@ if __name__ == "__main__":
     # ========================================================================
     param_grid_for_sampling = {
         "scenario": all_scenarios,  # Include in param_grid but handle separately
-        "total_demand_TWh": [5, 15],
-        "demand_level_ratio": [5, 15],
-        "unbalance_ratio": [1, 4], # how large clusters are unbalanced demand large1/demand large2
-        "import_availability_ratio": [0.2, 0.4],
+        "total_demand_TWh": [5, 10, 15, 20],
+        "demand_level_ratio": [5, 10, 15, 20],
+        "unbalance_ratio": [2, 3, 5], # how large clusters are unbalanced demand large1/demand large2
+        "import_availability_ratio": [0, 0.2, 0.3, 0.4, 0.6],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
-        "electricity_price_avg": [150, 300],
-        "electricity_availability_small": [50, 100],
-        "hydrogen_import_price":  [200, 300]
+        "electricity_price_avg": [20, 50, 100, 150, 250],
+        "electricity_availability_small": [30, 50, 100],
+        "hydrogen_import_price": [150, 200, 250, 300],
         # "threads" viene aggiunto dal runner
     }
 
@@ -962,7 +1035,7 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 1  # Number of LHS samples per scenario
+    n_samples_per_scenario = 30  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID (all combinations)")

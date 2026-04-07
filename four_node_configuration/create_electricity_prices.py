@@ -27,7 +27,7 @@ def create_electricity_prices(input_data_path, nodes, params):
     example_series = pd.read_excel(
         electricity_example,
         header=0
-        )["Last paper 2040"].astype(float).to_numpy() #E-MBT (ammonia)	Last paper 2040
+        )["E-MBT (ammonia)"].astype(float).to_numpy() #E-MBT (ammonia)	Last paper 2040
 
     if len(example_series) < 8760:
         raise ValueError(f"Example series too short: {len(example_series)} < 8760")
@@ -48,11 +48,11 @@ def create_electricity_prices(input_data_path, nodes, params):
     for node in nodes:
         # ---- manual mode selection (keep your structure) ----
         if node.startswith("Small"):
-            mode = "fluctuating"  # change manually if you want
+            mode = "constant"  # change manually if you want
             base = base_price_small
 
         elif node.startswith("Large"):
-            mode = "constant"  # change manually if you want
+            mode = "fluctuating"  # change manually if you want
             base = base_price_big
 
         elif node == "STORAGE":

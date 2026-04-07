@@ -6,7 +6,12 @@
       <excludeFolder url="file://$MODULE_DIR$/four_node_configuration/results" />
       <excludeFolder url="file://$MODULE_DIR$/generic_node_optimization/results" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.12 (AdOpT-NET0-main)" jdkType="Python SDK" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/four_node_configuration/results" />
+      <excludeFolder url="file://$MODULE_DIR$/generic_node_optimization/results" />
+      <excludeFolder url="file://$MODULE_DIR$/two_node_configuration/results" />
+    </content>
+    <orderEntry type="jdk" jdkName="Python 3.12 (.venv)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

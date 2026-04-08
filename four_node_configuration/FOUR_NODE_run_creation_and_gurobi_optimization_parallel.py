@@ -961,7 +961,8 @@ if __name__ == "__main__":
     # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
     # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
     all_scenarios = [f"{i:04d}" for i in range(1, 41)]
-    #all_scenarios = [f"{i:04d}" for i in [5, 15, 25, 35]]
+    #all_scenarios = [f"{i:04d}" for i in [5, 15, 25]]
+
 
     # OTHER PARAMETERS: These will be sampled using LHS
     # param_grid_for_sampling = {
@@ -1006,7 +1007,8 @@ if __name__ == "__main__":
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
         "small_cluster_existing_technologies": [{}],
         "big_cluster_existing_technologies": [{"Storage_H2_Cavern": 10000}],
-        "willingness_to_pay": [250]
+        "willingness_to_pay": [250],
+        "electricity_profile_approach": ["changing_profile"] # possibility fixed_profile or changing_profile
     }
 
     # ========================================================================
@@ -1020,6 +1022,7 @@ if __name__ == "__main__":
         "import_availability_ratio": [0, 0.2, 0.3, 0.4, 0.6],
         #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
         "electricity_price_avg": [20, 50, 100, 150, 250],
+        "electricity_standard_dev": [10, 50, 100],
         "electricity_availability_small": [30, 50, 100],
         "hydrogen_import_price": [150, 200, 250, 300],
         # "threads" viene aggiunto dal runner
@@ -1035,7 +1038,7 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 30  # Number of LHS samples per scenario
+    n_samples_per_scenario = 1  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID (all combinations)")

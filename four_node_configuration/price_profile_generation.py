@@ -164,3 +164,32 @@ def load_electricity_price_profile(ctr_sel, data_dir="data/european_wholesale_el
     p = p[["Price (EUR/MWhe)"]]
     p.columns = ["p"]
     return p
+
+def compute_overall_factor_for_target_std(
+    params, p_mean, target_std, year,
+    tol=0.5, max_iter=60
+):
+    """
+    Binary search for the overall_factor that produces
+    a profile with std ≈ target_std (EUR/MWh).
+    """
+    shape_scaling = {
+        "trend": 1.0,
+        "weekly_factor": 1.0,
+        "hourly_factor": 1.0,
+    }
+    lo, hi = 0.0, 50.0
+
+    for _ in range(max_iter):
+        mid = (lo + hi) / 2.0
+        sf = {**shape_scaling, "overall_factor": mid}
+        p_gen = generate_electricity_price_profile(params, p_mean, sf, year)
+        actual_std = float(p_gen["p"].std())
+        if abs(actual_std - target_std) < tol:
+            return mid
+        if actual_std < target_std:
+            lo = mid
+        else:
+            hi = mid
+
+    return mid

@@ -53,7 +53,7 @@ def create_electricity_prices(input_data_path, nodes, params):
             load_electricity_price_profile, fit_electricty_price_trends, generate_electricity_price_profile
         )
 
-        data_dir = BASE_PATH / "data" / "european_wholsale_eletricity_price_data_hourly"
+        data_dir = BASE_PATH / "data" / "european_wholesale_electricity_price_data_hourly"
         p = load_electricity_price_profile("Netherlands", data_dir=str(data_dir))
         p, fit_params = fit_electricty_price_trends(p, 2024)
 

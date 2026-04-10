@@ -422,7 +422,7 @@ def export_to_excel(df, output_path):
 
 if __name__ == "__main__":
     # Enter the path to your optimization folder
-    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_old_prices_fluctuation_in_all_clusters"
+    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_new_price_methodology_fluct_in_all"
 
     print("="*80)
     print("EXTRACTING OPTIMIZATION RESULTS")

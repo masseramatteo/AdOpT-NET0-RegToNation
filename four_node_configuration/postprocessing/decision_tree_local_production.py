@@ -10,7 +10,7 @@ import os
 
 # SETTINGS
 do_preprocessing = 1
-results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_old_prices_fluctuation_in_small_clusters"
+results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_new_price_methodology_fluct_in_all"
 
 # results_folders = {
 #     # "New price, small": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_1200_with_latest_electricity_fluctu_in_small",
@@ -58,6 +58,7 @@ independent_vars.extend([
     "electricity_availability_small",
     "import_availability_ratio",
     "electricity_price_avg",
+    "electricity_standard_dev",
     "hydrogen_import_price"
 ])
 

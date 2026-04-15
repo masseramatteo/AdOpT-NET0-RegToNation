@@ -794,7 +794,7 @@ if __name__ == "__main__":
     # HPC explicit config — set these when submitting batch jobs.
     # When running locally these are overridden by the strategy prompt below.
     # -------------------------------------------------------------------------
-    HPC_MAX_WORKERS = 60          # workers per node (None → auto/prompt on local)
+    HPC_MAX_WORKERS = 63          # workers per node (None → auto/prompt on local)
     HPC_THREADS_PER_WORKER = 3   # Gurobi threads per worker
 
     # ==========================================================================
@@ -840,7 +840,7 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 30  # Number of LHS samples per scenario
+    n_samples_per_scenario = 60  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID")

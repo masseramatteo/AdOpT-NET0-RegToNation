@@ -814,24 +814,34 @@ if __name__ == "__main__":
         "small_cluster_existing_technologies": [{}],
         "big_cluster_existing_technologies": [{"Storage_H2_Cavern": 10000}],
         "willingness_to_pay": [250],
+        "electricity_profile_approach": ["changing_profile"] # possibility fixed_profile or changing_profile
     }
 
     param_grid_for_sampling = {
+        "scenario": all_scenarios,  # Include in param_grid but handle separately
         "total_demand_TWh": [5, 10, 15, 20],
         "demand_level_ratio": [5, 10, 15, 20],
-        "unbalance_ratio": [2, 3, 5],
+        "unbalance_ratio": [2, 3, 5], # how large clusters are unbalanced demand large1/demand large2
         "import_availability_ratio": [0, 0.2, 0.3, 0.4, 0.6],
         "electricity_price_avg": [20, 50, 100, 150, 250],
+        "electricity_standard_dev": [10, 50, 100],
         "electricity_availability_small": [30, 50, 100],
         "hydrogen_import_price": [150, 200, 250, 300],
+        # "threads" viene aggiunto dal runner
     }
 
-    n_samples_per_scenario = 30
-
-    # ==========================================================================
-    # 3) Build full combination list
-    # ==========================================================================
     print(f"\n[INFO] Total scenarios: {len(all_scenarios)}")
+
+    # ========================================================================
+    # SAMPLING METHOD
+    # ========================================================================
+    # Strategy:
+    # 1. Fixed params: FULL GRID (all combinations)
+    # 2. LHS params: Latin Hypercube Sampling
+    # 3. Final: Scenarios × Fixed Grid × LHS Samples
+
+    n_samples_per_scenario = 30  # Number of LHS samples per scenario
+
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID")
     print(f"   - Other parameters: Latin Hypercube Sampling")

@@ -5,6 +5,8 @@ import numpy as np
 
 from openpyxl import load_workbook
 
+BASE_PATH = Path(__file__).parent
+
 def define_excel_data(input_data_path, params):
     input_data_path.mkdir(parents=True, exist_ok=True)
 
@@ -40,7 +42,7 @@ def define_excel_data(input_data_path, params):
 
     # input_data_path = Path(input_data_path)
 
-    demand_example_folder = (input_data_path.parents[4] / "data")
+    demand_example_folder = BASE_PATH / "data"
     demand_example = demand_example_folder / "Example_hydrogen_demand.xlsx"
 
     df_example = pd.read_excel(

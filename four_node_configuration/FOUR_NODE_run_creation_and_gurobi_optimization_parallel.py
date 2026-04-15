@@ -854,8 +854,11 @@ if __name__ == "__main__":
     ]
     print(f"\n[FIXED GRID] Fixed parameter combinations: {len(fixed_combinations)}")
 
+    # Separate scenario from other parameters for LHS
+    param_grid_without_scenario = {k: v for k, v in param_grid_for_sampling.items() if k != "scenario"}
+
     lhs_samples = generate_parameter_combinations(
-        param_grid_for_sampling,
+        param_grid_without_scenario,
         method='lhs',
         max_samples=n_samples_per_scenario,
         seed=42,

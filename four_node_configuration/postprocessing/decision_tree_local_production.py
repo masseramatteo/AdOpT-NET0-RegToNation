@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from typing import List
 import os
 
 # SETTINGS
 do_preprocessing = 1
-results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_new_price_methodology_fluct_in_all"
+results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260410_151458"
 
 # results_folders = {
 #     # "New price, small": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_1200_with_latest_electricity_fluctu_in_small",
@@ -26,6 +26,17 @@ results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Mat
 INCLUDE_ARCHETYPE = False  # Set to False to exclude archetype from analysis
 INCLUDE_DISTANCES = True   # Set to False to exclude all distances from analysis
 ANALYZE_BY_ARCHETYPE = False  # Set to True to create separate decision trees for each archetype (1, 2, 3, 4)
+
+# ============================================================================
+# DECISION TREE ROBUSTNESS SETTINGS
+# ============================================================================
+# Increase min_samples_leaf and min_samples_split for more stable/robust trees.
+# Higher values → fewer, more reliable splits (less sensitive to individual samples).
+# Lower values → more detailed tree but risk overfitting to noise.
+DT_MAX_DEPTH = 4              # Max tree depth (4 = up to 4 levels of splits)
+DT_MIN_SAMPLES_LEAF = 20      # Min samples in each leaf (old: 5 → prone to overfitting)
+DT_MIN_SAMPLES_SPLIT = 30     # Min samples required to attempt a split (old: 10)
+DT_RANDOM_STATE = 0           # Random state for reproducibility
 
 # Dependent variables for 4-node configuration
 dependent_vars_selection = ["Electrolyzer_small1_installed", "Electrolyzer_small2_installed"]
@@ -74,10 +85,84 @@ print(f"{'='*80}\n")
 # =============================================================================
 print("Loading data from Excel files...")
 
-# Load data
+# Load extracted results (now includes input params if extract_design_sizes.py was re-run)
 extracted_results_path = os.path.join(results_folder, "extracted_results.xlsx")
 df_merged = pd.read_excel(extracted_results_path)
 print(f"Loaded {len(df_merged)} runs from extracted_results.xlsx")
+
+# Check if the independent variable columns are already present
+# (they will be if extract_design_sizes.py was run with the updated version)
+_required_params = ["total_demand_TWh", "electricity_price_avg", "hydrogen_import_price"]
+_params_present = all(col in df_merged.columns for col in _required_params)
+
+if not _params_present:
+    # Fallback: merge with parallel_results_summary.xlsx (for old extractions)
+    parallel_summary_path = os.path.join(results_folder, "parallel_results_summary.xlsx")
+    if os.path.isfile(parallel_summary_path):
+        print("Input parameter columns not found in extracted_results.xlsx.")
+        print("Merging with parallel_results_summary.xlsx...")
+        df_summary = pd.read_excel(parallel_summary_path)
+        print(f"Loaded {len(df_summary)} runs from parallel_results_summary.xlsx")
+        df_merged = pd.merge(df_summary, df_merged, left_on='run_id', right_on='run', how='inner')
+        print(f"Merged data: {len(df_merged)} runs")
+    else:
+        print("\n" + "!"*80)
+        print("ERROR: Input parameter columns not found in extracted_results.xlsx")
+        print("       and parallel_results_summary.xlsx is not available.")
+        print("       Please re-run extract_design_sizes.py to include input parameters.")
+        print("!"*80 + "\n")
+
+# =============================================================================
+# DATA VALIDATION: compare extracted params with parallel_results_summary
+# =============================================================================
+if _params_present:
+    parallel_summary_path = os.path.join(results_folder, "parallel_results_summary.xlsx")
+    if os.path.isfile(parallel_summary_path):
+        print("\n" + "="*80)
+        print("DATA VALIDATION: comparing extracted_results vs parallel_results_summary")
+        print("="*80)
+        _df_old = pd.read_excel(parallel_summary_path)
+
+        # Match rows by run name
+        _key_extracted = "run"
+        _key_summary = "run_id"
+
+        _common_runs = set(df_merged[_key_extracted]) & set(_df_old[_key_summary])
+        print(f"  Runs in extracted_results: {len(df_merged)}")
+        print(f"  Runs in parallel_results_summary: {len(_df_old)}")
+        print(f"  Common runs: {len(_common_runs)}")
+
+        if _common_runs:
+            _df_ext_sorted = df_merged.set_index(_key_extracted).loc[sorted(_common_runs)]
+            _df_old_sorted = _df_old.set_index(_key_summary).loc[sorted(_common_runs)]
+
+            _check_cols = [c for c in independent_vars if c in _df_ext_sorted.columns and c in _df_old_sorted.columns]
+            print(f"  Comparing columns: {_check_cols}")
+
+            _all_match = True
+            for col in _check_cols:
+                _ext_vals = pd.to_numeric(_df_ext_sorted[col], errors='coerce')
+                _old_vals = pd.to_numeric(_df_old_sorted[col], errors='coerce')
+                _close = np.allclose(_ext_vals.fillna(0), _old_vals.fillna(0), rtol=1e-6, atol=1e-6)
+                _max_diff = (_ext_vals.fillna(0) - _old_vals.fillna(0)).abs().max()
+                if _close:
+                    print(f"    ✓ {col}: MATCH")
+                else:
+                    _all_match = False
+                    print(f"    ✗ {col}: MISMATCH! max_diff = {_max_diff:.6f}")
+                    # Show first few differences
+                    _diff_mask = (_ext_vals.fillna(0) - _old_vals.fillna(0)).abs() > 1e-6
+                    _n_diff = _diff_mask.sum()
+                    print(f"      {_n_diff} values differ out of {len(_ext_vals)}")
+                    _diff_idx = _diff_mask[_diff_mask].index[:3]
+                    for idx in _diff_idx:
+                        print(f"      Run {idx}: extracted={_ext_vals[idx]:.6f}, summary={_old_vals[idx]:.6f}")
+
+            if _all_match:
+                print(f"\n  ✓ ALL COLUMNS MATCH - data sources are identical")
+            else:
+                print(f"\n  ✗ MISMATCHES FOUND - check the columns above")
+        print("="*80 + "\n")
 
 # =============================================================================
 # Create derived distance variables
@@ -233,8 +318,13 @@ print(f"  - HighP_vs_LowP (where pipeline exists): {(df_merged['HighP_vs_LowP'] 
 if do_preprocessing:
     print("\nPreprocessing data...")
 
-    df_filtered = df_merged.copy()
-    print(f"Using {len(df_filtered)} runs")
+    # Filter only successful runs
+    if 'status' in df_merged.columns:
+        df_filtered = df_merged[df_merged['status'] == 'SUCCESS'].copy()
+        print(f"Filtered to {len(df_filtered)} successful runs (out of {len(df_merged)} total)")
+    else:
+        df_filtered = df_merged.copy()
+        print(f"No 'status' column found — using all {len(df_filtered)} runs")
 
     # Check for missing values in independent variables
     print("\nChecking missing values in independent variables:")
@@ -281,6 +371,11 @@ if do_preprocessing:
     print(f"\nPreprocessing complete. Final dataset: {len(data_preprocessed['cap'])} runs")
 else:
     data_preprocessed = {"cap": df_merged, "independent_vars": independent_vars}
+
+# Sort by run name before splitting to ensure consistent results regardless of
+# how data was loaded (row order in parallel_results_summary depends on completion
+# order which is non-deterministic; extracted_results uses sorted folder order)
+data_preprocessed["cap"] = data_preprocessed["cap"].sort_values("run").reset_index(drop=True)
 
 # Split set
 (data_train, data_test) = train_test_split(data_preprocessed["cap"],
@@ -373,6 +468,25 @@ for dataset_name, data_train, data_test, current_results_folder in datasets_to_a
     print(f"Training set size: {len(X_train)}, Test set size: {len(X_test)}")
     print(f"Results will be saved to: {current_results_folder}")
 
+    # FEATURE DIAGNOSTICS: check dtype, range, unique values for each feature
+    print(f"\n{'─'*80}")
+    print("FEATURE DIAGNOSTICS (training set):")
+    print(f"{'─'*80}")
+    for col in X_cols:
+        col_data = X_train[col]
+        n_unique = col_data.nunique()
+        dtype = col_data.dtype
+        print(f"  {col}:")
+        print(f"    dtype={dtype}, unique={n_unique}, min={col_data.min()}, max={col_data.max()}, "
+              f"mean={col_data.mean():.4f}, std={col_data.std():.4f}")
+        if n_unique <= 5:
+            print(f"    VALUES: {sorted(col_data.unique())}")
+        if dtype == 'object':
+            print(f"    ⚠️  WARNING: column is dtype=object (strings!), sample: {col_data.iloc[:3].tolist()}")
+        if n_unique == 1:
+            print(f"    ⚠️  WARNING: column is CONSTANT = {col_data.iloc[0]}")
+    print(f"{'─'*80}\n")
+
 # =============================================================================
 # 1) DECISION TREE: Electrolyzer Installation in Small_cluster1
 # =============================================================================
@@ -388,10 +502,10 @@ print(f"Target distribution (test): {y_install_test.value_counts().to_dict()}")
 
 # Train decision tree classifier
 clf_install = DecisionTreeClassifier(
-            max_depth=4,
-            min_samples_leaf=5,
-            min_samples_split=10,
-            random_state=0,
+            max_depth=DT_MAX_DEPTH,
+            min_samples_leaf=DT_MIN_SAMPLES_LEAF,
+            min_samples_split=DT_MIN_SAMPLES_SPLIT,
+            random_state=DT_RANDOM_STATE,
             class_weight="balanced"
         )
 clf_install.fit(X_train, y_install_train)
@@ -408,6 +522,31 @@ feature_importance = sorted(zip(X_cols, clf_install.feature_importances_),
                            key=lambda x: -x[1])
 for i, (feature, importance) in enumerate(feature_importance[:10], 1):
     print(f"{i}. {feature}: {importance:.4f}")
+
+# Cross-validated feature importance (robust, split-independent)
+print("\n" + "─"*60)
+print("CROSS-VALIDATED Feature Importances (10-fold CV):")
+print("─"*60)
+_X_full = data_preprocessed["cap"][X_cols].fillna(0)
+_y_full = data_preprocessed["cap"]["Electrolyzer_small1_installed"]
+_cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
+_cv_importances = np.zeros(len(X_cols))
+_cv_accuracies = []
+for _train_idx, _test_idx in _cv.split(_X_full, _y_full):
+    _clf_cv = DecisionTreeClassifier(
+        max_depth=DT_MAX_DEPTH, min_samples_leaf=DT_MIN_SAMPLES_LEAF,
+        min_samples_split=DT_MIN_SAMPLES_SPLIT,
+        random_state=DT_RANDOM_STATE, class_weight="balanced"
+    )
+    _clf_cv.fit(_X_full.iloc[_train_idx], _y_full.iloc[_train_idx])
+    _cv_importances += _clf_cv.feature_importances_
+    _cv_accuracies.append(accuracy_score(_y_full.iloc[_test_idx], _clf_cv.predict(_X_full.iloc[_test_idx])))
+_cv_importances /= 10
+print(f"  Mean CV accuracy: {np.mean(_cv_accuracies):.4f} ± {np.std(_cv_accuracies):.4f}")
+_cv_feature_importance = sorted(zip(X_cols, _cv_importances), key=lambda x: -x[1])
+for i, (feature, importance) in enumerate(_cv_feature_importance[:10], 1):
+    print(f"  {i}. {feature}: {importance:.4f}")
+print("─"*60 + "\n")
 
 # Export tree as text
 tree_text_install = export_text(clf_install, feature_names=X_cols)
@@ -543,10 +682,10 @@ if "Large_cluster2_hydrogen_network_inflow_sum" in data_train.columns:
 
 # Train decision tree classifier
 clf_pipe = DecisionTreeClassifier(
-            max_depth=4,
-            min_samples_leaf=5,
-            min_samples_split=10,
-            random_state=0,
+            max_depth=DT_MAX_DEPTH,
+            min_samples_leaf=DT_MIN_SAMPLES_LEAF,
+            min_samples_split=DT_MIN_SAMPLES_SPLIT,
+            random_state=DT_RANDOM_STATE,
             class_weight="balanced"
         )
 clf_pipe.fit(X_train, y_pipe_train)
@@ -829,10 +968,10 @@ print(f"\nSmall cluster outflow dominates in {y_outflow_train.mean()*100:.1f}% o
 if len(y_outflow_train.unique()) > 1:
     # Train decision tree classifier
     clf_outflow = DecisionTreeClassifier(
-            max_depth=4,
-            min_samples_leaf=5,
-            min_samples_split=10,
-            random_state=0,
+            max_depth=DT_MAX_DEPTH,
+            min_samples_leaf=DT_MIN_SAMPLES_LEAF,
+            min_samples_split=DT_MIN_SAMPLES_SPLIT,
+            random_state=DT_RANDOM_STATE,
             class_weight="balanced"
         )
     clf_outflow.fit(X_train, y_outflow_train)
@@ -1000,10 +1139,10 @@ if lowp_col in data_train.columns:
 if len(y_small_connect_train.unique()) > 1:
     # Train decision tree classifier
     clf_small_connect = DecisionTreeClassifier(
-            max_depth=4,
-            min_samples_leaf=5,
-            min_samples_split=10,
-            random_state=0,
+            max_depth=DT_MAX_DEPTH,
+            min_samples_leaf=DT_MIN_SAMPLES_LEAF,
+            min_samples_split=DT_MIN_SAMPLES_SPLIT,
+            random_state=DT_RANDOM_STATE,
             class_weight="balanced"
         )
     clf_small_connect.fit(X_train, y_small_connect_train)
@@ -1263,10 +1402,10 @@ for node_a, node_b in all_connections:
 if len(y_full_connect_train.unique()) > 1:
     # Train decision tree classifier
     clf_full_connect = DecisionTreeClassifier(
-        max_depth=5,
-        min_samples_leaf=5,
-        min_samples_split=10,
-        random_state=0,
+        max_depth=DT_MAX_DEPTH,
+        min_samples_leaf=DT_MIN_SAMPLES_LEAF,
+        min_samples_split=DT_MIN_SAMPLES_SPLIT,
+        random_state=DT_RANDOM_STATE,
         class_weight="balanced"
     )
     clf_full_connect.fit(X_train, y_full_connect_train)
@@ -1419,10 +1558,10 @@ print(f"  Avg outflow: {data_train['Small_cluster2_hydrogen_network_outflow_sum'
 
 if len(y_net_export_train.unique()) > 1:
     clf_net_export = DecisionTreeClassifier(
-        max_depth=4,
-        min_samples_leaf=5,
-        min_samples_split=10,
-        random_state=0,
+        max_depth=DT_MAX_DEPTH,
+        min_samples_leaf=DT_MIN_SAMPLES_LEAF,
+        min_samples_split=DT_MIN_SAMPLES_SPLIT,
+        random_state=DT_RANDOM_STATE,
         class_weight="balanced"
     )
     clf_net_export.fit(X_train, y_net_export_train)
@@ -1602,10 +1741,10 @@ print(f"  Total with 2+ connections: {(small2_num_conn >= 2).sum()} cases")
 
 if len(y_two_conn_train.unique()) > 1:
     clf_two_conn = DecisionTreeClassifier(
-        max_depth=4,
-        min_samples_leaf=5,
-        min_samples_split=10,
-        random_state=0,
+        max_depth=DT_MAX_DEPTH,
+        min_samples_leaf=DT_MIN_SAMPLES_LEAF,
+        min_samples_split=DT_MIN_SAMPLES_SPLIT,
+        random_state=DT_RANDOM_STATE,
         class_weight="balanced"
     )
     clf_two_conn.fit(X_train, y_two_conn_train)
@@ -1790,10 +1929,10 @@ for i, (hp_col, lp_col) in enumerate(zip(highP_cols, lowP_cols)):
 
 if len(y_pipeline_pressure_train.unique()) > 1 and len(X_train_pipeline) > 10:
     clf_pressure = DecisionTreeClassifier(
-        max_depth=4,
-        min_samples_leaf=5,
-        min_samples_split=10,
-        random_state=0,
+        max_depth=DT_MAX_DEPTH,
+        min_samples_leaf=DT_MIN_SAMPLES_LEAF,
+        min_samples_split=DT_MIN_SAMPLES_SPLIT,
+        random_state=DT_RANDOM_STATE,
         class_weight="balanced"
     )
     clf_pressure.fit(X_train_pipeline, y_pipeline_pressure_train)

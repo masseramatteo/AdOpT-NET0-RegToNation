@@ -1020,7 +1020,6 @@ if __name__ == "__main__":
         "demand_level_ratio": [5, 10, 15, 20],
         "unbalance_ratio": [2, 3, 5], # how large clusters are unbalanced demand large1/demand large2
         "import_availability_ratio": [0, 0.2, 0.3, 0.4, 0.6],
-        #"import_cost_multiplier": [2], # keep if fixed to wtp and see when it can be produced locally
         "electricity_price_avg": [20, 50, 100, 150, 250],
         "electricity_standard_dev": [10, 50, 100],
         "electricity_availability_small": [30, 50, 100],

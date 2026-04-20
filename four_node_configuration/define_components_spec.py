@@ -59,6 +59,9 @@ def define_hydrogen_pipeline2(input_data_path):
     network_data["Performance"]["min_transport"] = 0
     network_data["Performance"]["loss"] = 0
 
+    network_data["Performance"]["pressure"]["hydrogen"]["inlet"] = 15
+    network_data["Performance"]["pressure"]["hydrogen"]["outlet"] = 15
+
     with open(input_data_path / "period1" / "network_data" / "hydrogenPipelineOnshore_lowP.json", "w") as json_file:
         json.dump(network_data, json_file, indent=4)
 

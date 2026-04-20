@@ -13,6 +13,12 @@ utilities = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utilities)
 calculate_distance_between_coordinates = utilities.calculate_distance_between_coordinates
 
+# ── Archetype configuration ──────────────────────────────────────────────
+# Scenarios are numbered sequentially (0001, 0002, ...).
+# Every SCENARIOS_PER_ARCHETYPE consecutive scenarios belong to the same archetype.
+# Example: with 10 → scenarios 0001-0010 = Archetype 1, 0011-0020 = Archetype 2, etc.
+SCENARIOS_PER_ARCHETYPE = 10
+
 
 def extract_optimization_results(h5_path):
     """
@@ -440,13 +446,23 @@ def create_summary_dataframe(all_results):
     """
     summary_data = []
 
-    for run_idx, (run_name, run_results) in enumerate(all_results.items()):
+    for run_name, run_results in all_results.items():
         row = {'run': run_name}
 
-        # Assign archetype based on run index
-        # Every 300 simulations = 1 archetype (10 cases * 30 simulations)
-        archetype_number = (run_idx // 300) + 1
-        row['archetype'] = f'Archetype_{archetype_number}'
+        # Derive archetype from the scenario parameter saved in each run's
+        # optimization_model_info.txt.
+        # Scenarios are grouped: 0001-0010 → Archetype 1, 0011-0020 → Archetype 2, etc.
+        # (SCENARIOS_PER_ARCHETYPE scenarios per archetype)
+        scenario = run_results.get('params', {}).get('scenario')
+        if scenario is not None:
+            try:
+                scenario_num = int(scenario)
+                archetype_number = ((scenario_num - 1) // SCENARIOS_PER_ARCHETYPE) + 1
+            except (ValueError, TypeError):
+                archetype_number = scenario
+            row['archetype'] = f'Archetype_{archetype_number}'
+        else:
+            row['archetype'] = 'Unknown'
 
         # Extract network sizes - now individual arcs
         for network_column, size in run_results['networks'].items():
@@ -597,7 +613,7 @@ def export_to_excel(df, output_path):
 
 if __name__ == "__main__":
     # Enter the path to your optimization folder
-    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_new_price_methodology_fluct_in_all"
+    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\all_simulations_with_new_methodology_for_prices"
 
     print("="*80)
     print("EXTRACTING OPTIMIZATION RESULTS")

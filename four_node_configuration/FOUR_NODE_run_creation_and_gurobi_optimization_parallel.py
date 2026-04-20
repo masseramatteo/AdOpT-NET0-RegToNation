@@ -68,6 +68,7 @@ def create_single_model(args):
         runner.wtp = params["willingness_to_pay"]
         runner.electricity_average_price = params["electricity_price_avg"]
         runner.electricity_availability_small = params["electricity_availability_small"]
+        runner.electricity_availability_large = params["electricity_availability_large"]
 
         # Define topology
         runner._configure_topology(input_data_path, nodes)
@@ -210,6 +211,7 @@ def solve_single_model(args):
 
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
+        adopt.load_climate_data_from_api(input_data_path)
         m = adopt.ModelHub()
         m.read_data(input_data_path, start_period=0, end_period=8760)
 
@@ -960,9 +962,9 @@ if __name__ == "__main__":
 
     # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
     # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
-    all_scenarios = [f"{i:04d}" for i in range(1, 41)]
-    #all_scenarios = [f"{i:04d}" for i in [5, 15, 25]]
-
+    #all_scenarios = [f"{i:04d}" for i in range(1, 41)]
+    # all_scenarios = [f"{i:04d}" for i in [5, 15, 25, 35]]
+    all_scenarios = [f"{i:04d}" for i in [5]]
 
     # OTHER PARAMETERS: These will be sampled using LHS
     # param_grid_for_sampling = {
@@ -1003,7 +1005,7 @@ if __name__ == "__main__":
         "N_typical_days": [20],
         "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
         "networks_existing": [[]],
-        "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP"]],
+        "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic"]],
         "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
         "small_cluster_existing_technologies": [{}],
         "big_cluster_existing_technologies": [{"Storage_H2_Cavern": 10000}],
@@ -1016,13 +1018,14 @@ if __name__ == "__main__":
     # ========================================================================
     param_grid_for_sampling = {
         "scenario": all_scenarios,  # Include in param_grid but handle separately
-        "total_demand_TWh": [5, 10, 15, 20],
-        "demand_level_ratio": [5, 10, 15, 20],
+        "total_demand_TWh": [5, 10, 15],
+        "demand_level_ratio": [8, 15, 20],
         "unbalance_ratio": [2, 3, 5], # how large clusters are unbalanced demand large1/demand large2
         "import_availability_ratio": [0, 0.2, 0.3, 0.4, 0.6],
         "electricity_price_avg": [20, 50, 100, 150, 250],
         "electricity_standard_dev": [10, 50, 100],
         "electricity_availability_small": [30, 50, 100],
+        "electricity_availability_large": [500, 1000, 1500],
         "hydrogen_import_price": [150, 200, 250, 300],
         # "threads" viene aggiunto dal runner
     }
@@ -1037,7 +1040,7 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 30  # Number of LHS samples per scenario
+    n_samples_per_scenario = 1  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID (all combinations)")

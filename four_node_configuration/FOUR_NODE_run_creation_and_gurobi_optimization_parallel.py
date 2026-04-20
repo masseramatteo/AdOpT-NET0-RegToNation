@@ -963,8 +963,7 @@ if __name__ == "__main__":
     # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
     # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
     #all_scenarios = [f"{i:04d}" for i in range(1, 41)]
-    # all_scenarios = [f"{i:04d}" for i in [5, 15, 25, 35]]
-    all_scenarios = [f"{i:04d}" for i in [5]]
+    all_scenarios = [f"{i:04d}" for i in [5, 15, 25, 35]]
 
     # OTHER PARAMETERS: These will be sampled using LHS
     # param_grid_for_sampling = {
@@ -1040,7 +1039,7 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 1  # Number of LHS samples per scenario
+    n_samples_per_scenario = 10  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID (all combinations)")

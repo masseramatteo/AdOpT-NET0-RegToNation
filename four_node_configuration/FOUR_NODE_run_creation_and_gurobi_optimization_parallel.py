@@ -1039,7 +1039,7 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 10  # Number of LHS samples per scenario
+    n_samples_per_scenario = 1  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID (all combinations)")

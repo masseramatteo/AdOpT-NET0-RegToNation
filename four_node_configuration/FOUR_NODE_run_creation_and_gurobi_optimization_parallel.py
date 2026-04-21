@@ -169,7 +169,25 @@ def solve_single_model(args):
 
         input_data_path = Path(input_data_path)
 
-        adopt.load_climate_data_from_api(input_data_path)
+        # Apply pre-downloaded climate data from local cache
+        # (downloaded via preprocess_climate_data.py — avoids JRC API calls unavailable on Snellius)
+        import pandas as pd
+        base_path = Path(__file__).resolve().parent
+        climate_cache = base_path / "preprocess" / "climate_data"
+        nodes = ["Large_cluster1", "Large_cluster2", "Small_cluster1", "Small_cluster2"]
+        for node in nodes:
+            cached = climate_cache / f"{node}.csv"
+            target = input_data_path / "period1" / "node_data" / node / "ClimateData.csv"
+            if cached.exists() and target.exists():
+                climate_df = pd.read_csv(cached, sep=";")
+                existing = pd.read_csv(target, sep=";")
+                for column in climate_df.columns:
+                    if column in existing.columns:
+                        existing[column] = climate_df[column].values[:len(existing)]
+                existing.to_csv(target, sep=";", index=False)
+            else:
+                print(f"  [WARNING] Climate cache missing for {node} — using template data")
+
         m = adopt.ModelHub()
         m.read_data(input_data_path, start_period=0, end_period=8760)
 

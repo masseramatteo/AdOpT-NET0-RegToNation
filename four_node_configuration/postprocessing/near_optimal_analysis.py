@@ -90,18 +90,9 @@ def get_installed_technologies(h5_path):
                         size_val = float(size[0]) if hasattr(size, "__len__") else float(size)
                         if size_val > 0:
                             installed_tecs.add(net)
-                            # Parse arc name: expected "From_node->To_node"
-                            if "->" in arc:
-                                from_node, to_node = arc.split("->", 1)
-                            elif "-" in arc:
-                                # fallback split on first "-" after underscores
-                                parts = arc.split("-")
-                                from_node, to_node = parts[0], parts[1]
-                            else:
-                                continue
-                            installed_arcs.setdefault(net, set()).add(
-                                (from_node.strip(), to_node.strip())
-                            )
+                            parsed = _parse_arc_key(arc)
+                            if parsed:
+                                installed_arcs.setdefault(net, set()).add(parsed)
 
     return installed_tecs, installed_arcs
 
@@ -150,7 +141,22 @@ def read_first_best_results(results_folder):
     return runs
 
 
-# Node-level param keys (technologies that can be excluded).
+# All possible node names — used to parse arc keys in the h5 (no separator)
+ALL_NODES = ["Large_cluster1", "Large_cluster2", "Small_cluster1", "Small_cluster2"]
+
+
+def _parse_arc_key(arc_key):
+    """
+    Parse an arc key like 'Large_cluster1Small_cluster2' into
+    ('Large_cluster1', 'Small_cluster2') by trying all known node names.
+    Returns (from_node, to_node) or None if parsing fails.
+    """
+    for node in ALL_NODES:
+        if arc_key.startswith(node):
+            to_node = arc_key[len(node):]
+            if to_node in ALL_NODES:
+                return node, to_node
+    return None
 # Network technologies are intentionally left in params — the solver re-optimises
 # their arcs freely; we only block node-level investments.
 NODE_PARAM_KEYS = {
@@ -189,6 +195,9 @@ def _disable_network_arcs_in_csv(input_data_path, net_name, arcs_to_disable):
             df.loc[from_node, to_node] = 0
     df.to_csv(csv_path, sep=";")
     print(f"  [ARC] Disabled {len(arcs_to_disable)} arc(s) for {net_name}")
+
+
+def _disable_technology_in_json(input_data_path, tec_name):
     """
     Set size_max = 0 (and size_min = 0) in every node JSON for tec_name.
     Called AFTER create_single_model so the files already exist.

@@ -177,24 +177,31 @@ TEC_NODE_MAP = {
 
 def _disable_network_arcs_in_csv(input_data_path, net_name, arcs_to_disable):
     """
-    Set size_max_arcs = 0 for specific (from_node, to_node) pairs in the
-    network topology CSV of net_name.
+    Set connection = 0 (both directions) for specific (from_node, to_node) pairs
+    in the network topology connection.csv of net_name.
+    This prevents the solver from building those arcs at all.
     Called AFTER create_single_model so the file already exists.
     """
     csv_path = (
         Path(input_data_path)
-        / "period1" / "network_topology" / "new" / net_name / "size_max_arcs.csv"
+        / "period1" / "network_topology" / "new" / net_name / "connection.csv"
     )
     if not csv_path.exists():
-        print(f"  [WARN] size_max_arcs.csv not found for {net_name}, skipping arc disable")
+        print(f"  [WARN] connection.csv not found for {net_name}, skipping arc disable")
         return
 
     df = pd.read_csv(csv_path, sep=";", index_col=0)
+    disabled = 0
     for from_node, to_node in arcs_to_disable:
+        # Both directions (network is bidirectional)
         if from_node in df.index and to_node in df.columns:
             df.loc[from_node, to_node] = 0
+            disabled += 1
+        if to_node in df.index and from_node in df.columns:
+            df.loc[to_node, from_node] = 0
+            disabled += 1
     df.to_csv(csv_path, sep=";")
-    print(f"  [ARC] Disabled {len(arcs_to_disable)} arc(s) for {net_name}")
+    print(f"  [ARC] Disabled {disabled} connection(s) in {net_name} connection.csv")
 
 
 def _disable_technology_in_json(input_data_path, tec_name):

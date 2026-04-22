@@ -16,10 +16,10 @@ import json
 import sys
 import h5py
 import pandas as pd
+import shutil
 from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing as mp
-import tempfile
 
 # ── Path setup ────────────────────────────────────────────────────────────────
 BASE_PATH = Path(__file__).resolve().parent.parent  # four_node_configuration/
@@ -234,7 +234,12 @@ def _reopt_worker(args):
 
     Returns (run_id, excluded_tec, new_objective, error_string_or_None).
     """
-    run_id, params, excluded_tec, installed_arcs, reopt_base_folder, base_path = args
+    run_id, params, excluded_tec, installed_arcs, reopt_base_folder, base_path, gurobi_threads = args
+
+    # Override Gurobi thread count if requested
+    if gurobi_threads is not None:
+        params = dict(params)
+        params["threads"] = int(gurobi_threads)
 
     import sys
     sys.path.insert(0, str(base_path))
@@ -286,7 +291,8 @@ def _reopt_worker(args):
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
 
-def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=None, max_workers=4):
+def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=None,
+                         max_workers=4, gurobi_threads=None):
     """
     For each first-best run: re-run excluding ALL installed node-level technologies
     at once, then compare the new NPV with the original NPV.
@@ -335,8 +341,8 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
                 continue
             jobs.append((
                 run["run_id"], run["params"], tec,
-                run["installed_arcs"],   # passed so worker can disable specific arcs
-                reopt_folder, BASE_PATH,
+                run["installed_arcs"],
+                reopt_folder, BASE_PATH, gurobi_threads,
             ))
 
     print(f"  First-best runs      : {len(first_best)}")
@@ -406,6 +412,17 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
     print(f"  Saved: {out_csv.name}  ({len(df)} rows)")
     print(f"  Saved: {out_excel.name}")
 
+    # ── Step 4b: Copy reopt run folders to output folder ──────────────────────
+    dest_reopt = output_folder / "reopt_runs"
+    if reopt_folder.resolve() != dest_reopt.resolve():
+        print(f"\n[STEP 4b] Copying reopt run folders to output folder...")
+        if dest_reopt.exists():
+            shutil.rmtree(dest_reopt)
+        shutil.copytree(reopt_folder, dest_reopt)
+        print(f"  Copied: {reopt_folder} → {dest_reopt}")
+    else:
+        print(f"\n[STEP 4b] Reopt runs already in output folder, skipping copy.")
+
     # ── Step 5: Print summary ─────────────────────────────────────────────────
     print(f"\n{'='*70}")
     print(f"SUMMARY — avg NPV change when each technology is excluded")
@@ -433,16 +450,15 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
 # ENTRY POINT
 # ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    # ── Set these before running ──────────────────────────────────────────────
-    RESULTS_FOLDER = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\4_simulations_for_rubustness"
-    MAX_WORKERS = 4        # parallel re-optimization workers
+    RESULTS_FOLDER     = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\4_simulations_for_rubustness"
+    MAX_WORKERS        = 4    # parallel re-optimization workers (processes)
+    GUROBI_THREADS     = 2   # Gurobi threads per worker (None = inherit from run_params.json)
 
-    # LOCAL folder for intermediate re-opt data — keep this short!
-    # Final CSV/Excel are still saved next to RESULTS_FOLDER on the network.
-    LOCAL_REOPT_FOLDER = r"C:\Temp\reopt_runs"
+    LOCAL_REOPT_FOLDER = r"C:\Temp\reopt_runs"   # keep this short!
 
     run_reopt_comparison(
         results_folder=RESULTS_FOLDER,
         local_reopt_folder=LOCAL_REOPT_FOLDER,
         max_workers=MAX_WORKERS,
+        gurobi_threads=GUROBI_THREADS,
     )

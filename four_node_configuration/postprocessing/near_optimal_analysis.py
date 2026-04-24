@@ -457,9 +457,9 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
 # ENTRY POINT
 # ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    RESULTS_FOLDER     = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\4_simulations_for_rubustness"
-    MAX_WORKERS        = 4    # parallel re-optimization workers (processes)
-    GUROBI_THREADS     = 2   # Gurobi threads per worker (None = inherit from run_params.json)
+    RESULTS_FOLDER     = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260422_132946"
+    MAX_WORKERS        = 15    # parallel re-optimization workers (processes)
+    GUROBI_THREADS     = 3   # Gurobi threads per worker (None = inherit from run_params.json)
 
     LOCAL_REOPT_FOLDER = r"C:\Temp\reopt_runs"   # keep this short!
 

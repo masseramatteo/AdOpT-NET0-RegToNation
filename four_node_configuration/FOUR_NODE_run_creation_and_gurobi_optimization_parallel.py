@@ -14,7 +14,8 @@ from utilities import (
     add_new_transmission_network,
     add_existing_distribution_network,
     add_existing_transmission_network,
-    tune_gurobi_model
+    tune_gurobi_model,
+    load_climate_data_from_pvgis,
 )
 
 from define_components_spec import (
@@ -211,7 +212,9 @@ def solve_single_model(args):
 
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
-        adopt.load_climate_data_from_api(input_data_path)
+        # Use PVGIS to download/cache real irradiance data (W/m²) so pvlib
+        # computes correct PV capacity factors — no changes to res.py needed.
+        load_climate_data_from_pvgis(input_data_path, year=2015)
         m = adopt.ModelHub()
         m.read_data(input_data_path, start_period=0, end_period=8760)
 

@@ -38,7 +38,25 @@ TEC_PARAM_MAP = {
 }
 
 # Technologies that should never be excluded (existing/fixed)
-EXCLUDE_FROM_ANALYSIS = {"Storage_H2_Cavern", "Storage_H2_Cavern_existing"}
+EXCLUDE_FROM_ANALYSIS = {"Storage_H2_Cavern", "Storage_H2_Cavern_existing", "Electrolyzer_big", "Storage_H2_highP", "Photovoltaic"}
+
+# Combinations to exclude together (only run if ALL techs in the tuple are installed)
+COMBO_JOBS = [
+    ("Electrolyzer_small", "Storage_H2_lowP"),
+]
+
+# Networks to disable in the "no network" scenario (always run, regardless of installation)
+NO_NETWORK_TECHS = ("hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP")
+
+# Set to True to include network re-optimization jobs (single arc exclusions + no-network scenario)
+REOPT_NETWORKS = False
+
+# Technologies to skip in single-exclusion jobs (can still appear in COMBO_JOBS)
+SKIP_SINGLE_EXCLUSIONS = {"Electrolyzer_small", "Storage_H2_lowP"}
+
+# If True, combo job runs if at least ONE tech in the combo is installed.
+# If False, combo job runs only if ALL techs in the combo are installed.
+COMBO_INDEPENDENT_OF_INSTALLATION = True
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -65,12 +83,16 @@ def get_objective(run_folder):
 def get_installed_technologies(h5_path):
     """
     Return:
-      installed_tecs : set of installed technology names (size > 0)
-      installed_arcs : dict { network_name: set of (from_node, to_node) tuples }
+      installed_tecs  : set of installed technology names (size > 0)
+      installed_arcs  : dict { network_name: set of (from_node, to_node) tuples }
+      installed_sizes : dict { tec_name: { location: size } }
+                        For node techs   → location is the node name
+                        For network arcs → location is "from→to"
     Only returns technologies in TEC_PARAM_MAP and not in EXCLUDE_FROM_ANALYSIS.
     """
-    installed_tecs = set()
-    installed_arcs = {}   # { net_name: {(from, to), ...} }
+    installed_tecs  = set()
+    installed_arcs  = {}   # { net_name: {(from, to), ...} }
+    installed_sizes = {}   # { tec_name: { location: size_val } }
 
     with h5py.File(str(h5_path), "r") as f:
         if "design/nodes/period1" in f:
@@ -81,8 +103,9 @@ def get_installed_technologies(h5_path):
                         size_val = float(size[0]) if hasattr(size, "__len__") else float(size)
                         if size_val > 0:
                             installed_tecs.add(tec)
+                            installed_sizes.setdefault(tec, {})[node] = size_val
 
-        if "design/networks/period1" in f:
+        if REOPT_NETWORKS and "design/networks/period1" in f:
             for net in f["design/networks/period1"].keys():
                 if net in TEC_PARAM_MAP:
                     for arc in f[f"design/networks/period1/{net}"].keys():
@@ -93,8 +116,10 @@ def get_installed_technologies(h5_path):
                             parsed = _parse_arc_key(arc)
                             if parsed:
                                 installed_arcs.setdefault(net, set()).add(parsed)
+                                arc_label = f"{parsed[0]}→{parsed[1]}"
+                                installed_sizes.setdefault(net, {})[arc_label] = size_val
 
-    return installed_tecs, installed_arcs
+    return installed_tecs, installed_arcs, installed_sizes
 
 
 def read_first_best_results(results_folder):
@@ -126,15 +151,16 @@ def read_first_best_results(results_folder):
         with open(params_file) as f:
             params = json.load(f)
 
-        installed_tecs, installed_arcs = get_installed_technologies(h5_path)
+        installed_tecs, installed_arcs, installed_sizes = get_installed_technologies(h5_path)
 
         runs.append({
-            "run_id":          run_folder.name,
-            "run_folder":      run_folder,
-            "objective":       objective,
-            "params":          params,
-            "installed_tecs":  installed_tecs,
-            "installed_arcs":  installed_arcs,   # { net: {(from,to), ...} }
+            "run_id":           run_folder.name,
+            "run_folder":       run_folder,
+            "objective":        objective,
+            "params":           params,
+            "installed_tecs":   installed_tecs,
+            "installed_arcs":   installed_arcs,    # { net: {(from,to), ...} }
+            "installed_sizes":  installed_sizes,   # { tec: { location: size } }
         })
 
     print(f"[READ] Found {len(runs)} completed first-best runs in {results_folder.name}")
@@ -204,6 +230,21 @@ def _disable_network_arcs_in_csv(input_data_path, net_name, arcs_to_disable):
     print(f"  [ARC] Disabled {disabled} connection(s) in {net_name} connection.csv")
 
 
+def _disable_all_network_arcs_in_csv(input_data_path, net_name):
+    """Set ALL connections to 0 in a network's connection.csv (force no-network scenario)."""
+    csv_path = (
+        Path(input_data_path)
+        / "period1" / "network_topology" / "new" / net_name / "connection.csv"
+    )
+    if not csv_path.exists():
+        print(f"  [WARN] connection.csv not found for {net_name}, skipping")
+        return
+    df = pd.read_csv(csv_path, sep=";", index_col=0)
+    df[:] = 0
+    df.to_csv(csv_path, sep=";")
+    print(f"  [ARC] Disabled ALL connections in {net_name} connection.csv")
+
+
 def _disable_technology_in_json(input_data_path, tec_name):
     """
     Set size_max = 0 (and size_min = 0) in every node JSON for tec_name.
@@ -232,16 +273,17 @@ def _disable_technology_in_json(input_data_path, tec_name):
 
 def _reopt_worker(args):
     """
-    Spawned worker: excludes ONE technology and re-solves.
+    Spawned worker: excludes one OR more technologies and re-solves.
 
-    Node technologies    → model created with full params, then size_max=0
-                           patched into the technology JSON after template creation.
-    Network technologies → model created with full params, then size_max_arcs=0
-                           for the specific arcs that were installed in the first-best.
+    excluded_tecs is a tuple of technology names. For each:
+      - Node technologies    → size_max=0 patched into the technology JSON.
+      - Network technologies → specific installed arcs disabled in connection.csv,
+                               or ALL arcs disabled if none were installed (force
+                               no-network scenario).
 
-    Returns (run_id, excluded_tec, new_objective, error_string_or_None).
+    Returns (run_id, label, new_objective, error_string_or_None).
     """
-    run_id, params, excluded_tec, installed_arcs, reopt_base_folder, base_path, gurobi_threads = args
+    run_id, params, excluded_tecs, installed_arcs, reopt_base_folder, base_path, gurobi_threads = args
 
     # Override Gurobi thread count if requested
     if gurobi_threads is not None:
@@ -254,44 +296,45 @@ def _reopt_worker(args):
         create_single_model, solve_single_model,
     )
 
-    reopt_id = f"{run_id}__excl_{excluded_tec}"
+    label = "+".join(sorted(excluded_tecs))
+    reopt_id = f"{run_id}__excl_{label}"
     reopt_base_folder = Path(reopt_base_folder)
-
-    param_key  = TEC_PARAM_MAP.get(excluded_tec)
-    is_network = param_key == "networks_new"
 
     try:
         # Create with full params so all JSON / topology files are written
         result = create_single_model((reopt_id, params, reopt_base_folder, base_path))
         _, input_path, results_path, _, error = result
         if error:
-            return run_id, excluded_tec, None, f"Creation failed: {error}"
+            return run_id, label, None, f"Creation failed: {error}"
 
-        if is_network:
-            # Disable only the arcs that were installed in the first-best
-            arcs = installed_arcs.get(excluded_tec, set())
-            if arcs:
-                _disable_network_arcs_in_csv(input_path, excluded_tec, arcs)
+        # Disable each excluded technology
+        for tec in excluded_tecs:
+            param_key  = TEC_PARAM_MAP.get(tec)
+            is_network = param_key == "networks_new"
+            if is_network:
+                arcs = installed_arcs.get(tec)
+                if arcs:
+                    _disable_network_arcs_in_csv(input_path, tec, arcs)
+                else:
+                    # No installed arcs → force-disable all (no-network scenario)
+                    _disable_all_network_arcs_in_csv(input_path, tec)
             else:
-                print(f"  [WARN] No installed arcs found for {excluded_tec} — network left unchanged")
-        else:
-            # Disable node technology by setting size_max=0 in its JSON
-            _disable_technology_in_json(input_path, excluded_tec)
+                _disable_technology_in_json(input_path, tec)
 
         result = solve_single_model((reopt_id, input_path, results_path, params))
         _, result_info, error = result
         if error:
-            return run_id, excluded_tec, None, f"Solve failed: {error}"
+            return run_id, label, None, f"Solve failed: {error}"
 
         objective_value = (result_info or {}).get("objective_value")
-        label = f"{objective_value:.0f}" if objective_value is not None else "None"
-        print(f"  [REOPT] {reopt_id}: NPV={label}")
-        return run_id, excluded_tec, objective_value, None
+        npv_str = f"{objective_value:.0f}" if objective_value is not None else "None"
+        print(f"  [REOPT] {reopt_id}: NPV={npv_str}")
+        return run_id, label, objective_value, None
 
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return run_id, excluded_tec, None, str(e)
+        return run_id, label, None, str(e)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -343,11 +386,36 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
     print(f"\n[STEP 2] Building re-optimization jobs...")
     jobs = []
     for run in first_best:
+        # Single-technology exclusions (only for installed techs)
         for tec in sorted(run["installed_tecs"]):
             if tec not in TEC_PARAM_MAP:
                 continue
+            if tec in SKIP_SINGLE_EXCLUSIONS:
+                continue
             jobs.append((
-                run["run_id"], run["params"], tec,
+                run["run_id"], run["params"], (tec,),
+                run["installed_arcs"],
+                reopt_folder, BASE_PATH, gurobi_threads,
+            ))
+
+        # Combination exclusions
+        for combo in COMBO_JOBS:
+            condition = (
+                any(t in run["installed_tecs"] for t in combo)
+                if COMBO_INDEPENDENT_OF_INSTALLATION
+                else all(t in run["installed_tecs"] for t in combo)
+            )
+            if condition:
+                jobs.append((
+                    run["run_id"], run["params"], combo,
+                    run["installed_arcs"],
+                    reopt_folder, BASE_PATH, gurobi_threads,
+                ))
+
+        # No-network scenario: always run, force-disables all pipeline connections
+        if REOPT_NETWORKS:
+            jobs.append((
+                run["run_id"], run["params"], NO_NETWORK_TECHS,
                 run["installed_arcs"],
                 reopt_folder, BASE_PATH, gurobi_threads,
             ))
@@ -372,17 +440,17 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
         done = 0
         for future in as_completed(future_to_job):
             done += 1
-            run_id, excluded_tec, obj, error = future.result()
+            run_id, label, obj, error = future.result()
             reopt_results.append({
                 "run_id":       run_id,
-                "excluded_tec": excluded_tec,
+                "excluded_tec": label,
                 "npv_reopt":    obj,
                 "error":        error,
             })
             if error:
-                print(f"  [{done}/{len(jobs)}] {run_id} excl {excluded_tec}: ERROR — {error}")
+                print(f"  [{done}/{len(jobs)}] {run_id} excl {label}: ERROR — {error}")
             else:
-                print(f"  [{done}/{len(jobs)}] {run_id} excl {excluded_tec}: NPV={obj}")
+                print(f"  [{done}/{len(jobs)}] {run_id} excl {label}: NPV={obj}")
 
     # ── Step 4: Build comparison table ───────────────────────────────────────
     print(f"\n[STEP 4] Building comparison table...")
@@ -398,6 +466,18 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
         delta_abs = (npv_reopt - npv_orig)              if npv_reopt is not None else None
         delta_pct = (delta_abs / abs(npv_orig) * 100)   if (npv_reopt is not None and npv_orig) else None
 
+        # Build removed_tech_sizes string for each excluded technology
+        excluded_labels = res["excluded_tec"].split("+")
+        parts = []
+        for tec in excluded_labels:
+            sizes = run["installed_sizes"].get(tec)
+            if sizes:
+                size_str = ", ".join(f"{loc}={v:.1f}" for loc, v in sizes.items())
+                parts.append(f"{tec}: {size_str}")
+            else:
+                parts.append(f"{tec}: not installed")
+        removed_tech_sizes = " | ".join(parts)
+
         rows.append({
             "run_id":                  res["run_id"],
             "excluded_technology":     res["excluded_tec"],
@@ -406,6 +486,7 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
             "delta_npv":               delta_abs,
             "delta_npv_pct":           delta_pct,
             "installed_tecs_original": ", ".join(sorted(run["installed_tecs"])),
+            "removed_tech_sizes":      removed_tech_sizes,
             "error":                   res["error"] or "",
         })
 
@@ -457,7 +538,7 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
 # ENTRY POINT
 # ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    RESULTS_FOLDER     = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260422_132946"
+    RESULTS_FOLDER     = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\new_limits_on_large_cluster_simulations\n"
     MAX_WORKERS        = 15    # parallel re-optimization workers (processes)
     GUROBI_THREADS     = 3   # Gurobi threads per worker (None = inherit from run_params.json)
 

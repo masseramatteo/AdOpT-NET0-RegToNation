@@ -36,7 +36,8 @@ def extract_optimization_results(h5_path):
         'networks': {},
         'electrolyzers': {},
         'storage': {},
-        'operation': {}
+        'operation': {},
+        'photovoltaics':{}
     }
 
     with h5py.File(str(h5_path), 'r') as f:
@@ -110,6 +111,13 @@ def extract_optimization_results(h5_path):
                         if 'size' in tech_group:
                             size_value = tech_group['size'][()]
                             results['storage'][f"{node_name}_{tech_name}"] = size_value[0] if hasattr(size_value, '__len__') else size_value
+
+                    if 'Photovoltaic' in tech_name:
+                        tech_group = node_group[tech_name]
+                        if 'size' in tech_group:
+                            size_value = tech_group['size'][()]
+                            results['photovoltaics'][f"{node_name}_{tech_name}"] = size_value[0] if hasattr(size_value,
+                                                                                                            '__len__') else size_value
 
         # Extract operational data - technology_operation
         if 'operation/technology_operation/period1' in f:
@@ -476,6 +484,10 @@ def create_summary_dataframe(all_results):
         for storage_name, size in run_results['storage'].items():
             row[storage_name] = size
 
+        # Extract photovoltaic sizes
+        for pv_name, size in run_results['photovoltaics'].items():
+            row[pv_name] = size
+
         # Extract operational data
         for op_name, value in run_results['operation'].items():
             row[op_name] = value
@@ -613,7 +625,7 @@ def export_to_excel(df, output_path):
 
 if __name__ == "__main__":
     # Enter the path to your optimization folder
-    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_20260420_172244"
+    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\new_limits_on_large_cluster_simulations\1600_simulations_with_new_constraints"
 
     print("="*80)
     print("EXTRACTING OPTIMIZATION RESULTS")

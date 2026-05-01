@@ -41,18 +41,19 @@ TEC_PARAM_MAP = {
 EXCLUDE_FROM_ANALYSIS = {"Storage_H2_Cavern", "Storage_H2_Cavern_existing", "Electrolyzer_big", "Storage_H2_highP", "Photovoltaic"}
 
 # Combinations to exclude together (only run if ALL techs in the tuple are installed)
-COMBO_JOBS = [
-    ("Electrolyzer_small", "Storage_H2_lowP"),
-]
+# COMBO_JOBS = [
+#     ("Electrolyzer_small", "Storage_H2_lowP"),
+# ]
+COMBO_JOBS = []
 
 # Networks to disable in the "no network" scenario (always run, regardless of installation)
 NO_NETWORK_TECHS = ("hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP")
 
 # Set to True to include network re-optimization jobs (single arc exclusions + no-network scenario)
-REOPT_NETWORKS = False
+REOPT_NETWORKS = True
 
 # Technologies to skip in single-exclusion jobs (can still appear in COMBO_JOBS)
-SKIP_SINGLE_EXCLUSIONS = {"Electrolyzer_small", "Storage_H2_lowP"}
+SKIP_SINGLE_EXCLUSIONS = {"Electrolyzer_small", "Storage_H2_lowP", "hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"}
 
 # If True, combo job runs if at least ONE tech in the combo is installed.
 # If False, combo job runs only if ALL techs in the combo are installed.
@@ -535,7 +536,7 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
 # ENTRY POINT
 # ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    RESULTS_FOLDER     = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\new_limits_on_large_cluster_simulations\n"
+    RESULTS_FOLDER     = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\new_limits_on_large_cluster_simulations\1600_simulations_with_new_constraints"
     MAX_WORKERS        = 15    # parallel re-optimization workers (processes)
     GUROBI_THREADS     = 3   # Gurobi threads per worker (None = inherit from run_params.json)
 

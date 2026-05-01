@@ -277,9 +277,9 @@ def _reopt_worker(args):
 
     excluded_tecs is a tuple of technology names. For each:
       - Node technologies    → size_max=0 patched into the technology JSON.
-      - Network technologies → specific installed arcs disabled in connection.csv,
-                               or ALL arcs disabled if none were installed (force
-                               no-network scenario).
+      - Network technologies → ALL arcs disabled in connection.csv (entire
+                               connection matrix zeroed, regardless of what
+                               was installed in the first-best solution).
 
     Returns (run_id, label, new_objective, error_string_or_None).
     """

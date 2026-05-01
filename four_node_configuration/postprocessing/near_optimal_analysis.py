@@ -312,12 +312,9 @@ def _reopt_worker(args):
             param_key  = TEC_PARAM_MAP.get(tec)
             is_network = param_key == "networks_new"
             if is_network:
-                arcs = installed_arcs.get(tec)
-                if arcs:
-                    _disable_network_arcs_in_csv(input_path, tec, arcs)
-                else:
-                    # No installed arcs → force-disable all (no-network scenario)
-                    _disable_all_network_arcs_in_csv(input_path, tec)
+                # Always zero the entire connection matrix — when a network is excluded,
+                # all arcs must be forbidden regardless of what was installed.
+                _disable_all_network_arcs_in_csv(input_path, tec)
             else:
                 _disable_technology_in_json(input_path, tec)
 

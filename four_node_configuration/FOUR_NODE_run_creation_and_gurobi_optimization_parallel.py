@@ -214,7 +214,11 @@ def solve_single_model(args):
         # Pyomo/adopt will use the default Gurobi environment configured above
         # Use PVGIS to download/cache real irradiance data (W/m²) so pvlib
         # computes correct PV capacity factors — no changes to res.py needed.
-        load_climate_data_from_pvgis(input_data_path, year=2015)
+        load_climate_data_from_pvgis(input_data_path, year=2015,
+                                     ghi_scale=float(params.get("solar_availability", 1.0)))
+
+        # adopt.load_climate_data_from_api(input_data_path)
+
         m = adopt.ModelHub()
         m.read_data(input_data_path, start_period=0, end_period=8760)
 
@@ -966,7 +970,7 @@ if __name__ == "__main__":
     # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
     # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
     #all_scenarios = [f"{i:04d}" for i in range(1, 41)]
-    all_scenarios = [f"{i:04d}" for i in [5, 15, 25, 35]]
+    all_scenarios = [f"{i:04d}" for i in [5]]
 
     # OTHER PARAMETERS: These will be sampled using LHS
     # param_grid_for_sampling = {
@@ -1026,6 +1030,7 @@ if __name__ == "__main__":
         "import_availability_ratio": [0, 0.2, 0.3, 0.4, 0.6],
         "electricity_price_avg": [20, 50, 100, 150, 250],
         "electricity_standard_dev": [10, 50, 100],
+        "solar_availability": [0.7, 1.0, 1.3],  # low / medium (2015 baseline) / high GHI scale
         "electricity_availability_small": [30, 50, 100],
         "electricity_availability_large": [500, 1000, 1500],
         "hydrogen_import_price": [150, 200, 250, 300],

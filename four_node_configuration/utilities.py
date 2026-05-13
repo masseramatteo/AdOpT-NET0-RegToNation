@@ -1,8 +1,160 @@
 import math
+import numpy as np
 import pandas as pd
 from pathlib import Path
 import os
 import json
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Default path to the PVGIS export file
+# Columns (after skipping 8 metadata rows):
+#   time       – YYYYMMDD:HHmm
+#   G(i)       – Global irradiance on tilted surface  [W/m²]
+#   H_sun      – Sun height (elevation angle)         [degrees]
+#   T2m        – Air temperature at 2 m               [°C]
+#   WS10m      – Wind speed at 10 m                   [m/s]
+#   Int        – Interpolation flag (ignored)
+# ─────────────────────────────────────────────────────────────────────────────
+_PVGIS_DATA_FILE = (
+    Path(__file__).parent / "preprocess" / "data" / "Timeseries_weather_data_solar.csv"
+)
+
+# Number of metadata lines at the top and footer lines at the bottom of the file
+_PVGIS_SKIPROWS = 8
+_PVGIS_SKIPFOOTER = 3
+
+
+def load_climate_data_from_pvgis(input_data_path, year: int = 2015,
+                                  pvgis_file: Path = None,
+                                  ghi_scale: float = 1.0):
+    """
+    Read hourly climate data from a locally stored PVGIS export CSV and write
+    the relevant columns into every node's ``ClimateData.csv``.
+
+    The PVGIS file is the standard hourly-radiation export from
+    https://re.jrc.ec.europa.eu/pvg_tools/en/ (CSV format).  It must contain
+    the columns ``time``, ``G(i)``, ``T2m``, ``WS10m`` after skipping the
+    8-line metadata header.
+
+    Column mapping written to ClimateData.csv:
+        ``G(i)``   → ``ghi``      (W/m²)
+        ``H_sun``  → ``dni``/``dhi`` via Erbs decomposition (numpy, no extra deps)
+        ``T2m``    → ``temp_air`` (°C)
+        ``WS10m``  → ``ws10``     (m/s)
+
+    Args:
+        input_data_path (str | Path): Path to the adopt_net0 input-data folder.
+        year (int): Calendar year to extract from the PVGIS file (default 2015).
+            Must be present in the file (2005–2023 in the default dataset).
+        pvgis_file (Path | None): Path to the PVGIS CSV. Defaults to
+            ``preprocess/data/Timeseries_weather_data_solar.csv``.
+        ghi_scale (float): Multiplicative factor applied to the GHI column.
+            1.0 = base year (2015), <1.0 = lower irradiance, >1.0 = higher irradiance.
+            Useful to represent low/medium/high solar availability scenarios.
+    """
+    input_data_path = Path(input_data_path)
+    if pvgis_file is None:
+        pvgis_file = _PVGIS_DATA_FILE
+    pvgis_file = Path(pvgis_file)
+
+    if not pvgis_file.exists():
+        raise FileNotFoundError(
+            f"PVGIS data file not found: {pvgis_file}\n"
+            "Download it from https://re.jrc.ec.europa.eu/pvg_tools/en/ "
+            "(Hourly Data → CSV) and place it at that path."
+        )
+
+    # ── Parse PVGIS file ──────────────────────────────────────────────────────
+    print(f"  [PVGIS] Reading {pvgis_file.name} …")
+    raw = pd.read_csv(
+        pvgis_file,
+        skiprows=_PVGIS_SKIPROWS,
+        skipfooter=_PVGIS_SKIPFOOTER,
+        engine="python",
+        dtype={"G(i)": float, "H_sun": float, "T2m": float, "WS10m": float},
+    )
+
+    # Parse timestamp: format is YYYYMMDD:HHmm  (e.g. 20150101:0011)
+    raw["_dt"] = pd.to_datetime(raw["time"].astype(str), format="%Y%m%d:%H%M", errors="coerce")
+    raw = raw[raw["_dt"].notna()]   # drop the 5 NaT rows (footer bleed-through guard)
+
+    # Filter to requested year
+    year_data = raw[raw["_dt"].dt.year == year].copy()
+    if len(year_data) == 0:
+        available = sorted(raw["_dt"].dt.year.dropna().unique().astype(int))
+        raise ValueError(
+            f"Year {year} not found in PVGIS file. Available years: {available}"
+        )
+    print(f"  [PVGIS] Loaded {len(year_data)} hourly rows for year {year}")
+
+    # ── Erbs decomposition: GHI → DNI + DHI ──────────────────────────────────
+    ghi_vals = year_data["G(i)"].values.astype(float) * ghi_scale
+    h_sun    = year_data["H_sun"].values.astype(float)
+
+    cos_zen  = np.sin(np.radians(h_sun))                        # cos(zenith) = sin(elevation)
+    cos_zen  = np.clip(cos_zen, 0.0, 1.0)
+    ghi_ext  = 1361.0 * cos_zen                                 # extraterrestrial horizontal [W/m²]
+
+    kt = np.where(ghi_ext > 0, np.clip(ghi_vals / ghi_ext, 0.0, 1.0), 0.0)
+
+    dhi_frac = np.where(
+        kt <= 0.22,
+        1.0 - 0.09 * kt,
+        np.where(
+            kt <= 0.80,
+            0.9511 - 0.1604*kt + 4.388*kt**2 - 16.638*kt**3 + 12.336*kt**4,
+            0.165,
+        ),
+    )
+    dhi_vals = np.clip(ghi_vals * dhi_frac, 0.0, ghi_vals)
+    dni_vals = np.where(cos_zen > 0.01, (ghi_vals - dhi_vals) / cos_zen, 0.0)
+    dni_vals = np.clip(dni_vals, 0.0, None)
+
+    if ghi_scale != 1.0:
+        print(f"  [PVGIS] GHI scaled by {ghi_scale:.2f} (solar_availability factor)")
+
+    # Build a clean DataFrame with the adopt/pvlib column names
+    climate_values = pd.DataFrame({
+        "ghi":      ghi_vals,
+        "dni":      dni_vals,
+        "dhi":      dhi_vals,
+        "temp_air": year_data["T2m"].values.astype(float),
+        "ws10":     year_data["WS10m"].values.astype(float),
+    })
+
+    # ── Write into each node's ClimateData.csv ────────────────────────────────
+    topology_path = input_data_path / "Topology.json"
+    if not topology_path.exists():
+        raise FileNotFoundError(f"Topology.json not found at: {topology_path}")
+    with open(topology_path, "r") as f:
+        topology = json.load(f)
+
+    updated = 0
+    skipped = 0
+
+    for period in topology["investment_periods"]:
+        for node in topology["nodes"]:
+            climate_path = input_data_path / period / "node_data" / node / "ClimateData.csv"
+            if not climate_path.exists():
+                print(f"  [CLIMATE] WARN: ClimateData.csv not found for {node}/{period}, skipping")
+                skipped += 1
+                continue
+
+            climate_df = pd.read_csv(climate_path, sep=";", index_col=0)
+            n = len(climate_df)
+
+            for col in ["ghi", "dni", "dhi", "temp_air", "ws10"]:
+                if col in climate_df.columns:
+                    climate_df[col] = climate_values[col].values[:n]
+
+            climate_df.to_csv(climate_path, sep=";")
+            updated += 1
+            print(f"  [CLIMATE] {node}/{period} written with PVGIS year={year} data ✓")
+
+    print(
+        f"\n  [CLIMATE] Done → {updated} node(s) updated, {skipped} skipped"
+    )
+
 
 def calculate_distance_between_coordinates(lon1, lat1, lon2, lat2):
     """

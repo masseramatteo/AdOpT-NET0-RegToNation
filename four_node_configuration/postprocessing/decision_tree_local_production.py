@@ -10,7 +10,7 @@ import os
 
 # SETTINGS
 do_preprocessing = 1
-results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\all_simulations_with_new_methodology_for_prices"
+results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\3000_simulations_13_may_2026\Snellius_3000_simulations"
 
 # results_folders = {
 #     # "New price, small": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_1200_with_latest_electricity_fluctu_in_small",
@@ -203,9 +203,9 @@ print(f"  Distance between Small clusters: mean = {df_merged['distance_Small_clu
 # =============================================================================
 print("\nCreating dependent variables...")
 
-# 1) Electrolyzer installed in Small_cluster1 and Small_cluster2: binary (1 if size > 0)
-df_merged['Electrolyzer_small1_installed'] = (df_merged['Small_cluster1_Electrolyzer_small'] > 0).astype(int)
-df_merged['Electrolyzer_small2_installed'] = (df_merged['Small_cluster2_Electrolyzer_small'] > 0).astype(int)
+# 1) Electrolyzer installed in Small_cluster1 and Small_cluster2: binary (1 if size > 1 MW)
+df_merged['Electrolyzer_small1_installed'] = (df_merged['Small_cluster1_Electrolyzer_small'] > 1).astype(int)
+df_merged['Electrolyzer_small2_installed'] = (df_merged['Small_cluster2_Electrolyzer_small'] > 1).astype(int)
 
 # 2) Electrolyzer sizes
 df_merged['Electrolyzer_small1_size'] = df_merged['Small_cluster1_Electrolyzer_small']

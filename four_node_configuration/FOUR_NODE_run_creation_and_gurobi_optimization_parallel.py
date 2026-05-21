@@ -832,7 +832,7 @@ if __name__ == "__main__":
         "import_availability_ratio": [0,  0.3, 0.6],
         "electricity_price_avg": [20, 50, 100, 200],
         "electricity_standard_dev": [10, 50, 100],
-        "solar_availability": [0.7, 1.0, 1.3],  # low / medium (2015 baseline) / high GHI scale
+        "solar_availability": [0.3, 0.7, 1.0, 1.3],  # low / medium (2015 baseline) / high GHI scale
         "electricity_availability_small": [30, 50, 100],
         "electricity_availability_large": [500, 1000, 1500],
         "hydrogen_import_price": [100, 200, 300],

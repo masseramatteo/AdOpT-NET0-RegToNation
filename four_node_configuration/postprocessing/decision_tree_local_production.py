@@ -10,7 +10,7 @@ import os
 
 # SETTINGS
 do_preprocessing = 1
-results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\1000_sim_to_try_lower_elect_price"
+results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\checking_on_installation_small\1200_sim_to_try_less_solar"
 
 # results_folders = {
 #     # "New price, small": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_1200_with_latest_electricity_fluctu_in_small",
@@ -67,10 +67,12 @@ independent_vars.extend([
     "demand_level_ratio",
     "unbalance_ratio",
     "electricity_availability_small",
+    "electricity_availability_large",
     "import_availability_ratio",
     "electricity_price_avg",
     "electricity_standard_dev",
-    "hydrogen_import_price"
+    "hydrogen_import_price",
+    "solar_availability"
 ])
 
 print(f"\n{'='*80}")

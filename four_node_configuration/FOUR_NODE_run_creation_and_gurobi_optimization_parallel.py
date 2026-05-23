@@ -831,10 +831,10 @@ if __name__ == "__main__":
         "unbalance_ratio": [2, 3, 5], # how large clusters are unbalanced demand large1/demand large2
         "import_availability_ratio": [0,  0.3, 0.6],
         "electricity_price_avg": [20, 50, 100, 200],
-        "electricity_standard_dev": [10, 50, 100],
-        "solar_availability": [0.3, 0.7, 1.0, 1.3],  # low / medium (2015 baseline) / high GHI scale
+        "electricity_standard_dev": [10, 50, 150],
+        "solar_availability": [0.5, 1.0, 1.3],  # low / medium (2015 baseline) / high GHI scale
         "electricity_availability_small": [30, 50, 100],
-        "electricity_availability_large": [500, 1000, 1500],
+        "electricity_availability_large": [500, 1000, 2000],
         "hydrogen_import_price": [100, 200, 300],
         # "threads" viene aggiunto dal runner
     }
@@ -849,7 +849,7 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 30  # Number of LHS samples per scenario
+    n_samples_per_scenario = 75  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID")

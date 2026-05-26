@@ -38,22 +38,35 @@ TEC_PARAM_MAP = {
 }
 
 # Technologies that should never be excluded (existing/fixed)
-EXCLUDE_FROM_ANALYSIS = {"Storage_H2_Cavern", "Storage_H2_Cavern_existing", "Electrolyzer_big", "Storage_H2_highP", "Photovoltaic"}
+EXCLUDE_FROM_ANALYSIS = {"Storage_H2_Cavern", "Storage_H2_Cavern_existing", "Electrolyzer_big", "Storage_H2_highP"}
 
-# Combinations to exclude together (only run if ALL techs in the tuple are installed)
-# COMBO_JOBS = [
-#     ("Electrolyzer_small", "Storage_H2_lowP"),
-# ]
-COMBO_JOBS = []
+# Combinations to exclude together
+# If any small-cluster tech is installed, exclude all three together (no small-cluster scenario)
+COMBO_JOBS = [
+    ("Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic"),
+]
+
+# Trigger techs for each combo: combo runs if ANY of these is installed.
+# If entry is None, falls back to COMBO_INDEPENDENT_OF_INSTALLATION logic on the full combo.
+COMBO_TRIGGER_TECHS = [
+    ("Electrolyzer_small",),  # only Electrolyzer_small triggers; Photovoltaic/Storage alone do not
+]
+
+# Minimum installed size (MW) to consider a technology as "installed" for trigger evaluation.
+# Technologies not listed here use DEFAULT_INSTALLATION_THRESHOLD.
+DEFAULT_INSTALLATION_THRESHOLD = 0.0
+INSTALLATION_THRESHOLDS = {
+    "Electrolyzer_small": 1.0,
+}
 
 # Networks to disable in the "no network" scenario (always run, regardless of installation)
 NO_NETWORK_TECHS = ("hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP")
 
 # Set to True to include network re-optimization jobs (single arc exclusions + no-network scenario)
-REOPT_NETWORKS = True
+REOPT_NETWORKS = False
 
 # Technologies to skip in single-exclusion jobs (can still appear in COMBO_JOBS)
-SKIP_SINGLE_EXCLUSIONS = {"Electrolyzer_small", "Storage_H2_lowP", "hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"}
+SKIP_SINGLE_EXCLUSIONS = {"Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic", "hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"}
 
 # If True, combo job runs if at least ONE tech in the combo is installed.
 # If False, combo job runs only if ALL techs in the combo are installed.
@@ -397,12 +410,19 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
             ))
 
         # Combination exclusions
-        for combo in COMBO_JOBS:
-            condition = (
-                any(t in run["installed_tecs"] for t in combo)
-                if COMBO_INDEPENDENT_OF_INSTALLATION
-                else all(t in run["installed_tecs"] for t in combo)
-            )
+        for i, combo in enumerate(COMBO_JOBS):
+            trigger = COMBO_TRIGGER_TECHS[i] if i < len(COMBO_TRIGGER_TECHS) else None
+            if trigger is not None:
+                def _above_threshold(t_, sizes_):
+                    threshold = INSTALLATION_THRESHOLDS.get(t_, DEFAULT_INSTALLATION_THRESHOLD)
+                    return any(v > threshold for v in (sizes_.get(t_) or {}).values())
+                condition = any(_above_threshold(t, run["installed_sizes"]) for t in trigger)
+            else:
+                condition = (
+                    any(t in run["installed_tecs"] for t in combo)
+                    if COMBO_INDEPENDENT_OF_INSTALLATION
+                    else all(t in run["installed_tecs"] for t in combo)
+                )
             if condition:
                 jobs.append((
                     run["run_id"], run["params"], combo,
@@ -536,7 +556,7 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
 # ENTRY POINT
 # ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    RESULTS_FOLDER     = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\new_limits_on_large_cluster_simulations\1600_simulations_with_new_constraints"
+    RESULTS_FOLDER     = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\3000_simulations_24_may_2026\Snellius_3000_simulations"
     MAX_WORKERS        = 15    # parallel re-optimization workers (processes)
     GUROBI_THREADS     = 3   # Gurobi threads per worker (None = inherit from run_params.json)
 

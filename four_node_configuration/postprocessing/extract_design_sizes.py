@@ -625,7 +625,7 @@ def export_to_excel(df, output_path):
 
 if __name__ == "__main__":
     # Enter the path to your optimization folder
-    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\checking_on_installation_small\1200_sim_to_try_less_solar"
+    optimization_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\3000_simulations_24_may_2026\Snellius_3000_simulations"
 
     print("="*80)
     print("EXTRACTING OPTIMIZATION RESULTS")

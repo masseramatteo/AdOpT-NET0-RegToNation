@@ -574,8 +574,8 @@ if __name__ == "__main__":
             base_results / "task_001",
         ]
         RESULTS_FOLDER     = TASK_FOLDERS[task_id]
-        MAX_WORKERS        = 48
-        GUROBI_THREADS     = 4
+        MAX_WORKERS        = 63
+        GUROBI_THREADS     = 3
         LOCAL_REOPT_FOLDER = Path(os.environ.get("TMPDIR", "/tmp")) / "reopt_runs"
         OUTPUT_FOLDER      = base_results / f"reopt_comparison_task_{task_id:03d}"
 

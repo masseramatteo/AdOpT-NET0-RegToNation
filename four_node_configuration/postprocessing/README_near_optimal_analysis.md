@@ -85,7 +85,7 @@ sbatch run_near_optimal.sh
 ```
 
 - Runs as SLURM array job (`--array=0-1`): one fat_genoa node per task folder
-- 48 workers × 4 Gurobi threads = 192 CPUs per node
+- 63 workers × 3 Gurobi threads = 189 CPUs per node
 - Intermediate files → `$TMPDIR/reopt_runs` (fast node-local NVMe)
 - Output → `results/parallel_run_20260523_190614/reopt_comparison_task_000/` and `_001/`
 - Logs → `logs/reopt_<jobid>_0.out` and `_1.out`

@@ -38,13 +38,15 @@ TEC_PARAM_MAP = {
 }
 
 # Technologies that should never be excluded (existing/fixed)
-EXCLUDE_FROM_ANALYSIS = {"Storage_H2_Cavern", "Storage_H2_Cavern_existing", "Electrolyzer_big", "Storage_H2_highP"}
+EXCLUDE_FROM_ANALYSIS = {
+    "Storage_H2_Cavern", "Storage_H2_Cavern_existing",
+    "Electrolyzer_big", "Storage_H2_highP",
+    "Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic",
+}
 
 # Combinations to exclude together
 # If any small-cluster tech is installed, exclude all three together (no small-cluster scenario)
-COMBO_JOBS = [
-    ("Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic"),
-]
+COMBO_JOBS = []
 
 # Trigger techs for each combo: combo runs if ANY of these is installed.
 # If entry is None, falls back to COMBO_INDEPENDENT_OF_INSTALLATION logic on the full combo.
@@ -56,14 +58,17 @@ COMBO_TRIGGER_TECHS = [
 # Technologies not listed here use DEFAULT_INSTALLATION_THRESHOLD.
 DEFAULT_INSTALLATION_THRESHOLD = 0.0
 INSTALLATION_THRESHOLDS = {
-    "Electrolyzer_small": 1.0,
+    "Electrolyzer_small":            1.0,
+    "hydrogenPipelineOnshore_lowP":  1.0,
+    "hydrogenPipelineOnshore_highP": 1.0,
 }
 
 # Networks to disable in the "no network" scenario (always run, regardless of installation)
 NO_NETWORK_TECHS = ("hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP")
 
-# Set to True to include network re-optimization jobs (single arc exclusions + no-network scenario)
-REOPT_NETWORKS = False
+# Set to True to include network re-optimization jobs (no-network scenario).
+# Job only runs if at least one network arc is installed (> threshold) in the first-best solution.
+REOPT_NETWORKS = True
 
 # Technologies to skip in single-exclusion jobs (can still appear in COMBO_JOBS)
 SKIP_SINGLE_EXCLUSIONS = {"Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic", "hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"}
@@ -122,10 +127,11 @@ def get_installed_technologies(h5_path):
         if REOPT_NETWORKS and "design/networks/period1" in f:
             for net in f["design/networks/period1"].keys():
                 if net in TEC_PARAM_MAP:
+                    arc_threshold = INSTALLATION_THRESHOLDS.get(net, DEFAULT_INSTALLATION_THRESHOLD)
                     for arc in f[f"design/networks/period1/{net}"].keys():
                         size = f[f"design/networks/period1/{net}/{arc}/size"][()]
                         size_val = float(size[0]) if hasattr(size, "__len__") else float(size)
-                        if size_val > 0:
+                        if size_val > arc_threshold:
                             installed_tecs.add(net)
                             parsed = _parse_arc_key(arc)
                             if parsed:
@@ -430,8 +436,8 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
                     reopt_folder, BASE_PATH, gurobi_threads,
                 ))
 
-        # No-network scenario: always run, force-disables all pipeline connections
-        if REOPT_NETWORKS:
+        # No-network scenario: run only if at least one network arc is installed
+        if REOPT_NETWORKS and run["installed_arcs"]:
             jobs.append((
                 run["run_id"], run["params"], NO_NETWORK_TECHS,
                 run["installed_arcs"],

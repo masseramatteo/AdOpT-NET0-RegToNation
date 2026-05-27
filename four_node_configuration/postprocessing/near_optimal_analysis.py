@@ -62,8 +62,9 @@ INSTALLATION_THRESHOLDS = {
 # Networks to disable in the "no network" scenario (always run, regardless of installation)
 NO_NETWORK_TECHS = ("hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP")
 
-# Set to True to include network re-optimization jobs (single arc exclusions + no-network scenario)
-REOPT_NETWORKS = False
+# Set to True to include network re-optimization jobs (no-network scenario)
+# Job only runs if at least one network arc is installed in the first-best solution.
+REOPT_NETWORKS = True
 
 # Technologies to skip in single-exclusion jobs (can still appear in COMBO_JOBS)
 SKIP_SINGLE_EXCLUSIONS = {"Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic", "hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"}
@@ -434,8 +435,8 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
                     reopt_folder, BASE_PATH, gurobi_threads,
                 ))
 
-        # No-network scenario: always run, force-disables all pipeline connections
-        if REOPT_NETWORKS:
+        # No-network scenario: run only if at least one network arc is installed
+        if REOPT_NETWORKS and run["installed_arcs"]:
             jobs.append((
                 run["run_id"], run["params"], NO_NETWORK_TECHS,
                 run["installed_arcs"],

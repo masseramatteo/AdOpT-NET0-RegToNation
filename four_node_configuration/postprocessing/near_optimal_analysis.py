@@ -25,6 +25,10 @@ import multiprocessing as mp
 BASE_PATH = Path(__file__).resolve().parent.parent  # four_node_configuration/
 sys.path.insert(0, str(BASE_PATH))
 
+# ── Path setup ────────────────────────────────────────────────────────────────
+BASE_PATH = Path(__file__).resolve().parent.parent  # four_node_configuration/
+sys.path.insert(0, str(BASE_PATH))
+
 # ── Technology mapping ────────────────────────────────────────────────────────
 # Maps technology name → which params key it belongs to
 TEC_PARAM_MAP = {
@@ -41,7 +45,6 @@ TEC_PARAM_MAP = {
 EXCLUDE_FROM_ANALYSIS = {
     "Storage_H2_Cavern", "Storage_H2_Cavern_existing",
     "Electrolyzer_big", "Storage_H2_highP",
-    "Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic",
 }
 
 # Combinations to exclude together
@@ -66,12 +69,12 @@ INSTALLATION_THRESHOLDS = {
 # Networks to disable in the "no network" scenario (always run, regardless of installation)
 NO_NETWORK_TECHS = ("hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP")
 
-# Set to True to include network re-optimization jobs (no-network scenario)
-# Job only runs if at least one network arc is installed in the first-best solution.
-REOPT_NETWORKS = True
+# Set to True to include network re-optimization jobs (no-network scenario).
+# Job only runs if at least one network arc is installed (> threshold) in the first-best solution.
+REOPT_NETWORKS = False
 
 # Technologies to skip in single-exclusion jobs (can still appear in COMBO_JOBS)
-SKIP_SINGLE_EXCLUSIONS = {"Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic", "hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"}
+SKIP_SINGLE_EXCLUSIONS = {"Storage_H2_lowP", "Photovoltaic", "hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"}
 
 # If True, combo job runs if at least ONE tech in the combo is installed.
 # If False, combo job runs only if ALL techs in the combo are installed.

@@ -41,20 +41,18 @@ TEC_PARAM_MAP = {
 EXCLUDE_FROM_ANALYSIS = {
     "Storage_H2_Cavern", "Storage_H2_Cavern_existing",
     "Electrolyzer_big", "Storage_H2_highP",
+    "Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic",
 }
 
 # Combinations to exclude together
-# If any small-cluster tech is installed, exclude all three together (no small-cluster scenario)
 COMBO_JOBS = []
 
-# Trigger techs for each combo: combo runs if ANY of these is installed.
-# If entry is None, falls back to COMBO_INDEPENDENT_OF_INSTALLATION logic on the full combo.
+# Trigger techs for each combo
 COMBO_TRIGGER_TECHS = [
-    ("Electrolyzer_small",),  # only Electrolyzer_small triggers; Photovoltaic/Storage alone do not
+    ("Electrolyzer_small",),
 ]
 
-# Minimum installed size (MW) to consider a technology as "installed" for trigger evaluation.
-# Technologies not listed here use DEFAULT_INSTALLATION_THRESHOLD.
+# Minimum installed size (MW) to consider a technology as "installed"
 DEFAULT_INSTALLATION_THRESHOLD = 0.0
 INSTALLATION_THRESHOLDS = {
     "Electrolyzer_small":            1.0,
@@ -62,18 +60,19 @@ INSTALLATION_THRESHOLDS = {
     "hydrogenPipelineOnshore_highP": 1.0,
 }
 
-# Networks to disable in the "no network" scenario (always run, regardless of installation)
+# Networks to disable in the "no network" scenario
 NO_NETWORK_TECHS = ("hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP")
 
-# Set to True to include network re-optimization jobs (no-network scenario).
-# Job only runs if at least one network arc is installed (> threshold) in the first-best solution.
+# Include network re-optimization jobs
 REOPT_NETWORKS = True
 
-# Technologies to skip in single-exclusion jobs (can still appear in COMBO_JOBS)
-SKIP_SINGLE_EXCLUSIONS = {"Storage_H2_lowP", "Photovoltaic", "hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"}
+# Technologies to skip in single-exclusion jobs
+SKIP_SINGLE_EXCLUSIONS = {
+    "Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic",
+    "hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP",
+}
 
-# If True, combo job runs if at least ONE tech in the combo is installed.
-# If False, combo job runs only if ALL techs in the combo are installed.
+# Combo job trigger logic
 COMBO_INDEPENDENT_OF_INSTALLATION = True
 
 

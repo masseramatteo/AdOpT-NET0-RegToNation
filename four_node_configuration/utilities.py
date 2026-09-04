@@ -28,6 +28,26 @@ def load_climate_data_from_pvgis(input_data_path, year: int = 2015,
                                   pvgis_file: Path = None,
                                   ghi_scale: float = 1.0):
     """
+    DEPRECATED -- kept only to reproduce runs made before 2026-09-04.
+    Use :func:`load_climate_data_for_target_cf` instead.
+
+    Two defects make this function unusable for new batches:
+
+    1. It maps the PVGIS column ``G(i)`` to ``ghi``. ``G(i)`` is *plane-of-array*
+       irradiance (the cached export was taken at ``Slope: 39 deg``), not global
+       horizontal, so pvlib transposes an already-tilted series a second time.
+       Measured effect: mean capacity factor 0.140 at ``ghi_scale=1.0`` against
+       0.091 for the same location computed from true horizontal data.
+    2. Because a tilted plane can exceed the horizontal extraterrestrial
+       irradiance, the Erbs clearness index exceeds 1 in 522 daylight hours even
+       at ``ghi_scale=1.0``, sending DNI to 2621 W/m2 (solar constant 1361) and
+       producing capacity factors above 1 in 179 hours.
+
+    ``ghi_scale`` amplifies both: at 1.3 the violations reach 1041 hours and
+    CF 1.72.
+
+    Original description follows.
+
     Read hourly climate data from a locally stored PVGIS export CSV and write
     the relevant columns into every node's ``ClimateData.csv``.
 
@@ -156,6 +176,181 @@ def load_climate_data_from_pvgis(input_data_path, year: int = 2015,
     )
 
 
+def _import_solar_anchors():
+    """
+    Import ``preprocess/solar_anchors.py`` by path.
+
+    Path-based rather than a plain ``import`` because the parallel runner uses
+    the ``spawn`` start method, so worker processes do not inherit the parent's
+    ``sys.path`` or working directory.
+
+    :return: the imported module
+    """
+    import importlib.util
+    import sys
+
+    module_path = Path(__file__).resolve().parent / "preprocess" / "solar_anchors.py"
+    if "solar_anchors" in sys.modules:
+        return sys.modules["solar_anchors"]
+    spec = importlib.util.spec_from_file_location("solar_anchors", module_path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Could not load solar_anchors from {module_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["solar_anchors"] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_climate_data_for_target_cf(input_data_path, solar_cf_mean: float,
+                                    report_realized_cf: bool = True,
+                                    target_nodes: list = None,
+                                    max_iterations: int = 3,
+                                    tolerance: float = 0.002):
+    """
+    Write climate data realizing a target annual-mean PV capacity factor.
+
+    Replaces :func:`load_climate_data_from_pvgis`. The sampled parameter is
+    ``solar_cf_mean`` -- dimensionless and geography-free -- rather than a
+    multiplier on irradiance. The anchor whose own capacity factor is nearest to
+    the target supplies the hourly *shape*; a small residual scale (within
+    +-5% over ``solar_cf_mean`` in [0.09, 0.17]) sets the *level*.
+
+    The three irradiance components come from the PVGIS TMY API as global
+    horizontal, beam normal and diffuse horizontal -- the same columns
+    ``adopt_net0.data_preprocessing.data_loading.import_jrc_climate_data`` uses
+    -- so no Erbs reconstruction is needed and the clearness index stays
+    physical.
+
+    Build the anchor cache once before calling this::
+
+        python four_node_configuration/preprocess/solar_anchors.py
+
+    :param input_data_path: path to the adopt_net0 input-data folder
+    :param float solar_cf_mean: target annual-mean PV capacity factor
+    :param bool report_realized_cf: run pvlib per node to measure the capacity
+        factor actually obtained at that node's coordinates, and correct the
+        residual scale so that measured value matches ``solar_cf_mean``. This
+        matters because ``res.py`` builds its pvlib ``Location`` from the node's
+        own latitude and longitude while every node receives the same series:
+        without the correction a Madrid anchor evaluated at 52 N realizes about
+        4% less than its calibrated value, compressing the top of the axis.
+        Costs roughly one second per node per iteration.
+    :param list target_nodes: nodes whose mean capacity factor should hit the
+        target. Defaults to every node; pass the nodes that actually carry PV
+        when they are a subset.
+    :param int max_iterations: maximum correction steps
+    :param float tolerance: relative tolerance on the realized mean
+    :return: dict with the anchor used, the residual scale, the predicted mean
+        capacity factor and -- if requested -- the realized mean per node
+    :rtype: dict
+    """
+    input_data_path = Path(input_data_path)
+    anchors = _import_solar_anchors()
+
+    target = float(solar_cf_mean)
+    calibration = anchors.load_calibration()
+    anchor_name, scale, predicted_cf = anchors.select_anchor(target, calibration)
+    anchor_climate = anchors.load_anchor_climate(anchor_name)
+
+    topology_path = input_data_path / "Topology.json"
+    if not topology_path.exists():
+        raise FileNotFoundError(f"Topology.json not found at: {topology_path}")
+    with open(topology_path, "r") as f:
+        topology = json.load(f)
+
+    node_coords = {}
+    node_locations_path = input_data_path / "NodeLocations.csv"
+    if node_locations_path.exists():
+        locations = pd.read_csv(node_locations_path, sep=";")
+        index_col = locations.columns[0]
+        for _, row in locations.iterrows():
+            node_coords[row[index_col]] = (
+                float(row["lon"]), float(row["lat"]), float(row.get("alt", 0.0) or 0.0)
+            )
+
+    if target_nodes is None:
+        target_nodes = list(topology["nodes"])
+    measured_nodes = [n for n in target_nodes if n in node_coords]
+
+    print(f"  [SOLAR] target CF {target:.4f} -> anchor '{anchor_name}' "
+          f"(base CF {calibration['anchors'][anchor_name]['cf_base']:.4f}), "
+          f"initial scale {scale:.4f}")
+
+    # ── Correct the scale against the capacity factor actually realized at the
+    #    node coordinates. CF is very nearly linear in scale, so a Newton step
+    #    converges in one or two iterations.
+    def _measure(current_scale):
+        """Mean capacity factor per measured node for a given residual scale."""
+        series = anchors.scale_climate(anchor_climate, current_scale)
+        out = {}
+        for node in measured_nodes:
+            lon, lat, alt = node_coords[node]
+            cf = anchors.capacity_factor(series, lat=lat, lon=lon, alt=alt)
+            if cf.max() > 1.0:
+                raise ValueError(
+                    f"PV capacity factor exceeds 1 at {node} (max {cf.max():.3f}) "
+                    f"for solar_cf_mean={target}. The climate series is not "
+                    "physical -- check the anchor cache."
+                )
+            out[node] = float(cf.mean())
+        return out
+
+    realized = {}
+    iterations = 0
+    if report_realized_cf and measured_nodes:
+        for iterations in range(1, max_iterations + 1):
+            realized = _measure(scale)
+            achieved = float(np.mean(list(realized.values())))
+            error = abs(achieved - target) / target
+            print(f"  [SOLAR]   iter {iterations}: scale {scale:.4f} -> "
+                  f"realized mean CF {achieved:.4f} (error {error * 100:.2f}%)")
+            if error <= tolerance:
+                break
+            scale *= target / achieved
+        else:
+            # Iterations exhausted: re-measure so the reported values match the
+            # scale that is about to be written.
+            realized = _measure(scale)
+            print(f"  [SOLAR]   final scale {scale:.4f} -> realized mean CF "
+                  f"{np.mean(list(realized.values())):.4f} (tolerance not reached)")
+
+    climate_values = anchors.scale_climate(anchor_climate, scale)
+
+    info = {
+        "solar_anchor": anchor_name,
+        "solar_anchor_scale": round(float(scale), 6),
+        "solar_cf_predicted": round(float(predicted_cf), 6),
+    }
+
+    updated = 0
+    for period in topology["investment_periods"]:
+        for node in topology["nodes"]:
+            climate_path = input_data_path / period / "node_data" / node / "ClimateData.csv"
+            if not climate_path.exists():
+                print(f"  [CLIMATE] WARN: ClimateData.csv not found for {node}/{period}, skipping")
+                continue
+
+            climate_df = pd.read_csv(climate_path, sep=";", index_col=0)
+            n = len(climate_df)
+            for col in ["ghi", "dni", "dhi", "temp_air", "ws10"]:
+                if col in climate_df.columns:
+                    climate_df[col] = climate_values[col].values[:n]
+            climate_df.to_csv(climate_path, sep=";")
+            updated += 1
+
+    if realized:
+        info["solar_cf_iterations"] = iterations
+        info["solar_cf_realized_by_node"] = {k: round(v, 6) for k, v in realized.items()}
+        info["solar_cf_realized_mean"] = round(
+            float(np.mean(list(realized.values()))), 6
+        )
+        print("  [SOLAR] realized CF per node: "
+              + ", ".join(f"{k}={v:.4f}" for k, v in realized.items()))
+
+    print(f"  [CLIMATE] Done -> {updated} node(s) updated")
+    return info
+
+
 def calculate_distance_between_coordinates(lon1, lat1, lon2, lat2):
     """
     Calculate the distance between two points on Earth using the Haversine formula.
@@ -220,7 +415,7 @@ def load_scenario_nodes(input_data_path, nodes, scenario):
     # Build path relative to this file's location
     current_file = Path(__file__).resolve()
     four_node_folder = current_file.parent  # four_node_configuration folder
-    scenario_file = four_node_folder / "preprocess" / "generated_topology" / f"NodeLocations_{scenario}.csv"
+    scenario_file = four_node_folder / "preprocess" / "generated_topology_v4" / f"NodeLocations_{scenario}.csv"
 
     if not scenario_file.exists():
         raise FileNotFoundError(f"Scenario file not found: {scenario_file}")

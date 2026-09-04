@@ -15,7 +15,7 @@ from utilities import (
     add_existing_distribution_network,
     add_existing_transmission_network,
     tune_gurobi_model,
-    load_climate_data_from_pvgis,
+    load_climate_data_for_target_cf,
 )
 
 from define_components_spec import (
@@ -212,12 +212,18 @@ def solve_single_model(args):
 
         # Create ModelHub and read data
         # Pyomo/adopt will use the default Gurobi environment configured above
-        # Use PVGIS to download/cache real irradiance data (W/m²) so pvlib
-        # computes correct PV capacity factors — no changes to res.py needed.
-        load_climate_data_from_pvgis(input_data_path, year=2015,
-                                     ghi_scale=float(params.get("solar_availability", 1.0)))
-
-        # adopt.load_climate_data_from_api(input_data_path)
+        # Write the hourly irradiance series realizing the sampled annual-mean PV
+        # capacity factor. Shape comes from a real European TMY anchor, level from
+        # a small residual scale. Returns the anchor used and the capacity factor
+        # actually realized per node, which is what postprocessing should use.
+        solar_info = load_climate_data_for_target_cf(
+            input_data_path,
+            solar_cf_mean=float(params["solar_cf_mean"]),
+            # PV exists only at the small clusters, so the capacity factor that
+            # matters is the one realized there
+            target_nodes=["Small_cluster1", "Small_cluster2"],
+        )
+        params.update(solar_info)
 
         m = adopt.ModelHub()
         m.read_data(input_data_path, start_period=0, end_period=8760)
@@ -1025,16 +1031,18 @@ if __name__ == "__main__":
     # ========================================================================
     param_grid_for_sampling = {
         "scenario": all_scenarios,  # Include in param_grid but handle separately
-        "total_demand_TWh": [5, 10, 15],
-        "demand_level_ratio": [8, 15, 20],
-        "unbalance_ratio": [2, 3, 5], # how large clusters are unbalanced demand large1/demand large2
-        "import_availability_ratio": [0, 0.2, 0.3, 0.4, 0.6],
-        "electricity_price_avg": [20, 50, 100, 150, 250],
-        "electricity_standard_dev": [10, 50, 100],
-        "solar_availability": [0.7, 1.0, 1.3],  # low / medium (2015 baseline) / high GHI scale
-        "electricity_availability_small": [30, 50, 100],
-        "electricity_availability_large": [500, 1000, 1500],
-        "hydrogen_import_price": [150, 200, 250, 300],
+        "total_demand_TWh": [5, 15, 25],
+        "demand_level_ratio": [5, 17.5, 30],
+        "unbalance_ratio": [2, 5, 8], # how large clusters are unbalanced demand large1/demand large2
+        "import_availability_ratio": [0, 0.35, 0.7],
+        "electricity_price_avg": [20, 135, 250],
+        "electricity_standard_dev": [10, 55, 100],
+        # Annual-mean PV capacity factor. Anchor library covers 0.089-0.169
+        # (Denmark to Madrid); see preprocess/solar_anchors.py
+        "solar_cf_mean": [0.09, 0.13, 0.17],
+        "electricity_availability_small": [30, 90, 150],
+        "electricity_availability_large": [500, 1250, 2000],
+        "hydrogen_import_price": [150, 225, 300],
         # "threads" viene aggiunto dal runner
     }
 
@@ -1048,7 +1056,7 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 1  # Number of LHS samples per scenario
+    n_samples_per_scenario = 100  # Number of LHS samples per scenario
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID (all combinations)")

@@ -94,7 +94,7 @@ def define_hydrogen_storage(input_data_path):
             storage_data = json.load(json_file)
 
         storage_data["size_min"] = 0
-        storage_data["size_max"]  = 50
+        storage_data["size_max"]  = 100
         storage_data["Economics"]["unit_capex"] = 15000
 
         storage_data["Performance"]["allow_only_one_direction"] = 1
@@ -150,7 +150,8 @@ def define_electrolyzers(input_data_path):
             electrolyzer_data = json.load(json_file)
 
         electrolyzer_data["size_min"] = 0
-        electrolyzer_data["size_max"] = 3500
+        electrolyzer_data["size_max"] = 2500
+        electrolyzer_data["Economics"]["opex_fixed"] = 0.03
 
         with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Electrolyzer_big.json",
                   "w") as json_file:
@@ -162,6 +163,7 @@ def define_electrolyzers(input_data_path):
             electrolyzer_data = json.load(json_file)
 
         electrolyzer_data["size_max"] = 150
+        electrolyzer_data["Economics"]["opex_fixed"] = 0.03
 
         with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Electrolyzer_small.json",
                   "w") as json_file:
@@ -172,7 +174,7 @@ def define_electrolyzers(input_data_path):
                   "r") as json_file:
             photovoltaic_data = json.load(json_file)
 
-        photovoltaic_data["size_max"] = 25
+        photovoltaic_data["size_max"] = 60
 
         with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Photovoltaic.json",
                   "w") as json_file:

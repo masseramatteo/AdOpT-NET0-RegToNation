@@ -22,7 +22,7 @@ from utilities import (
     add_existing_distribution_network,
     add_existing_transmission_network,
     tune_gurobi_model,
-    load_climate_data_from_pvgis,
+    load_climate_data_for_target_cf,
 )
 
 from define_components_spec import (
@@ -170,10 +170,19 @@ def solve_single_model(args):
 
         input_data_path = Path(input_data_path)
 
-        # Apply PVGIS climate data (GHI, DNI, DHI, temp_air, ws10) to every node's ClimateData.csv.
-        # Erbs decomposition is done here from H_sun; pvlib receives complete irradiance data.
-        load_climate_data_from_pvgis(input_data_path, year=2015,
-                                     ghi_scale=float(params.get("solar_availability", 1.0)))
+        # Write the hourly irradiance series realizing the sampled annual-mean PV
+        # capacity factor. Shape comes from a real European TMY anchor (cached in
+        # preprocess/data/solar_anchors, no network needed), level from a small
+        # residual scale. Returns the anchor used and the capacity factor actually
+        # realized per node, which is what postprocessing should use.
+        solar_info = load_climate_data_for_target_cf(
+            input_data_path,
+            solar_cf_mean=float(params["solar_cf_mean"]),
+            # PV exists only at the small clusters, so the capacity factor that
+            # matters is the one realized there
+            target_nodes=["Small_cluster1", "Small_cluster2"],
+        )
+        params.update(solar_info)
 
         m = adopt.ModelHub()
         m.read_data(input_data_path, start_period=0, end_period=8760)
@@ -826,16 +835,18 @@ if __name__ == "__main__":
 
     param_grid_for_sampling = {
         "scenario": all_scenarios,  # Include in param_grid but handle separately
-        "total_demand_TWh": [5, 10, 15],
-        "demand_level_ratio": [5, 15, 20],
-        "unbalance_ratio": [2, 3, 5], # how large clusters are unbalanced demand large1/demand large2
-        "import_availability_ratio": [0,  0.3, 0.6],
-        "electricity_price_avg": [20, 50, 100, 200],
-        "electricity_standard_dev": [10, 50, 150],
-        "solar_availability": [0.5, 1.0, 1.3],  # low / medium (2015 baseline) / high GHI scale
-        "electricity_availability_small": [30, 50, 100],
-        "electricity_availability_large": [500, 1000, 2000],
-        "hydrogen_import_price": [100, 200, 300],
+        "total_demand_TWh": [5, 15, 25],
+        "demand_level_ratio": [5, 17.5, 30],
+        "unbalance_ratio": [2, 5, 8], # how large clusters are unbalanced demand large1/demand large2
+        "import_availability_ratio": [0, 0.35, 0.7],
+        "electricity_price_avg": [20, 135, 250],
+        "electricity_standard_dev": [10, 55, 100],
+        # Annual-mean PV capacity factor. Anchor library covers 0.089-0.169
+        # (Denmark to Madrid); see preprocess/solar_anchors.py
+        "solar_cf_mean": [0.09, 0.13, 0.17],
+        "electricity_availability_small": [30, 90, 150],
+        "electricity_availability_large": [500, 1250, 2000],
+        "hydrogen_import_price": [150, 225, 300],
         # "threads" viene aggiunto dal runner
     }
 
@@ -849,7 +860,36 @@ if __name__ == "__main__":
     # 2. LHS params: Latin Hypercube Sampling
     # 3. Final: Scenarios × Fixed Grid × LHS Samples
 
-    n_samples_per_scenario = 75  # Number of LHS samples per scenario
+    n_samples_per_scenario = 100  # Number of LHS samples per scenario
+
+    # Pre-flight: fail in seconds if the solar anchor cache is missing or the
+    # sampled range falls outside it, rather than after the whole model-creation
+    # phase has burned node time in every worker.
+    # Resolve every endpoint through select_anchor itself rather than against the
+    # anchors' base capacity factors: an anchor reaches beyond its own base CF via
+    # the residual scale, so a plain range test rejects values that work.
+    from preprocess.solar_anchors import (
+        load_calibration as _load_solar_calibration,
+        select_anchor as _select_solar_anchor,
+    )
+    _solar_calib = _load_solar_calibration()
+    _solar_failures = []
+    for _v in param_grid_for_sampling["solar_cf_mean"]:
+        try:
+            _a, _s, _p = _select_solar_anchor(float(_v), _solar_calib)
+            print(f"[SOLAR] solar_cf_mean {_v:.4f} -> anchor '{_a}' x {_s:.4f} "
+                  f"(predicted {_p:.4f})")
+        except ValueError as _err:
+            _solar_failures.append(f"{_v}: {_err}")
+    if _solar_failures:
+        raise ValueError(
+            "solar_cf_mean values not reachable from the anchor library:\n  "
+            + "\n  ".join(_solar_failures)
+            + "\nAdd an anchor site in preprocess/solar_anchors.py and rebuild the "
+              "cache, or narrow the range."
+        )
+    print(f"[SOLAR] anchor library OK: {len(_solar_calib['anchors'])} anchors, "
+          f"base CF coverage {_solar_calib['cf_min']:.4f}-{_solar_calib['cf_max']:.4f}")
 
     print(f"\n[SAMPLING] Hybrid approach:")
     print(f"   - Fixed parameters: FULL GRID")

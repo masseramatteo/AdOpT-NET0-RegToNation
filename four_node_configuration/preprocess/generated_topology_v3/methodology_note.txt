@@ -1,0 +1,10 @@
+Spatial topology design - generated description
+
+40 four-node configurations were generated, 10 for each of the 4 archetypes.
+Each configuration is defined by three distance parameters - the large-large distance d_LL in [400, 1500] km, the small-large distance d_SL in [100, 500] km and the small-small distance d_SS in [100, 1000] km - together with a discrete archetype that fixes the qualitative arrangement of the two small clusters relative to the two large ones.
+
+Given an archetype, the four node positions are obtained by solving the three distance constraints rather than by assigning coordinates: each archetype supplies the symmetry that reduces the remaining degree of freedom to a unique layout, so the three requested distances are realized exactly and no additional random factor is introduced.
+
+Because four coplanar nodes carry six pairwise distances, each archetype can realize only a subset of the parameter box. The design was therefore drawn as a scrambled Sobol pool over the box, filtered on feasibility, and reduced to the final size by conditioned Latin hypercube sampling (Minasny and McBratney, 2006), which selects the subset whose marginals fill every stratum of the stated ranges once and whose parameters remain uncorrelated. The sampled distances are therefore homogeneously distributed over the ranges given above, and no draw is rescaled or discarded after the fact. Feasible shares of the box were A: 56%, B: 56%, C: 3%, D: 64%.
+
+Node coordinates were produced with an azimuthal-equidistant inverse projection and refined so that the great-circle distances used by the optimisation model reproduce the sampled distances.

@@ -1,0 +1,65 @@
+Pooled topology design - realized coverage
+========================================================================
+pool = 65536 scrambled Sobol points in the parameter box
+selection = pooled Latin hypercube over all 40 topologies (6 restarts x 300000 iterations)
+archetype C mode = 'balanced', centrality threshold = 0.9
+nearness ratio = 0.9, hub side policy = 'auto'
+max haversine-vs-planar residual over all runs = 0.214 km
+
+POOLED design - this is the property the study relies on
+------------------------------------------------------------------------
+    d_LL           400 -    1479 km   strata filled 39/40   max gap 0.049 (ideal 0.024)
+    d_SL_mean      109 -     493 km   strata filled 38/40   max gap 0.052 (ideal 0.024)
+    d_SS           110 -     988 km   strata filled 39/40   max gap 0.069 (ideal 0.024)
+    max |correlation| between parameters: 0.03
+
+            d_LL  d_SL_mean   d_SS  rho_comp
+d_LL       1.000     -0.031 -0.000     0.045
+d_SL_mean -0.031      1.000  0.032    -0.567
+d_SS      -0.000      0.032  1.000     0.690
+rho_comp   0.045     -0.567  0.690     1.000
+
+Archetype vs distances - confounding check
+------------------------------------------------------------------------
+eta^2 = share of each parameter's variance explained by the
+archetype. Near 0 means the archetype contrast is clean; above
+~0.5 the two are entangled and the tree will confuse them.
+
+    d_LL       eta^2 = 0.29
+    d_SL_mean  eta^2 = 0.31
+    d_SS       eta^2 = 0.25
+
+Per-archetype coverage - reported, not forced
+------------------------------------------------------------------------
+An archetype spans only what its geometry allows. Comparisons
+within one archetype are valid over the range it actually covers;
+the pooled design above is what guarantees the stated ranges are
+sampled homogeneously.
+
+A - both small near Large_cluster1 (the larger hub)
+    10 topologies, 55.6% of the box is feasible for it
+    d_LL           551 -    1479 km   spans  84.4% of [400, 1500]
+    d_SL_mean      131 -     470 km   spans  84.5% of [100, 500]
+    d_SS           131 -     884 km   spans  83.7% of [100, 1000]
+    centrality (d_near/d_far) 0.14 - 0.54
+
+B - both small near Large_cluster2 (the smaller hub)
+    10 topologies, 55.6% of the box is feasible for it
+    d_LL           441 -    1456 km   spans  92.3% of [400, 1500]
+    d_SL_mean      164 -     486 km   spans  80.4% of [100, 500]
+    d_SS           162 -     823 km   spans  73.5% of [100, 1000]
+    centrality (d_near/d_far) 0.12 - 0.76
+
+C - both small midway between the hubs
+    10 topologies, 3.8% of the box is feasible for it
+    d_LL           400 -     977 km   spans  52.4% of [400, 1500]
+    d_SL_mean      267 -     493 km   spans  56.5% of [100, 500]
+    d_SS           110 -     808 km   spans  77.5% of [100, 1000]
+    centrality (d_near/d_far) 0.91 - 1.00
+
+D - one small cluster per hub
+    10 topologies, 64.2% of the box is feasible for it
+    d_LL           519 -    1347 km   spans  75.3% of [400, 1500]
+    d_SL_mean      109 -     409 km   spans  74.9% of [100, 500]
+    d_SS           439 -     988 km   spans  60.9% of [100, 1000]
+    centrality (d_near/d_far) 0.10 - 0.49

@@ -3,7 +3,13 @@
     "allow": [
       "Bash(python -c \":*)",
       "Bash(python:*)",
-      "Bash(net use:*)"
+      "Bash(net use:*)",
+      "mcp__zotero__zotero_search_items",
+      "mcp__zotero__zotero_get_item_fulltext",
+      "PowerShell($env:PYTHONIOENCODING=\"utf-8\"; cd \"C:\\\\Users\\\\Masse007\\\\Documents\\\\Code\\\\AdOpT-NET0-RegToNation\\\\four_node_configuration\\\\postprocessing\\\\DT_Supply_Chain\\\\hierarchical\"; echo \"== robust_pure_trees ==\"; python robust_pure_trees.py 2>&1 | Select-String \"full |target|has_local|decentr|k4_arch|Saved\"; echo \"== hierarchical_clustering ==\"; python hierarchical_clustering.py 2>&1 | Select-String \"origin|structure|cut k=|BisectingKMeans|Done\"; echo \"== render_hierarchical_html ==\"; python render_hierarchical_html.py 2>&1 | Select-String \"leaves, train|Saved\")",
+      "Read(//x/3000_simulations_24_may_2026/**)",
+      "Read(//x/3000_simulations_24_may_2026/reopt_comparison_Snellius_3000_simulations_no_networks/**)",
+      "PowerShell($env:PYTHONIOENCODING=\"utf-8\"; cd \"C:\\\\Users\\\\Masse007\\\\Documents\\\\Code\\\\AdOpT-NET0-RegToNation\\\\four_node_configuration\\\\preprocess\"; python generate_node_topology_pooled.py 2>&1 | Select-Object -Last 60)"
     ]
   }
 }

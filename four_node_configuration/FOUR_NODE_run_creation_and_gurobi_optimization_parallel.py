@@ -969,8 +969,9 @@ if __name__ == "__main__":
 
     # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
     # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
-    #all_scenarios = [f"{i:04d}" for i in range(1, 41)]
-    all_scenarios = [f"{i:04d}" for i in [5]]
+    all_scenarios = [f"{i:04d}" for i in range(1, 41)]
+    #all_scenarios = [f"{i:04d}" for i in [5]]
+    #all_scenarios = [f"{i:04d}" for i in range(1, 2)]
 
     # OTHER PARAMETERS: These will be sampled using LHS
     # param_grid_for_sampling = {

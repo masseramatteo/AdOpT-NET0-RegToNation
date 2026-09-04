@@ -308,7 +308,7 @@ class OptimizationRunner:
         h2_import_limit_2 = h2_import_limit / (unbalance +1 )
         h2_import_limit_1 = h2_import_limit - h2_import_limit_2
 
-        # H2 import price: electricity price * ratio
+        # H2 import price
         h2_import_price = params["hydrogen_import_price"]
 
         return {

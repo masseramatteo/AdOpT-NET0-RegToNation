@@ -1,0 +1,56 @@
+Topology design - realized coverage
+========================================================================
+pool = 32768 scrambled Sobol points in the parameter box
+selection = clhs over the feasible pool (8 restarts x 60000 iterations, de-correlation weight 5)
+paired core shared by all archetypes = 0 topologies
+nearness ratio = 0.9, hub side policy = 'auto'
+max haversine-vs-planar residual over all runs = 0.098 km
+
+A - both small near Large_cluster1 (the larger hub)
+    10 topologies, 55.6% of the box is feasible
+    joint fill distance (unit coords, box diagonal 1.73): mean 0.268, 95th pct 0.423
+    d_LL           417 -    1432 km   covers  92.3% of [400, 1500]   strata filled 10/10   max gap 0.18 (ideal 0.09)
+    d_SL_mean      167 -     497 km   covers  82.4% of [100, 500]   strata filled 9/10   max gap 0.17 (ideal 0.09)
+    d_SS           131 -     825 km   covers  77.1% of [100, 1000]   strata filled 9/10   max gap 0.19 (ideal 0.09)
+    max |correlation| between parameters: 0.01
+    centrality (d_near/d_far) 0.13 - 0.68
+
+B - both small near Large_cluster2 (the smaller hub)
+    10 topologies, 55.6% of the box is feasible
+    joint fill distance (unit coords, box diagonal 1.73): mean 0.268, 95th pct 0.423
+    d_LL           417 -    1432 km   covers  92.3% of [400, 1500]   strata filled 10/10   max gap 0.18 (ideal 0.09)
+    d_SL_mean      167 -     497 km   covers  82.4% of [100, 500]   strata filled 9/10   max gap 0.17 (ideal 0.09)
+    d_SS           131 -     825 km   covers  77.1% of [100, 1000]   strata filled 9/10   max gap 0.19 (ideal 0.09)
+    max |correlation| between parameters: 0.01
+    centrality (d_near/d_far) 0.13 - 0.68
+
+C - both small midway, equidistant from the two hubs
+    10 topologies, 2.6% of the box is feasible
+    joint fill distance (unit coords, box diagonal 1.73): mean 0.110, 95th pct 0.180
+    d_LL           421 -     852 km   covers  39.2% of [400, 1500]   strata filled 5/10   max gap 0.59 (ideal 0.09)
+    d_SL_mean      249 -     491 km   covers  60.5% of [100, 500]   strata filled 7/10   max gap 0.37 (ideal 0.09)
+    d_SS           106 -     827 km   covers  80.0% of [100, 1000]   strata filled 9/10   max gap 0.19 (ideal 0.09)
+    max |correlation| between parameters: 0.88
+    centrality (d_near/d_far) 1.00 - 1.00
+    WARNING: this archetype cannot carry three independent, uniformly covered distances inside the stated ranges. Its feasible region is too thin, so the sampler must trade marginal coverage against parameter correlation. Do not read a distance effect out of this archetype alone; either widen the parameter ranges until the region opens up, or report it as a restricted case.
+
+D - one small cluster per hub
+    10 topologies, 64.2% of the box is feasible
+    joint fill distance (unit coords, box diagonal 1.73): mean 0.269, 95th pct 0.455
+    d_LL           411 -    1311 km   covers  81.9% of [400, 1500]   strata filled 9/10   max gap 0.17 (ideal 0.09)
+    d_SL_mean      114 -     485 km   covers  92.7% of [100, 500]   strata filled 10/10   max gap 0.18 (ideal 0.09)
+    d_SS           177 -     975 km   covers  88.7% of [100, 1000]   strata filled 10/10   max gap 0.14 (ideal 0.09)
+    max |correlation| between parameters: 0.01
+    centrality (d_near/d_far) 0.20 - 0.72
+
+Full design, all archetypes pooled
+------------------------------------------------------------------------
+    d_LL           411 -    1432 km   max gap 0.10
+    d_SL_mean      114 -     497 km   max gap 0.12
+    d_SS           106 -     975 km   max gap 0.12
+
+            d_LL  d_SL_mean   d_SS  rho_comp
+d_LL       1.000     -0.102  0.004    -0.012
+d_SL_mean -0.102      1.000  0.147    -0.385
+d_SS       0.004      0.147  1.000     0.708
+rho_comp  -0.012     -0.385  0.708     1.000

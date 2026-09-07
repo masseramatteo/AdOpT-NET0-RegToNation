@@ -81,6 +81,12 @@ SKIP_SINGLE_EXCLUSIONS = {"Storage_H2_lowP", "Photovoltaic", "hydrogenPipelineOn
 COMBO_INDEPENDENT_OF_INSTALLATION = True
 
 
+def _above_threshold(tec, installed_sizes):
+    """True if `tec` is installed above its threshold at any single location."""
+    threshold = INSTALLATION_THRESHOLDS.get(tec, DEFAULT_INSTALLATION_THRESHOLD)
+    return any(v > threshold for v in (installed_sizes.get(tec) or {}).values())
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # READING RESULTS
 # ─────────────────────────────────────────────────────────────────────────────
@@ -410,11 +416,13 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
     print(f"\n[STEP 2] Building re-optimization jobs...")
     jobs = []
     for run in first_best:
-        # Single-technology exclusions (only for installed techs)
+        # Single-technology exclusions (only for techs installed above threshold)
         for tec in sorted(run["installed_tecs"]):
             if tec not in TEC_PARAM_MAP:
                 continue
             if tec in SKIP_SINGLE_EXCLUSIONS:
+                continue
+            if not _above_threshold(tec, run["installed_sizes"]):
                 continue
             jobs.append((
                 run["run_id"], run["params"], (tec,),
@@ -426,9 +434,6 @@ def run_reopt_comparison(results_folder, output_folder=None, local_reopt_folder=
         for i, combo in enumerate(COMBO_JOBS):
             trigger = COMBO_TRIGGER_TECHS[i] if i < len(COMBO_TRIGGER_TECHS) else None
             if trigger is not None:
-                def _above_threshold(t_, sizes_):
-                    threshold = INSTALLATION_THRESHOLDS.get(t_, DEFAULT_INSTALLATION_THRESHOLD)
-                    return any(v > threshold for v in (sizes_.get(t_) or {}).values())
                 condition = any(_above_threshold(t, run["installed_sizes"]) for t in trigger)
             else:
                 condition = (
@@ -576,7 +581,7 @@ if __name__ == "__main__":
         # ── Snellius HPC entry point ──────────────────────────────────────────
         task_id      = int(os.environ.get("SLURM_ARRAY_TASK_ID", 0))
         home         = Path(os.environ["HOME"])
-        base_results = home / "AdOpT-NET0-RegToNation/four_node_configuration/results/parallel_run_20260523_190614"
+        base_results = home / "AdOpT-NET0-RegToNation/four_node_configuration/results/parallel_run_20260905_122248"
 
         TASK_FOLDERS = [
             base_results / "task_000",

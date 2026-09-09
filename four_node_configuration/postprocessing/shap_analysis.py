@@ -31,6 +31,8 @@ FEATURES = [
     "electricity_standard_dev",
     "hydrogen_import_price",
     "solar_cf_realized_mean",
+    "capex_ratio_small_big",         # sampled since the v5 campaign (Sept 2026)
+    "pipeline_cost_multiplier",      # idem
     "distance_from_large_cluster",
     "distance_Small_cluster1_to_Small_cluster2_km",
 ]

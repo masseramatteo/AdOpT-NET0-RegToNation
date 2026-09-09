@@ -457,12 +457,16 @@ def create_summary_dataframe(all_results):
     for run_name, run_results in all_results.items():
         row = {'run': run_name}
 
-        # Derive archetype from the scenario parameter saved in each run's
-        # optimization_model_info.txt.
-        # Scenarios are grouped: 0001-0010 → Archetype 1, 0011-0020 → Archetype 2, etc.
+        # Archetype: campaigns from the v5 paired design (Sept 2026) store it in
+        # the run parameters ('A'..'D'), together with 'economy' and 'slot'.
+        # Older campaigns derive it from the scenario number:
+        # 0001-0010 → Archetype 1, 0011-0020 → Archetype 2, etc.
         # (SCENARIOS_PER_ARCHETYPE scenarios per archetype)
-        scenario = run_results.get('params', {}).get('scenario')
-        if scenario is not None:
+        params = run_results.get('params', {})
+        scenario = params.get('scenario')
+        if params.get('archetype') is not None:
+            row['archetype'] = str(params['archetype'])
+        elif scenario is not None:
             try:
                 scenario_num = int(scenario)
                 archetype_number = ((scenario_num - 1) // SCENARIOS_PER_ARCHETYPE) + 1

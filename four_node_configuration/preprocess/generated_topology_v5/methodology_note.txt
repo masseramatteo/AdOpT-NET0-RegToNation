@@ -1,0 +1,7 @@
+Spatial topology design (v5) - generated description
+
+Each of the 750 economic samples is paired with eight four-node configurations of its own: two per archetype, the two differing in the small-large distance (one drawn from the lower half of the d_SL range, one from the upper half). The two hub-attached archetypes (A, B) share the same two distance triples, so that attaching the small clusters to the larger or to the smaller hub is compared at identical distances; the split and midway archetypes receive their own triples because their feasible regions differ from that of the attached archetypes.
+
+Distances are sampled as a scrambled Sobol sequence over the full ranges d_LL [400, 1500] km, d_SL [100, 500] km and d_SS [100, 1000] km, filtered for geometric feasibility under each archetype and never clamped or rescaled; the sample is therefore uniform over each archetype's feasible region and the realized coverage per archetype is reported. Triples are assigned to economic samples by random permutation, so the spatial and the techno-economic parameters are independent by construction. Across the campaign this yields 4500 distinct distance triples, so distance enters the decision-tree analysis as a continuous parameter.
+
+Node positions are the closed-form solution of the three distance constraints under the archetype's symmetry convention (see v4), projected with an azimuthal-equidistant inverse projection and refined so that the great-circle distances used by the optimisation model reproduce the sampled distances.

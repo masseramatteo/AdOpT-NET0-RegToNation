@@ -46,7 +46,15 @@ def run():
     clf.fit(X, y)
     pred = clf.predict(X)
 
-    cv = cross_val_score(clf, X, y, cv=5)
+    # Group folds by economy when the campaign has one (v5 paired design:
+    # 8 runs share every economic input), otherwise plain 5-fold.
+    if C.GROUP_COL in df.columns:
+        from sklearn.model_selection import StratifiedGroupKFold
+        cv = cross_val_score(clf, X, y, groups=df[C.GROUP_COL],
+                             cv=StratifiedGroupKFold(5, shuffle=True, random_state=C.RANDOM_STATE))
+        print(f"\n  CV grouped by '{C.GROUP_COL}' ({df[C.GROUP_COL].nunique()} groups)")
+    else:
+        cv = cross_val_score(clf, X, y, cv=5)
     print(f"\n  Train accuracy: {accuracy_score(y, pred):.4f}")
     print(f"  5-fold CV accuracy: {cv.mean():.4f} +/- {cv.std():.4f}")
     print("\nClassification report (train):")

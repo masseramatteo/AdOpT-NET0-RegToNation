@@ -3,7 +3,8 @@ import pandas as pd
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
-from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.model_selection import (train_test_split, StratifiedKFold,
+                                     GroupShuffleSplit, StratifiedGroupKFold)
 from typing import List
 import os
 import sys
@@ -103,7 +104,10 @@ independent_vars.extend([
     "electricity_price_avg",
     "electricity_standard_dev",
     "hydrogen_import_price",
-    "solar_cf_realized_mean"
+    "solar_cf_realized_mean",
+    # Sampled since the v5 campaign (Sept 2026); dropped below if absent
+    "capex_ratio_small_big",
+    "pipeline_cost_multiplier",
 ])
 
 print(f"\n{'='*80}")
@@ -122,6 +126,13 @@ print("Loading data from Excel files...")
 extracted_results_path = os.path.join(results_folder, "extracted_results.xlsx")
 df_merged = pd.read_excel(extracted_results_path)
 print(f"Loaded {len(df_merged)} runs from extracted_results.xlsx")
+
+# Features only present in campaigns that sampled them (v5 onwards)
+_missing_optional = [v for v in ("capex_ratio_small_big", "pipeline_cost_multiplier")
+                     if v in independent_vars and v not in df_merged.columns]
+if _missing_optional:
+    print(f"Optional features not in this campaign, dropped: {_missing_optional}")
+    independent_vars = [v for v in independent_vars if v not in _missing_optional]
 
 # Check if the independent variable columns are already present
 # (they will be if extract_design_sizes.py was run with the updated version)
@@ -421,10 +432,19 @@ else:
 # order which is non-deterministic; extracted_results uses sorted folder order)
 data_preprocessed["cap"] = data_preprocessed["cap"].sort_values("run").reset_index(drop=True)
 
-# Split set
-(data_train, data_test) = train_test_split(data_preprocessed["cap"],
-                                                      test_size=0.1,
-                                                      random_state=42)
+# Split set. In the v5 paired design 8 runs share every economic input, so the
+# unit of independence is the economy; group the split by it when available.
+_cap = data_preprocessed["cap"]
+SPLIT_GROUP_COL = "economy" if "economy" in _cap.columns else None
+if SPLIT_GROUP_COL:
+    print(f"\n[SPLIT] Train/test and CV grouped by '{SPLIT_GROUP_COL}' "
+          f"({_cap[SPLIT_GROUP_COL].nunique()} groups)")
+    _tr_idx, _te_idx = next(GroupShuffleSplit(n_splits=1, test_size=0.1, random_state=42)
+                            .split(_cap, groups=_cap[SPLIT_GROUP_COL]))
+    data_train = _cap.iloc[_tr_idx].reset_index(drop=True)
+    data_test = _cap.iloc[_te_idx].reset_index(drop=True)
+else:
+    (data_train, data_test) = train_test_split(_cap, test_size=0.1, random_state=42)
 
 # =============================================================================
 # Archetype-specific analysis setup
@@ -574,10 +594,15 @@ for dataset_name, data_train, data_test, current_results_folder in datasets_to_a
         print("─"*60)
         _X_full = data_preprocessed["cap"][X_cols].fillna(0)
         _y_full = data_preprocessed["cap"]["Electrolyzer_small_installed"]
-        _cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
+        if SPLIT_GROUP_COL:
+            _cv = StratifiedGroupKFold(n_splits=10, shuffle=True, random_state=42)
+            _splits = _cv.split(_X_full, _y_full, groups=data_preprocessed["cap"][SPLIT_GROUP_COL])
+        else:
+            _cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
+            _splits = _cv.split(_X_full, _y_full)
         _cv_importances = np.zeros(len(X_cols))
         _cv_accuracies = []
-        for _train_idx, _test_idx in _cv.split(_X_full, _y_full):
+        for _train_idx, _test_idx in _splits:
             _clf_cv = DecisionTreeClassifier(
                 max_depth=DT_MAX_DEPTH, min_samples_leaf=DT_MIN_SAMPLES_LEAF,
                 min_samples_split=DT_MIN_SAMPLES_SPLIT,

@@ -129,9 +129,9 @@ def create_single_model(args):
                 print(f"[NETWORK] Creating existing transmission network (highP)")
                 add_existing_transmission_network(input_data_path)
 
-        define_hydrogen_pipeline2(input_data_path)
+        define_hydrogen_pipeline2(input_data_path, params.get("pipeline_cost_multiplier", 1.0))
         define_hydrogen_storage(input_data_path)
-        define_electrolyzers(input_data_path)
+        define_electrolyzers(input_data_path, params.get("capex_ratio_small_big"))
 
         # Load carrier data
         runner._load_carrier_data(input_data_path, nodes, params)
@@ -961,23 +961,75 @@ def generate_parameter_combinations(param_grid, method='full', max_samples=100, 
 
 
 # ============================================================================
+# CAMPAIGN DEFINITION
+# ============================================================================
+# Module level so that sampling_design.py can import it for a dry run of the
+# design (economies, pairing, QC report) without creating any model.
+#
+# Design (v5, 2026-09): N_ECONOMIES techno-economic samples from a constrained
+# Latin hypercube, each paired with its own 8 topologies from
+# preprocess/generated_topology_v5/design_manifest.csv. Runs = 8 * N_ECONOMIES.
+# The old scenario x LHS crossing (40 topologies x n samples) is gone.
+
+N_ECONOMIES = 750            # size of the full design
+N_ECONOMIES_TO_RUN = None    # None = all; e.g. 60 for the pilot (prefix of the full design)
+FEASIBILITY_MARGIN = 1.02    # g + import_availability_ratio >= margin (annual supply adequacy)
+LHS_SEED = 42
+
+# Fixed parameters: full grid, must yield exactly one combination for the
+# paired design (several combinations would need several campaigns).
+FIXED_PARAMS_GRID = {
+    "mipgap": [0.0001],
+    "time_limit": [50],
+    "N_typical_days": [20],
+    "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
+    "networks_existing": [[]],
+    "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic"]],
+    "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
+    "small_cluster_existing_technologies": [{}],
+    "big_cluster_existing_technologies": [{"Storage_H2_Cavern": 10000}],
+    "willingness_to_pay": [250],
+    "electricity_profile_approach": ["changing_profile"]  # possibility fixed_profile or changing_profile
+}
+
+# Sampled parameters: three equally spaced anchors -> uniform marginal after
+# linear interpolation. Absolute MW kept for the grid connections; g and k are
+# derived (sampling_design.grid_adequacy / small_self_sufficiency).
+PARAM_GRID_FOR_SAMPLING = {
+    "total_demand_TWh": [5, 10, 15],
+    "demand_level_ratio": [8, 19, 30],
+    "unbalance_ratio": [2, 5, 8],  # how large clusters are unbalanced demand large1/demand large2
+    "import_availability_ratio": [0, 0.35, 0.7],
+    "electricity_price_avg": [20, 135, 250],
+    "electricity_standard_dev": [10, 55, 100],
+    # Annual-mean PV capacity factor. Anchor library covers 0.089-0.169
+    # (Denmark to Madrid); see preprocess/solar_anchors.py
+    "solar_cf_mean": [0.09, 0.13, 0.17],
+    "electricity_availability_small": [20, 70, 120],
+    "electricity_availability_large": [500, 1250, 2000],
+    "hydrogen_import_price": [150, 225, 300],
+    # Small-cluster electrolyzer unit capex as a multiple of the large one
+    # (1.494 MEUR/MW); 1.34 was the fixed value up to the Sept 2026 campaign
+    "capex_ratio_small_big": [1.0, 1.5, 2.0],
+    # Multiplier on gamma1, gamma3, gamma4 of both pipeline pressure levels
+    "pipeline_cost_multiplier": [0.5, 1.25, 2.0],
+    # "threads" viene aggiunto dal runner
+}
+
+
+# ============================================================================
 # EXAMPLE USAGE
 # ============================================================================
 if __name__ == "__main__":
     import itertools
     import numpy as np
+    from sampling_design import build_campaign
 
     base_path = Path(__file__).parent
 
     # =======================================================
     #  Define Parameters
     # =======================================================
-
-    # SCENARIOS: All 100 scenarios (0001 to 0100) - NO SAMPLING on these
-    # all_scenarios = [f"{i:04d}" for i in range(1, 101)]
-    all_scenarios = [f"{i:04d}" for i in range(1, 41)]
-    #all_scenarios = [f"{i:04d}" for i in [5]]
-    #all_scenarios = [f"{i:04d}" for i in range(1, 2)]
 
     # OTHER PARAMETERS: These will be sampled using LHS
     # param_grid_for_sampling = {
@@ -1008,118 +1060,35 @@ if __name__ == "__main__":
     # }
 
     # ========================================================================
-    # FIXED PARAMETERS - Full Grid (all combinations will be tested)
+    # SAMPLING: constrained LHS of economies x paired topologies (v5)
     # ========================================================================
-    # These parameters use FULL GRID exploration (not LHS)
-    # Each combination will be paired with each scenario and each LHS sample
-    fixed_params_grid = {
-        "mipgap": [0.0001],
-        "time_limit": [50],
-        "N_typical_days": [20],
-        "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
-        "networks_existing": [[]],
-        "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic"]],
-        "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
-        "small_cluster_existing_technologies": [{}],
-        "big_cluster_existing_technologies": [{"Storage_H2_Cavern": 10000}],
-        "willingness_to_pay": [250],
-        "electricity_profile_approach": ["changing_profile"] # possibility fixed_profile or changing_profile
-    }
+    # Grids and design constants are module-level (CAMPAIGN DEFINITION above).
+    fixed_combinations = [dict(zip(FIXED_PARAMS_GRID.keys(), combo))
+                          for combo in itertools.product(*FIXED_PARAMS_GRID.values())]
+    if len(fixed_combinations) != 1:
+        raise RuntimeError(f"FIXED_PARAMS_GRID yields {len(fixed_combinations)} combinations; "
+                           "the paired design expects exactly one per campaign")
 
-    # ========================================================================
-    # PARAMETERS TO BE SAMPLED
-    # ========================================================================
-    param_grid_for_sampling = {
-        "scenario": all_scenarios,  # Include in param_grid but handle separately
-        "total_demand_TWh": [5, 15, 25],
-        "demand_level_ratio": [5, 17.5, 30],
-        "unbalance_ratio": [2, 5, 8], # how large clusters are unbalanced demand large1/demand large2
-        "import_availability_ratio": [0, 0.35, 0.7],
-        "electricity_price_avg": [20, 135, 250],
-        "electricity_standard_dev": [10, 55, 100],
-        # Annual-mean PV capacity factor. Anchor library covers 0.089-0.169
-        # (Denmark to Madrid); see preprocess/solar_anchors.py
-        "solar_cf_mean": [0.09, 0.13, 0.17],
-        "electricity_availability_small": [30, 90, 150],
-        "electricity_availability_large": [500, 1250, 2000],
-        "hydrogen_import_price": [150, 225, 300],
-        # "threads" viene aggiunto dal runner
-    }
+    # Create timestamp for results folder (design files are written into it)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    results_folder = base_path / "results" / f"parallel_creation_test_{timestamp}"
 
-    print(f"\n[INFO] Total scenarios: {len(all_scenarios)}")
-
-    # ========================================================================
-    # SAMPLING METHOD
-    # ========================================================================
-    # Strategy:
-    # 1. Fixed params: FULL GRID (all combinations)
-    # 2. LHS params: Latin Hypercube Sampling
-    # 3. Final: Scenarios × Fixed Grid × LHS Samples
-
-    n_samples_per_scenario = 100  # Number of LHS samples per scenario
-
-    print(f"\n[SAMPLING] Hybrid approach:")
-    print(f"   - Fixed parameters: FULL GRID (all combinations)")
-    print(f"   - Other parameters: Latin Hypercube Sampling")
-    print(f"   - LHS samples per (scenario × fixed_config): {n_samples_per_scenario}")
-
-    # Generate all combinations of fixed parameters (full grid)
-    import itertools
-    fixed_keys = list(fixed_params_grid.keys())
-    fixed_values = list(fixed_params_grid.values())
-    fixed_combinations = [dict(zip(fixed_keys, combo)) for combo in itertools.product(*fixed_values)]
-
-    print(f"\n[FIXED GRID] Fixed parameter combinations: {len(fixed_combinations)}")
-    for key, values in fixed_params_grid.items():
-        if len(values) > 1:
-            print(f"   - {key}: {len(values)} values")
-
-    # Separate scenario from other parameters for LHS
-    param_grid_without_scenario = {k: v for k, v in param_grid_for_sampling.items() if k != "scenario"}
-
-    # Generate LHS samples for non-scenario parameters
-    lhs_samples = generate_parameter_combinations(
-        param_grid_without_scenario,
-        method='lhs',
-        max_samples=n_samples_per_scenario,
-        seed=42
+    print(f"\n[SAMPLING] Constrained LHS: {N_ECONOMIES} economies x 8 topologies, "
+          f"margin {FEASIBILITY_MARGIN}, seed {LHS_SEED}"
+          + (f", running the first {N_ECONOMIES_TO_RUN} economies (pilot)"
+             if N_ECONOMIES_TO_RUN else ""))
+    # Builds economies, pairs them with their topologies, writes
+    # economies.csv / run_table.csv / sampling_qc.txt and aborts if QC fails.
+    combinations = build_campaign(
+        PARAM_GRID_FOR_SAMPLING, fixed_combinations[0], results_folder,
+        n_economies=N_ECONOMIES, n_economies_to_run=N_ECONOMIES_TO_RUN,
+        seed=LHS_SEED, margin=FEASIBILITY_MARGIN,
     )
 
-    # Combine: Scenarios × Fixed Grid × LHS Samples
-    combinations = []
-    for scenario in all_scenarios:
-        for fixed_combo in fixed_combinations:
-            for lhs_sample in lhs_samples:
-                combined = {"scenario": scenario}
-                combined.update(fixed_combo)  # Add fixed parameters (full grid)
-                combined.update(lhs_sample)  # Add sampled parameters (LHS)
-                combinations.append(combined)
-
-    print(f"\n[INFO] Total runs to execute:")
-    print(f"   - Scenarios: {len(all_scenarios)}")
-    print(f"   - Fixed param combinations: {len(fixed_combinations)}")
-    print(f"   - LHS samples per config: {len(lhs_samples)}")
-    print(f"   - TOTAL: {len(combinations)} runs ({len(all_scenarios)} × {len(fixed_combinations)} × {len(lhs_samples)})")
-
-    # Full grid size (for comparison)
-    full_grid_size_lhs = 1
-    for values in param_grid_without_scenario.values():
-        full_grid_size_lhs *= len(values)
-    full_grid_size_fixed = len(fixed_combinations)
-    total_full_grid = len(all_scenarios) * full_grid_size_fixed * full_grid_size_lhs
-
-    print(f"\n[COMPARISON] Full grid would be:")
-    print(f"   - Scenarios × Fixed × LHS_full: {len(all_scenarios)} × {full_grid_size_fixed} × {full_grid_size_lhs} = {total_full_grid} runs")
-    print(f"   - Reduction from LHS: {(1 - len(combinations)/total_full_grid)*100:.1f}%")
-
-    # Prepare run configs
+    # Prepare run configs (economy-major: economy 1 -> runs 0001-0008, ...)
     run_configs = [(f"parallel_run_{i:04d}", params) for i, params in enumerate(combinations, 1)]
 
     print(f"\n[OK] Total runs to execute: {len(run_configs)}")
-
-    # Create timestamp for results folder
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    results_folder = base_path / "results" / f"parallel_creation_test_{timestamp}"
 
     # ========================================================================
     # OPTIONAL: GUROBI PARAMETER TUNING

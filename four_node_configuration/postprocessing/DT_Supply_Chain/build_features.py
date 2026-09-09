@@ -52,6 +52,11 @@ def build():
     out = pd.DataFrame(index=df.index)
     out["run"] = df["run"].values
     out["archetype"] = df["archetype"].values
+    # v5 paired design: keep the grouping key and slot so downstream splits can
+    # be grouped by economy (C.GROUP_COL)
+    for _c in ("economy", "slot"):
+        if _c in df.columns:
+            out[_c] = df[_c].values
 
     # --- Production, imports, network flows, reconstructed demand -------------
     # NaN in a flow/production column means the technology was not installed

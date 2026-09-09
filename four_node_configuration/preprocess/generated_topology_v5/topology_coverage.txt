@@ -1,0 +1,56 @@
+Paired topology design (v5) - realized coverage
+========================================================================
+750 economies x 8 topologies = 6000 topologies
+distinct distance triples = 4500 (A and B share theirs by design)
+centrality threshold = 0.9, nearness ratio = 0.9
+max haversine-vs-planar residual = 0.244 km
+
+POOLED over all 6000 rows - 60 strata per parameter
+------------------------------------------------------------------------
+    d_LL           400 -    1500 km   strata filled 60/60   min/max rows per stratum 55/148   max gap 0.0020
+    d_SL_mean      101 -     500 km   strata filled 60/60   min/max rows per stratum 21/206   max gap 0.0033
+    d_SS           100 -    1000 km   strata filled 60/60   min/max rows per stratum 35/146   max gap 0.0016
+    max |corr| pooled: 0.21
+
+Archetype vs distances - confounding check (eta^2)
+------------------------------------------------------------------------
+    d_LL       eta^2 = 0.14
+    d_SL_mean  eta^2 = 0.08
+    d_SS       eta^2 = 0.15
+
+Per archetype - uniform over its own feasible region
+------------------------------------------------------------------------
+A - both small near Large_cluster1 (the larger hub)  (1500 rows, 55.7% of the box feasible)
+    d_LL           401 -    1499 km   spans  99.8%   strata 60/60
+    d_SL_mean      101 -     500 km   spans  99.8%   strata 60/60
+    d_SS           100 -     986 km   spans  98.4%   strata 60/60
+    corr(LL,SL) +0.00  corr(LL,SS) +0.01  corr(SL,SS) +0.49   (support-induced, reported not forced)
+    centrality 0.08 - 0.90
+
+B - both small near Large_cluster2 (the smaller hub)  (1500 rows, 55.7% of the box feasible)
+    d_LL           401 -    1499 km   spans  99.8%   strata 60/60
+    d_SL_mean      101 -     500 km   spans  99.8%   strata 60/60
+    d_SS           100 -     986 km   spans  98.4%   strata 60/60
+    corr(LL,SL) +0.00  corr(LL,SS) +0.01  corr(SL,SS) +0.49   (support-induced, reported not forced)
+    centrality 0.08 - 0.90
+
+C - both small midway between the hubs  (1500 rows, 1.9% of the box feasible)
+    d_LL           401 -    1029 km   spans  57.2%   strata 35/60
+    d_SL_mean      211 -     500 km   spans  72.3%   strata 44/60
+    d_SS           100 -     938 km   spans  93.1%   strata 56/60
+    corr(LL,SL) +0.56  corr(LL,SS) -0.46  corr(SL,SS) +0.45   (support-induced, reported not forced)
+    centrality 0.90 - 1.00
+
+D - one small cluster per hub  (1500 rows, 64.2% of the box feasible)
+    d_LL           400 -    1500 km   spans  99.9%   strata 60/60
+    d_SL_mean      102 -     500 km   spans  99.6%   strata 60/60
+    d_SS           101 -    1000 km   spans  99.8%   strata 60/60
+    corr(LL,SL) +0.23  corr(LL,SS) +0.32  corr(SL,SS) -0.12   (support-induced, reported not forced)
+    centrality 0.10 - 0.89
+
+Within-economy near/far contrast (d_SL far - d_SL near, km)
+------------------------------------------------------------------------
+    A: median    161   p10    135   min    130
+    B: median    161   p10    135   min    130
+    C: median    101   p10     81   min     77
+    D: median    175   p10    156   min    152

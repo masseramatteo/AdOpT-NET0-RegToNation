@@ -104,10 +104,17 @@ DRIVER_INPUTS = [
     "electricity_standard_dev",
     "hydrogen_import_price",
     "solar_cf_realized_mean",
+    "capex_ratio_small_big",         # sampled since the v5 campaign (Sept 2026)
+    "pipeline_cost_multiplier",      # idem
     "distance_Large_cluster1_to_Large_cluster2_km",
     "distance_Small_cluster1_to_Small_cluster2_km",
     "distance_from_large_cluster",   # derived in build_features
 ]
+
+# Column identifying the unit of independence for train/test splits and CV.
+# In the v5 paired design 8 runs share one economy; older campaigns have no
+# such column and fall back to plain row-wise splits.
+GROUP_COL = "economy"
 
 # --- UU brand colours (Joule style) -----------------------------------------
 UU_NAVY = "#161D41"

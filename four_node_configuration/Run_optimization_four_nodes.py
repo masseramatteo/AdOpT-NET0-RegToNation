@@ -121,9 +121,9 @@ class OptimizationRunner:
                 add_existing_transmission_network(input_data_path, params["scenarios"])
 
 
-        define_hydrogen_pipeline2(input_data_path)
+        define_hydrogen_pipeline2(input_data_path, params.get("pipeline_cost_multiplier", 1.0))
         define_hydrogen_storage(input_data_path)
-        define_electrolyzers(input_data_path)
+        define_electrolyzers(input_data_path, params.get("capex_ratio_small_big"))
 
         # Load carrier data
 

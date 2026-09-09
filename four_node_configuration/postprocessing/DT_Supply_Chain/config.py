@@ -103,7 +103,7 @@ DRIVER_INPUTS = [
     "electricity_price_avg",
     "electricity_standard_dev",
     "hydrogen_import_price",
-    "solar_cf_mean",
+    "solar_cf_realized_mean",
     "distance_Large_cluster1_to_Large_cluster2_km",
     "distance_Small_cluster1_to_Small_cluster2_km",
     "distance_from_large_cluster",   # derived in build_features

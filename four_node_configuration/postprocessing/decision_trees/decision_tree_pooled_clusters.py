@@ -27,7 +27,7 @@ from dt_plots import plot_decision_tree, plot_rf_comparison
 
 # SETTINGS
 do_preprocessing = 1
-results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\3000_simulations_24_may_2026\Snellius_3000_simulations"
+results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\4000_simulations_07_sept_2026\Snellius_4000_simulations"
 
 # results_folders = {
 #     # "New price, small": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_1200_with_latest_electricity_fluctu_in_small",
@@ -118,7 +118,7 @@ independent_vars.extend([
     "electricity_price_avg",
     "electricity_standard_dev",
     "hydrogen_import_price",
-    "solar_cf_mean"
+    "solar_cf_realized_mean"
 ])
 
 print(f"\n{'='*80}")

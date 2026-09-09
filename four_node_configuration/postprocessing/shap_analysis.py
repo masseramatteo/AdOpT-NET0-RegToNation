@@ -30,7 +30,7 @@ FEATURES = [
     "electricity_price_avg",
     "electricity_standard_dev",
     "hydrogen_import_price",
-    "solar_cf_mean",
+    "solar_cf_realized_mean",
     "distance_from_large_cluster",
     "distance_Small_cluster1_to_Small_cluster2_km",
 ]
@@ -41,7 +41,7 @@ PDP_FEATURES = [
     "hydrogen_import_price",
     "electricity_price_avg",
     "distance_from_large_cluster",
-    "solar_cf_mean",
+    "solar_cf_realized_mean",
     "electricity_availability_large",
 ]
 

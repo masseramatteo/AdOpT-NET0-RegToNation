@@ -103,7 +103,7 @@ independent_vars.extend([
     "electricity_price_avg",
     "electricity_standard_dev",
     "hydrogen_import_price",
-    "solar_cf_mean"
+    "solar_cf_realized_mean"
 ])
 
 print(f"\n{'='*80}")

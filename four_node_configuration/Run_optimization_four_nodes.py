@@ -180,7 +180,13 @@ class OptimizationRunner:
         configuration["solveroptions"]["NoRelHeurTime"] = 0
         configuration["solveroptions"]["timelim"]["value"] = 50
         # configuration["solveroptions"]["ConcurrentMethod"]["value"] = 3
-        configuration["solveroptions"]["method"]["value"] = -1
+        #configuration["solveroptions"]["method"]["value"] = -1
+        # Barrier for the root relaxation. With 3 threads the automatic choice
+        # (-1) races primal/dual simplex and drops barrier: 950-1330 s at the
+        # root on the 143k x 102k model; barrier takes 65-190 s (test of
+        # 2026-09-09, four economies, same NPV within the numerical tolerance).
+        # Gurobi falls back to simplex by itself if barrier hits numerical trouble.
+        configuration["solveroptions"]["method"]["value"] = 2
         configuration["solveroptions"]["crossover"]["value"] = -1
         configuration["solveroptions"]["scaleflag"]["value"] = 2
         configuration["solveroptions"]["barhomogeneous"]["value"] = 1

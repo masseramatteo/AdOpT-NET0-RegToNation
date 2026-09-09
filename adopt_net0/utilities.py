@@ -23,7 +23,12 @@ def get_gurobi_parameters(solveroptions: dict):
     solver.options["FeasibilityTol"] = solveroptions["feastol"]["value"]
     solver.options["Cuts"] = solveroptions["cuts"]["value"]
     solver.options["NumericFocus"] = solveroptions["numericfocus"]["value"]
-    #solver.options["NoRelHeurTime"] = solveroptions["NoRelHeurTime"]
+    # Optional: NoRel heuristic time (seconds) before the root relaxation.
+    # Accepts either {"value": x} or a bare number; absent or 0 = off.
+    _norel = solveroptions.get("NoRelHeurTime", 0)
+    _norel = _norel.get("value", 0) if isinstance(_norel, dict) else _norel
+    if _norel:
+        solver.options["NoRelHeurTime"] = _norel
     solver.options["Crossover"] = solveroptions["crossover"]["value"]
     solver.options["ScaleFlag"] = solveroptions["scaleflag"]["value"]
     solver.options["BarHomogeneous"] = solveroptions["barhomogeneous"]["value"]

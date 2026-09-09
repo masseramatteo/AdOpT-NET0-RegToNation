@@ -278,9 +278,17 @@ def build_campaign(param_grid, fixed_combo, results_folder,
     if len(manifest) < n_economies:
         raise RuntimeError(f"design_manifest.csv has {len(manifest)} economies, "
                            f"{n_economies} requested")
-    run_rows = build_run_table(economies, manifest, topo, fixed_combo, n_economies_to_run)
-    report, failures = qc_report(economies, U, qc, run_rows, topo)
-    write_design(results_folder, economies, run_rows, report)
+    # QC and design files always describe the FULL design; a pilot is then the
+    # prefix of it (checking independence on 2 economies would be meaningless).
+    run_rows_full = build_run_table(economies, manifest, topo, fixed_combo)
+    report, failures = qc_report(economies, U, qc, run_rows_full, topo)
+    if n_economies_to_run is not None and n_economies_to_run < n_economies:
+        run_rows = [r for r in run_rows_full if r["economy"] <= n_economies_to_run]
+        report += (f"\n\nPILOT: running economies 1-{n_economies_to_run} "
+                   f"({len(run_rows)} of {len(run_rows_full)} runs); QC above refers to the full design")
+    else:
+        run_rows = run_rows_full
+    write_design(results_folder, economies, run_rows_full, report)
     print(report)
     if failures and abort_on_fail:
         raise RuntimeError("sampling QC failed: " + "; ".join(failures))

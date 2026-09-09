@@ -96,7 +96,7 @@ def define_hydrogen_storage(input_data_path):
             storage_data = json.load(json_file)
 
         storage_data["size_min"] = 0
-        storage_data["size_max"]  = 100
+        storage_data["size_max"]  = 200
         storage_data["Economics"]["unit_capex"] = 15000
 
         storage_data["Performance"]["allow_only_one_direction"] = 1

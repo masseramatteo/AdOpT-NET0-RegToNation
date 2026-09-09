@@ -802,7 +802,7 @@ def generate_parameter_combinations(param_grid, method='full', max_samples=100, 
 # The old scenario x LHS crossing (40 topologies x n samples) is gone.
 
 N_ECONOMIES = 750            # size of the full design
-N_ECONOMIES_TO_RUN = 2    # None = all; e.g. 60 for the pilot (prefix of the full design)
+N_ECONOMIES_TO_RUN = None    # None = all; e.g. 60 for the pilot (prefix of the full design)
 FEASIBILITY_MARGIN = 1.02    # g + import_availability_ratio >= margin (annual supply adequacy)
 LHS_SEED = 42
 
@@ -869,7 +869,7 @@ if __name__ == "__main__":
     # HPC explicit config — set these when submitting batch jobs.
     # When running locally these are overridden by the strategy prompt below.
     # -------------------------------------------------------------------------
-    HPC_MAX_WORKERS = 4  # workers per node (None → auto/prompt on local)
+    HPC_MAX_WORKERS = 63  # workers per node (None → auto/prompt on local)
     HPC_THREADS_PER_WORKER = 3   # Gurobi threads per worker
 
 

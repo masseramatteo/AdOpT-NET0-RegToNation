@@ -121,9 +121,9 @@ class OptimizationRunner:
                 add_existing_transmission_network(input_data_path, params["scenarios"])
 
 
-        define_hydrogen_pipeline2(input_data_path)
+        define_hydrogen_pipeline2(input_data_path, params.get("pipeline_cost_multiplier", 1.0))
         define_hydrogen_storage(input_data_path)
-        define_electrolyzers(input_data_path)
+        define_electrolyzers(input_data_path, params.get("capex_ratio_small_big"))
 
         # Load carrier data
 
@@ -289,7 +289,7 @@ class OptimizationRunner:
                                   columns=['Import limit'], carriers=['hydrogen'], nodes=[node])
             adopt.fill_carrier_data(input_data_path, value_or_data=self.h2_import_price,
                                   columns=['Import price'], carriers=['hydrogen'], nodes=[node])
-            adopt.fill_carrier_data(input_data_path, value_or_data=self.electricity_availability_large,
+            adopt.fill_carrier_data(input_data_path, value_or_data=self.electricity_availability_large,  # BIG nodes have 2000 MW
                                   columns=['Import limit'], carriers=['electricity'], nodes=[node])
 
 
@@ -308,7 +308,7 @@ class OptimizationRunner:
         h2_import_limit_2 = h2_import_limit / (unbalance +1 )
         h2_import_limit_1 = h2_import_limit - h2_import_limit_2
 
-        # H2 import price: electricity price * ratio
+        # H2 import price
         h2_import_price = params["hydrogen_import_price"]
 
         return {

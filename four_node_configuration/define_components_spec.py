@@ -39,7 +39,9 @@ def define_hydrogen_pipeline1(input_data_path):
     with open(input_data_path / "period1" / "network_data" / "hydrogenPipelineOnshore_highP_big.json", "w") as json_file:
         json.dump(network_data, json_file, indent=4)
 
-def define_hydrogen_pipeline2(input_data_path):
+def define_hydrogen_pipeline2(input_data_path, cost_multiplier=1.0):
+    """cost_multiplier scales gamma1, gamma3 and gamma4 of both pressure levels
+    (sampled as pipeline_cost_multiplier); the highP/lowP ratio is unchanged."""
 
     with open(input_data_path / "period1" / "network_data"/ "hydrogenPipelineOnshore_lowP.json", "r") as json_file:
         network_data = json.load(json_file)
@@ -47,11 +49,11 @@ def define_hydrogen_pipeline2(input_data_path):
     network_data["size_min"] = 0
     network_data["size_max"] = 250
 
-    network_data["Economics"]["gamma1"] = 5000000
-    network_data["Economics"]["gamma3"] = 0
+    network_data["Economics"]["gamma1"] = 5000000 * cost_multiplier
+    network_data["Economics"]["gamma3"] = 450000 * cost_multiplier
 
     network_data["Economics"]["gamma2"] = 0
-    network_data["Economics"]["gamma4"] = 1700
+    network_data["Economics"]["gamma4"] = 1700 * cost_multiplier
 
     network_data["Performance"]["bidirectional_network"] = 1
     network_data["Performance"]["bidirectional_network_precise"] = 0
@@ -71,11 +73,11 @@ def define_hydrogen_pipeline2(input_data_path):
     network_data["size_min"] = 250
     network_data["size_max"] = 1000
 
-    network_data["Economics"]["gamma1"] = 25000000
-    network_data["Economics"]["gamma3"] = 0
+    network_data["Economics"]["gamma1"] = 25000000 * cost_multiplier
+    network_data["Economics"]["gamma3"] = 1500000 * cost_multiplier
 
     network_data["Economics"]["gamma2"] = 0
-    network_data["Economics"]["gamma4"] = 1000
+    network_data["Economics"]["gamma4"] = 1000 * cost_multiplier
 
     network_data["Performance"]["bidirectional_network"] = 1
     network_data["Performance"]["bidirectional_network_precise"] = 0
@@ -114,7 +116,7 @@ def define_hydrogen_storage(input_data_path):
             storage_data = json.load(json_file)
 
         storage_data["size_min"] = 0
-        storage_data["size_max"] = 500
+        storage_data["size_max"] = 1000
         storage_data["Economics"]["unit_capex"] = 35000
 
         storage_data["Performance"]["allow_only_one_direction"] = 1
@@ -143,7 +145,12 @@ def define_hydrogen_storage(input_data_path):
                   "w") as json_file:
             json.dump(storage_data, json_file, indent=4)
 
-def define_electrolyzers(input_data_path):
+BIG_ELECTROLYZER_UNIT_CAPEX = 1494000   # EUR/MW, Electrolyzer_big.json template
+
+
+def define_electrolyzers(input_data_path, capex_ratio_small_big=None):
+    """capex_ratio_small_big: small electrolyzer unit capex as a multiple of the
+    large one (sampled). None keeps the template value (2.0 MEUR/MW, ratio 1.34)."""
     for node in ["Large_cluster1", "Large_cluster2"]:
         with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Electrolyzer_big.json",
                   "r") as json_file:
@@ -164,6 +171,9 @@ def define_electrolyzers(input_data_path):
 
         electrolyzer_data["size_max"] = 150
         electrolyzer_data["Economics"]["opex_fixed"] = 0.03
+        if capex_ratio_small_big is not None:
+            electrolyzer_data["Economics"]["unit_capex"] = (
+                BIG_ELECTROLYZER_UNIT_CAPEX * capex_ratio_small_big)
 
         with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Electrolyzer_small.json",
                   "w") as json_file:
@@ -175,6 +185,7 @@ def define_electrolyzers(input_data_path):
             photovoltaic_data = json.load(json_file)
 
         photovoltaic_data["size_max"] = 60
+        photovoltaic_data["Economics"]["unit_capex"] = 700000
 
         with open(input_data_path / "period1" / "node_data" / node / "technology_data" / "Photovoltaic.json",
                   "w") as json_file:

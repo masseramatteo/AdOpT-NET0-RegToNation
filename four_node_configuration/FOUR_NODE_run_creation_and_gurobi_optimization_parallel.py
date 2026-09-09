@@ -122,9 +122,9 @@ def create_single_model(args):
                 print(f"[NETWORK] Creating existing transmission network (highP)")
                 add_existing_transmission_network(input_data_path)
 
-        define_hydrogen_pipeline2(input_data_path)
+        define_hydrogen_pipeline2(input_data_path, params.get("pipeline_cost_multiplier", 1.0))
         define_hydrogen_storage(input_data_path)
-        define_electrolyzers(input_data_path)
+        define_electrolyzers(input_data_path, params.get("capex_ratio_small_big"))
 
         # Load carrier data
         runner._load_carrier_data(input_data_path, nodes, params)
@@ -790,11 +790,70 @@ def generate_parameter_combinations(param_grid, method='full', max_samples=100, 
 
 
 # ============================================================================
+# CAMPAIGN DEFINITION
+# ============================================================================
+# Module level so that sampling_design.py can import it for a dry run of the
+# design (economies, pairing, QC report) without creating any model.
+# Keep IDENTICAL to two_node_study: this block carries no HPC logic.
+#
+# Design (v5, 2026-09): N_ECONOMIES techno-economic samples from a constrained
+# Latin hypercube, each paired with its own 8 topologies from
+# preprocess/generated_topology_v5/design_manifest.csv. Runs = 8 * N_ECONOMIES.
+# The old scenario x LHS crossing (40 topologies x n samples) is gone.
+
+N_ECONOMIES = 750            # size of the full design
+N_ECONOMIES_TO_RUN = 2    # None = all; e.g. 60 for the pilot (prefix of the full design)
+FEASIBILITY_MARGIN = 1.02    # g + import_availability_ratio >= margin (annual supply adequacy)
+LHS_SEED = 42
+
+# Fixed parameters: full grid, must yield exactly one combination for the
+# paired design (several combinations would need several campaigns).
+FIXED_PARAMS_GRID = {
+    "mipgap": [0.0001],
+    "time_limit": [50],
+    "N_typical_days": [20],
+    "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
+    "networks_existing": [[]],
+    "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic"]],
+    "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
+    "small_cluster_existing_technologies": [{}],
+    "big_cluster_existing_technologies": [{"Storage_H2_Cavern": 10000}],
+    "willingness_to_pay": [250],
+    "electricity_profile_approach": ["changing_profile"]  # possibility fixed_profile or changing_profile
+}
+
+# Sampled parameters: three equally spaced anchors -> uniform marginal after
+# linear interpolation. Absolute MW kept for the grid connections; g and k are
+# derived (sampling_design.grid_adequacy / small_self_sufficiency).
+PARAM_GRID_FOR_SAMPLING = {
+    "total_demand_TWh": [5, 10, 15],
+    "demand_level_ratio": [8, 19, 30],
+    "unbalance_ratio": [2, 5, 8],  # how large clusters are unbalanced demand large1/demand large2
+    "import_availability_ratio": [0, 0.35, 0.7],
+    "electricity_price_avg": [20, 135, 250],
+    "electricity_standard_dev": [10, 55, 100],
+    # Annual-mean PV capacity factor. Anchor library covers 0.089-0.169
+    # (Denmark to Madrid); see preprocess/solar_anchors.py
+    "solar_cf_mean": [0.09, 0.13, 0.17],
+    "electricity_availability_small": [20, 70, 120],
+    "electricity_availability_large": [500, 1250, 2000],
+    "hydrogen_import_price": [150, 225, 300],
+    # Small-cluster electrolyzer unit capex as a multiple of the large one
+    # (1.494 MEUR/MW); 1.34 was the fixed value up to the Sept 2026 campaign
+    "capex_ratio_small_big": [1.0, 1.5, 2.0],
+    # Multiplier on gamma1, gamma3, gamma4 of both pipeline pressure levels
+    "pipeline_cost_multiplier": [0.5, 1.25, 2.0],
+    # "threads" viene aggiunto dal runner
+}
+
+
+# ============================================================================
 # MAIN — works both locally (interactive) and on HPC via SLURM array jobs
 # ============================================================================
 if __name__ == "__main__":
     import itertools
     import numpy as np
+    from sampling_design import build_campaign
 
     base_path = Path(__file__).parent
 
@@ -810,57 +869,15 @@ if __name__ == "__main__":
     # HPC explicit config — set these when submitting batch jobs.
     # When running locally these are overridden by the strategy prompt below.
     # -------------------------------------------------------------------------
-    HPC_MAX_WORKERS = 63          # workers per node (None → auto/prompt on local)
+    HPC_MAX_WORKERS = 4  # workers per node (None → auto/prompt on local)
     HPC_THREADS_PER_WORKER = 3   # Gurobi threads per worker
 
+
     # ==========================================================================
-    # 2) Parameter grids  (keep your local param grid here — unchanged from v1)
+    # 2) Parameter grids — module-level CAMPAIGN DEFINITION above (identical to
+    #    two_node_study). Sampling = constrained LHS of economies x paired
+    #    topologies (sampling_design.build_campaign).
     # ==========================================================================
-
-    all_scenarios = [f"{i:04d}" for i in range(1, 41)]
-
-    fixed_params_grid = {
-        "mipgap": [0.0001],
-        "time_limit": [50],
-        "N_typical_days": [20],
-        "networks_new": [["hydrogenPipelineOnshore_lowP", "hydrogenPipelineOnshore_highP"]],
-        "networks_existing": [[]],
-        "small_cluster_new_technologies": [["Electrolyzer_small", "Storage_H2_lowP", "Photovoltaic"]],
-        "big_cluster_new_technologies": [["Electrolyzer_big", "Storage_H2_highP"]],
-        "small_cluster_existing_technologies": [{}],
-        "big_cluster_existing_technologies": [{"Storage_H2_Cavern": 10000}],
-        "willingness_to_pay": [250],
-        "electricity_profile_approach": ["changing_profile"] # possibility fixed_profile or changing_profile
-    }
-
-    param_grid_for_sampling = {
-        "scenario": all_scenarios,  # Include in param_grid but handle separately
-        "total_demand_TWh": [5, 15, 25],
-        "demand_level_ratio": [5, 17.5, 30],
-        "unbalance_ratio": [2, 5, 8], # how large clusters are unbalanced demand large1/demand large2
-        "import_availability_ratio": [0, 0.35, 0.7],
-        "electricity_price_avg": [20, 135, 250],
-        "electricity_standard_dev": [10, 55, 100],
-        # Annual-mean PV capacity factor. Anchor library covers 0.089-0.169
-        # (Denmark to Madrid); see preprocess/solar_anchors.py
-        "solar_cf_mean": [0.09, 0.13, 0.17],
-        "electricity_availability_small": [30, 90, 150],
-        "electricity_availability_large": [500, 1250, 2000],
-        "hydrogen_import_price": [150, 225, 300],
-        # "threads" viene aggiunto dal runner
-    }
-
-    print(f"\n[INFO] Total scenarios: {len(all_scenarios)}")
-
-    # ========================================================================
-    # SAMPLING METHOD
-    # ========================================================================
-    # Strategy:
-    # 1. Fixed params: FULL GRID (all combinations)
-    # 2. LHS params: Latin Hypercube Sampling
-    # 3. Final: Scenarios × Fixed Grid × LHS Samples
-
-    n_samples_per_scenario = 100  # Number of LHS samples per scenario
 
     # Pre-flight: fail in seconds if the solar anchor cache is missing or the
     # sampled range falls outside it, rather than after the whole model-creation
@@ -874,7 +891,7 @@ if __name__ == "__main__":
     )
     _solar_calib = _load_solar_calibration()
     _solar_failures = []
-    for _v in param_grid_for_sampling["solar_cf_mean"]:
+    for _v in PARAM_GRID_FOR_SAMPLING["solar_cf_mean"]:
         try:
             _a, _s, _p = _select_solar_anchor(float(_v), _solar_calib)
             print(f"[SOLAR] solar_cf_mean {_v:.4f} -> anchor '{_a}' x {_s:.4f} "
@@ -891,47 +908,41 @@ if __name__ == "__main__":
     print(f"[SOLAR] anchor library OK: {len(_solar_calib['anchors'])} anchors, "
           f"base CF coverage {_solar_calib['cf_min']:.4f}-{_solar_calib['cf_max']:.4f}")
 
-    print(f"\n[SAMPLING] Hybrid approach:")
-    print(f"   - Fixed parameters: FULL GRID")
-    print(f"   - Other parameters: Latin Hypercube Sampling")
-    print(f"   - LHS samples per (scenario × fixed_config): {n_samples_per_scenario}")
+    # ==========================================================================
+    # 3) Sampling: constrained LHS of economies x paired topologies (v5).
+    #    The design (economies, pairing, QC) is deterministic given LHS_SEED, so
+    #    every SLURM array task rebuilds the SAME full run table and then takes
+    #    its own slice below. Design files (sampling_qc.txt, economies.csv,
+    #    run_table.csv) go to <results>/design/, shared by all tasks.
+    # ==========================================================================
+    fixed_combinations = [dict(zip(FIXED_PARAMS_GRID.keys(), combo))
+                          for combo in itertools.product(*FIXED_PARAMS_GRID.values())]
+    if len(fixed_combinations) != 1:
+        raise RuntimeError(f"FIXED_PARAMS_GRID yields {len(fixed_combinations)} combinations; "
+                           "the paired design expects exactly one per campaign")
 
-    fixed_keys = list(fixed_params_grid.keys())
-    fixed_combinations = [
-        dict(zip(fixed_keys, combo))
-        for combo in itertools.product(*fixed_params_grid.values())
-    ]
-    print(f"\n[FIXED GRID] Fixed parameter combinations: {len(fixed_combinations)}")
+    # Results folder is needed here for the design files; the array-task
+    # sub-folder is resolved in section 6 below and reused. Under a SLURM array
+    # the folder is named after the array job id so that every task lands in
+    # the SAME campaign folder (a per-task timestamp can differ by a second).
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    _array_job = os.environ.get("SLURM_ARRAY_JOB_ID")
+    run_tag = f"{timestamp[:8]}_job{_array_job}" if _array_job else timestamp
+    base_results_folder = base_path / "results" / f"parallel_run_{run_tag}"
+    _design_folder = base_results_folder / "design"
 
-    # Separate scenario from other parameters for LHS
-    param_grid_without_scenario = {k: v for k, v in param_grid_for_sampling.items() if k != "scenario"}
-
-    lhs_samples = generate_parameter_combinations(
-        param_grid_without_scenario,
-        method='lhs',
-        max_samples=n_samples_per_scenario,
-        seed=42,
+    print(f"\n[SAMPLING] Constrained LHS: {N_ECONOMIES} economies x 8 topologies, "
+          f"margin {FEASIBILITY_MARGIN}, seed {LHS_SEED}"
+          + (f", running the first {N_ECONOMIES_TO_RUN} economies (pilot)"
+             if N_ECONOMIES_TO_RUN else ""))
+    combinations = build_campaign(
+        PARAM_GRID_FOR_SAMPLING, fixed_combinations[0], _design_folder,
+        n_economies=N_ECONOMIES, n_economies_to_run=N_ECONOMIES_TO_RUN,
+        seed=LHS_SEED, margin=FEASIBILITY_MARGIN,
     )
-
-    combinations = []
-    for scenario in all_scenarios:
-        for fixed_combo in fixed_combinations:
-            for lhs_sample in lhs_samples:
-                combined = {"scenario": scenario}
-                combined.update(fixed_combo)
-                combined.update(lhs_sample)
-                combinations.append(combined)
 
     total_combos = len(combinations)
     print(f"\n[INFO] Total runs to execute (all tasks combined): {total_combos}")
-
-    # Full grid size for comparison
-    full_lhs = 1
-    for v in param_grid_for_sampling.values():
-        full_lhs *= len(v)
-    total_full = len(all_scenarios) * len(fixed_combinations) * full_lhs
-    print(f"[COMPARISON] Full grid would be {total_full} runs "
-          f"(LHS reduction: {(1 - total_combos/total_full)*100:.1f}%)")
 
     # ==========================================================================
     # 4) SLURM array partitioning
@@ -971,10 +982,8 @@ if __name__ == "__main__":
 
     # ==========================================================================
     # 6) Results folder — separate sub-folder per array task when on HPC
+    #    (base_results_folder / timestamp already set in section 3)
     # ==========================================================================
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    base_results_folder = base_path / "results" / f"parallel_run_{timestamp}"
-
     if task_count > 1:
         results_folder = base_results_folder / f"task_{task_index:03d}"
     else:

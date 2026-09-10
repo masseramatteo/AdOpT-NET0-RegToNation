@@ -801,7 +801,7 @@ def generate_parameter_combinations(param_grid, method='full', max_samples=100, 
 # preprocess/generated_topology_v5/design_manifest.csv. Runs = 8 * N_ECONOMIES.
 # The old scenario x LHS crossing (40 topologies x n samples) is gone.
 
-N_ECONOMIES = 750            # size of the full design
+N_ECONOMIES = 500            # size of the full design (750 planned, cut to 500 = 4000 runs for credits, 2026-09-10)
 N_ECONOMIES_TO_RUN = None    # None = all; e.g. 60 for the pilot (prefix of the full design)
 FEASIBILITY_MARGIN = 1.02    # g + import_availability_ratio >= margin (annual supply adequacy)
 LHS_SEED = 42

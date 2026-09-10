@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=192
 #SBATCH --partition=fat_genoa
-#SBATCH --time=96:00:00
+#SBATCH --time=48:00:00
 #SBATCH --array=0-1
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=m.massera@uu.nl

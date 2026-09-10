@@ -49,10 +49,21 @@ sys.path.insert(0, str(HERE.parent))     # adopt_net0 (repo root)
 # ---------------------------------------------------------------- settings --
 # Each entry patches ConfigModel.json["solveroptions"] on top of the campaign
 # settings (A). Keys are the adopt template keys; "threads" is per job.
-# 0016 (3.8 h) and 0090 (3.5 h) close inside this cap under the baseline, 0110
-# (6.0 h) does not and is compared on gap_at_cap_pct instead. 30 jobs / 15
-# workers = 2 waves, so the cap sets the worst case at ~8 h.
-TIME_LIMIT_H = 4.0
+# Round 3 (2026-09-10 afternoon), against a hard deadline: Snellius launches
+# tonight. The cap is set so that most jobs actually CLOSE, because the metric
+# that matters is time to 1e-4 - what the campaign really does.
+#
+# A first draft of this round used a 1.5 h cap and gap_at_cap_pct as the metric.
+# That was wrong twice over. (1) The gap does not descend smoothly: run 0110 at
+# baseline hits 5% at 7539 s, 1% at 21613 s and closes at 21622 s - it sat
+# between 5% and 1% for four hours and then collapsed in 9 seconds. A snapshot
+# at a fixed time barely predicts the finish. (2) Worse, first incumbents on
+# 0110/0016/0089 land at 6824/5635/8031 s, so at a 5400 s cap three of seven runs
+# would have had no incumbent at all and an undefined gap - and the metric would
+# have mechanically rewarded M0/MK, the settings that optimise time-to-first-
+# incumbent, against B which keeps a tight bound but finds its solution late.
+# That is measuring the hypothesis with itself.
+TIME_LIMIT_H = 3.0
 
 SETTINGS = {
     # A = the pre-2026-09-09 campaign settings (Method -1 -> concurrent simplex
@@ -83,6 +94,11 @@ SETTINGS = {
     "ND": {"method": 2, "nodemethod": 2},
     # HE: more time in heuristics (0.2 vs 0.05). Same target as M0, other road.
     "HE": {"method": 2, "heuristics": 0.2},
+    # MK: round 2's two survivors together. They win on different runs (K on
+    #     0090/0025, M0 on 0110/0016), which suggests they are complementary -
+    #     but round 1 is the proof that two individually sensible knobs can
+    #     cancel, so the combination is tested, never assumed.
+    "MK": {"method": 2, "mipfocus": 0, "cuts": 1},
     # kept from round 1, not in DEFAULT_SETTINGS:
     # C: mipfocus and cuts together (the bundle that tied with B)
     "C": {"method": 2, "mipfocus": 0, "cuts": -1},
@@ -93,15 +109,32 @@ SETTINGS = {
     "F": {"method": 2, "threads": 6},
 }
 
-# Runs from the barrier pilot parallel_creation_test_20260909_215958, picked to
-# span the regimes found in the phase analysis:
-#   0110  econ 14, price  78, 6.01 h, 125 nodes  worst run of the pilot
-#   0016  econ  2, price  31, 3.80 h,  53 nodes  cheap-electricity economy
-#   0090  econ 12, price 204, 3.54 h, 110 nodes  high price but still slow
-#   0025  econ  4, price 219, 0.95 h,  16 nodes  guard: C regressed here
-#   0001  econ  1, price 243, 0.15 h,   1 node   guard: 43% of runs close at 1 node
-DEFAULT_RUNS = ["0110", "0016", "0090", "0025", "0001"]
-DEFAULT_SETTINGS = ["B", "M0", "K", "N", "ND", "HE"]
+# Round 3 runs, all from the barrier pilot parallel_creation_test_20260909_215958.
+# Round 2 used 5 runs and the B-vs-source spread showed run-to-run noise of about
+# +/-50%, which is the same size as the effects being measured. So round 3 drops
+# the two cheap guard runs (0001, 0025: together 8% of campaign compute) and
+# spends the budget on 7 slow runs instead - the class that owns 61% of the
+# compute - chosen to span price, cut-loop size and incumbent difficulty:
+#   run   econ  price  base h  nodes  cut_loop  1st inc   why
+#   0016    2     31    3.80     53     3563      5635    biggest cut loop (K's case)
+#   0090   12    204    3.54    110     2611      1079    continuity with round 2; easy incumbent
+#   0107   14     78    3.43     75     1361      2265    economy 14, the pathological one
+#   0122   16     38    3.21     69     1771      3432    mid
+#   0037    5    100    3.12     87     1230      2495    mid price
+#   0113   15    162    3.00     70     1277      2879    mid-high price
+#   0051    7     93    2.53     68     1991      3886    mid price, second economy
+#   0089   12    204    2.23     75     1049      8031    latest incumbent of the pilot (M0's case)
+# Seven distinct economies (2, 12, 14, 16, 5, 15, 7). Every run is <= 3.80 h at
+# baseline, so most should CLOSE inside the 3 h cap and yield the real metric,
+# time to 1e-4.
+# 8 runs x 4 settings = 32 jobs on 16 workers = 2 waves. Two waves do NOT
+# reintroduce round 2's confound: jobs are ordered by run, so all four settings
+# of a given run sit in the same wave, and every comparison is within-run against
+# B - i.e. under identical machine load.
+# 0110 (6.01 h at baseline) stays out: nothing closes it inside 3 h, so it would
+# spend four jobs to produce four capped results. Economy 14 is covered by 0107.
+DEFAULT_RUNS = ["0016", "0090", "0107", "0122", "0037", "0113", "0051", "0089"]
+DEFAULT_SETTINGS = ["B", "M0", "K", "MK"]
 DEFAULT_F_RUNS = ["0110", "0016"]          # threads test only on the slow ones
 DEFAULT_RERUN_BASELINE = []                # source logs are already Method=2
 
@@ -156,6 +189,14 @@ def parse_log(path: Path) -> dict:
     out["gap_at_cap_pct"] = at_cap[-1] if at_cap else None
     if out.get("total_s") and out["total_s"] <= cap and out.get("gap_pct") is not None:
         out["gap_at_cap_pct"] = out["gap_pct"]      # closed before the cap
+    # Best dual bound reached. Unlike the gap this is monotone and defined from
+    # the first node on, whether or not an incumbent exists - so for a job that
+    # hits the cap it is the honest progress measure. write_report turns it into
+    # a distance from the optimum already known from the pilot.
+    bd = re.findall(r"^[H*]?\s*\d+\s+\d+\s+.*?\s([\d.]+e[+-]\d+)\s+[\d.]+%", txt, re.M)
+    if not bd:
+        bd = re.findall(r"\s([\d.]+e[+-]\d+)\s+[-\d.]+%\s", txt)
+    out["best_bound"] = float(bd[-1]) if bd else None
     # end of the root cut loop = last "0 0" line of the node log
     cut_end = None
     for ln in body.splitlines():
@@ -165,8 +206,21 @@ def parse_log(path: Path) -> dict:
             cut_end = int(mt.group(1))
     if cut_end is not None and out.get("root_s"):
         out["cut_loop_s"] = round(cut_end - out["root_s"])
-    # numerical warnings: setting N is the one that can trigger these
-    out["numerical"] = 1 if re.search(r"numerical (trouble|issues)", txt, re.I) else 0
+    # Numerical health. Round 2 lesson: `numerical (trouble|issues)` was far too
+    # broad - it matched the tail of Gurobi's advisory "...setting NumericFocus
+    # parameter to avoid numerical issues", which is printed precisely BECAUSE
+    # NumericFocus is off, so setting N looked broken when it was not. Match only
+    # genuine trouble, and report the violation as a magnitude: every run of this
+    # campaign, the production baseline included, ends with a max constraint
+    # violation around 1e-5 against a 1e-6 tolerance (coefficients up to 4e8).
+    # That is the mechanism behind the 0.1-0.3% NPV noise floor, so the number is
+    # worth tracking; its mere presence is not a discriminator.
+    out["numerical"] = 1 if re.search(r"numerical trouble", txt, re.I) else 0
+    m = re.search(r"max constraint violation \(([\d.e+-]+)\)", txt)
+    out["max_viol"] = float(m.group(1)) if m else None
+    # wall-clock start, so the load confound stays auditable after the fact
+    m = re.search(r"logging started \w{3} (\w{3} +\d+ \d+:\d+:\d+ \d{4})", txt)
+    out["started"] = m.group(1) if m else None
     return out
 
 
@@ -234,7 +288,7 @@ def main():
     ap.add_argument("--settings", default=",".join(DEFAULT_SETTINGS))
     ap.add_argument("--f-runs", default=",".join(DEFAULT_F_RUNS), help="runs for the threads setting F")
     ap.add_argument("--rerun-baseline", default=",".join(DEFAULT_RERUN_BASELINE))
-    ap.add_argument("--workers", type=int, default=15)   # 15 x 3 = 45 of 48 cores
+    ap.add_argument("--workers", type=int, default=16)   # 16 x 3 = 48 cores, one wave of 16 jobs
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
 
@@ -255,8 +309,13 @@ def main():
             jobs.append((s, r, src / f"parallel_run_{r}", dst / s / f"parallel_run_{r}", SETTINGS[s]))
     for r in rerun_a:
         jobs.append(("A", r, src / f"parallel_run_{r}", dst / "A" / f"parallel_run_{r}", SETTINGS["A"]))
-    # order: 3-thread jobs first, 6-thread last -> the first wave fits the cores
-    jobs.sort(key=lambda j: (int(j[4].get("threads", 3)) > 3, j[0], j[1]))
+    # Order by RUN first, then setting. Round 2 sorted by setting, which put all
+    # of B/HE/K in the first wave and pushed N/ND 2-3 h later onto a machine that
+    # had emptied out: setting was confounded with machine load (measured mean
+    # concurrency 14.6 for B against 11.7 for ND). Sorting by run interleaves the
+    # settings so every one of them spans the same load profile.
+    # 6-thread jobs still go last so the first wave fits the cores.
+    jobs.sort(key=lambda j: (int(j[4].get("threads", 3)) > 3, j[1], j[0]))
 
     threads_total = sum(int(j[4].get("threads", 3)) for j in jobs[:a.workers])
     print(f"[TEST] {len(jobs)} jobs, {a.workers} workers, first wave {threads_total} Gurobi threads, "
@@ -312,9 +371,16 @@ def write_report(src, dst, runs, settings, f_runs, rerun_a):
     df["npv_rel_diff_vs_base"] = [((o - base.obj.get(r, float("nan"))) / base.obj.get(r, float("nan")))
                                   if o and r in base.index and base.obj.get(r) else None
                                   for r, o in zip(df.run, df.obj)]
-    cols = ["setting", "run", "econ", "price", "threads", "root_method", "root_s", "cut_loop_s",
+    # Distance of the dual bound from the optimum the pilot already established
+    # for this run (objective is minimised, so bound <= z*). Monotone, defined
+    # even with no incumbent: this is what to read for a job stopped at the cap.
+    df["bound_to_opt_pct"] = [round(100 * (base.obj.get(r, float("nan")) - bd)
+                                    / base.obj.get(r, float("nan")), 3)
+                              if bd and r in base.index and base.obj.get(r) else None
+                              for r, bd in zip(df.run, df.best_bound)]
+    cols = ["setting", "run", "econ", "price", "threads", "started", "root_s", "cut_loop_s",
             "t_first_inc_s", "t_gap5_s", "t_gap1_s", "t_gap05_s", "t_gap01_s", "nodes", "total_s",
-            "gap_pct", "gap_at_cap_pct", "status", "numerical",
+            "gap_pct", "gap_at_cap_pct", "bound_to_opt_pct", "status", "numerical", "max_viol",
             "speedup_vs_base", "gap1_speedup", "npv_rel_diff_vs_base"]
     df = df[[c for c in cols if c in df.columns]].sort_values(["run", "setting"])
     df.to_csv(dst / "summary.csv", index=False)
@@ -330,12 +396,18 @@ def write_report(src, dst, runs, settings, f_runs, rerun_a):
             for c in agg_cols:
                 agg[c + "_x"] = (b[c] / agg[c]).round(2)
         txt += "\n\nPer-setting totals over the common runs (x = speedup vs base):\n" + agg.to_string()
-        txt += ("\n\nRead in this order: (1) gap_at_cap_pct, the only column defined for every job "
-                "whether or not it closed inside the cap - lower is better; (2) total_s where the job "
-                "closed; (3) t_gap5_s / t_gap1_s for how fast the gap came down; (4) t_first_inc_s for "
-                "the no-incumbent phase, which M0 and HE target. Check `numerical` and "
-                "npv_rel_diff_vs_base before adopting N: it is the one setting that can trade accuracy "
-                "for speed on a model with coefficients 6e-4 .. 4e8.")
+        txt += ("\n\nRound 3 read, in order. (1) total_s for the jobs with status=optimal - this is "
+                "the real metric, time to 1e-4, which is what the campaign does. Compare against "
+                "setting B ON THE SAME RUN, never against the source logs: the test machine runs 16 "
+                "hard jobs at once and is harsher than the pilot was. (2) For a job at the cap, read "
+                "bound_to_opt_pct, not the gap: the bound is monotone and defined even before an "
+                "incumbent exists, whereas the gap can sit flat for hours and then collapse in seconds "
+                "(run 0110 at baseline: 5% at 7539 s, 1% at 21613 s, closed at 21622 s). (3) "
+                "t_first_inc_s separately, as the thing M0/MK actually change. "
+                "npv_rel_diff_vs_base is NOT usable for a capped job: the objective is minimised, so "
+                "its incumbent is suboptimal and the drift measures suboptimality, not solver noise. "
+                "max_viol is ~1e-5 for every setting including the baseline; only a value far out of "
+                "that range, or numerical=1, is a red flag.")
     (dst / "report.txt").write_text(txt)
     print("\n" + txt)
 

@@ -801,7 +801,12 @@ def generate_parameter_combinations(param_grid, method='full', max_samples=100, 
 # preprocess/generated_topology_v5/design_manifest.csv. Runs = 8 * N_ECONOMIES.
 # The old scenario x LHS crossing (40 topologies x n samples) is gone.
 
-N_ECONOMIES = 500            # size of the full design (750 planned, cut to 500 = 4000 runs for credits, 2026-09-10)
+N_ECONOMIES = 750            # size of the full design = 6000 runs. Cut to 500 on 2026-09-10 under
+                             # the credit shortage, restored the same evening once +100k SBU landed:
+                             # 500 also failed the sampling QC as written (one free pair at 0.052 vs
+                             # a 0.05 limit), and 750 passes it without relaxing anything.
+                             # PAIRED WITH --time=96:00:00 in run_optimization.sh - 48 h is not
+                             # enough for 6000 runs (53.5 h at the 80% upper bound).
 N_ECONOMIES_TO_RUN = None    # None = all; e.g. 60 for the pilot (prefix of the full design)
 FEASIBILITY_MARGIN = 1.02    # g + import_availability_ratio >= margin (annual supply adequacy)
 LHS_SEED = 42

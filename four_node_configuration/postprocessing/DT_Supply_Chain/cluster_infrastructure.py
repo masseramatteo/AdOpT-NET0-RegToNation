@@ -29,7 +29,18 @@ import config as C
 
 def _load_X():
     df = pd.read_csv(C.FEATURES_CSV)
-    X = df[C.OUTPUTS_OF_INTEREST].copy()
+    cols = [c for c in C.OUTPUTS_OF_INTEREST if c in df.columns]
+    missing = [c for c in C.OUTPUTS_OF_INTEREST if c not in df.columns]
+    if missing:
+        print(f"  WARNING: outputs of interest not in the features file: {missing}")
+    X = df[cols].copy()
+    # An output the campaign could not produce (e.g. the electricity-side ones on
+    # a pre-v5 extraction) is all-NaN; keeping it would add a constant column
+    # that carries no information but still enters the distance.
+    empty = [c for c in cols if X[c].isna().all()]
+    if empty:
+        print(f"  WARNING: dropping all-NaN outputs of interest: {empty}")
+        X = X.drop(columns=empty)
     # clip the rare local_share_small > 1 tail? No - keep, it is meaningful (net export).
     X = X.fillna(0.0)
     scaler = StandardScaler()

@@ -23,7 +23,7 @@ N_CLUSTERS = int(os.environ.get("DT_K", 4))
 RESULTS_FOLDER = (
     r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M"
     r"\AdOpT-NET0-RegToNation\four_node_configuration\results"
-    r"\3000_simulations_24_may_2026\Snellius_3000_simulations"
+    r"\Snellius_simulations_10_09\6000_snellius_runs"
 )
 EXTRACTED_RESULTS = os.path.join(RESULTS_FOLDER, "extracted_results.xlsx")
 
@@ -67,6 +67,12 @@ RF_PARAMS = dict(n_estimators=100, max_depth=10, min_samples_leaf=3,
                  min_samples_split=6, random_state=0, class_weight="balanced", n_jobs=-1)
 
 # --- Cluster archetype names (keyed by k-Means / cluster_final id at k=4) -----
+# WARNING: these names, and the choice k=4 above, were fitted on the 3000-run
+# campaign of May 2026, with a different set of outputs of interest (no
+# electricity side) and no paired topologies. For the v5 campaign re-run
+#   python cluster_infrastructure.py        (elbow / silhouette)
+#   python experiments.py                   (accuracy sweep over k)
+# and rename the clusters from the new per-cluster profiles before quoting them.
 CLUSTER_NAMES = {
     0: "Centralized backbone",
     1: "Satellite / radial",
@@ -81,6 +87,11 @@ CONTINUOUS_OOI = [
     "import_intensity",         # total imported H2 / total demand
     "transport_intensity",      # total H2 moved over network / total demand (volume of transport)
     "storage_large_share",      # newly-built storage in large clusters / total newly-built storage
+    # Electricity side, available since the v5 extraction. PV is a sampled
+    # technology of the small clusters, so how the small nodes are powered is
+    # part of the infrastructure type, not a detail.
+    "pv_supply_share_small",    # PV generation / electricity used by the small clusters
+    "grid_utilization_small",   # small-cluster grid import / (connection capacity x 8760)
 ]
 # Topology outputs of interest (binary / count)
 TOPOLOGY_OOI = [
@@ -109,7 +120,19 @@ DRIVER_INPUTS = [
     "distance_Large_cluster1_to_Large_cluster2_km",
     "distance_Small_cluster1_to_Small_cluster2_km",
     "distance_from_large_cluster",   # derived in build_features
+    # Shape of the topology, joined from topology_parameters.csv by
+    # extract_design_sizes. The archetypes partition the centrality axis, so
+    # these are the continuous version of the archetype label.
+    "small_centrality_mean",         # derived in build_features from S1/S2_centrality
+    "rho_comp",
 ]
+
+# Driver inputs that only exist in campaigns from v5 onwards. build_features
+# warns and drops them for older extractions instead of failing.
+OPTIONAL_DRIVER_INPUTS = {
+    "capex_ratio_small_big", "pipeline_cost_multiplier", "solar_cf_realized_mean",
+    "small_centrality_mean", "rho_comp",
+}
 
 # Column identifying the unit of independence for train/test splits and CV.
 # In the v5 paired design 8 runs share one economy; older campaigns have no

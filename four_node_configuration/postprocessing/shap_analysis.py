@@ -14,7 +14,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score
 
 # ── Config ────────────────────────────────────────────────────────────────────
-RESULTS_PATH = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\checking_on_installation_small\1200_sim_to_try_less_solar\extracted_results.xlsx"
+RESULTS_PATH = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\Snellius_simulations_10_09\6000_snellius_runs\extracted_results.xlsx"
 
 TARGET_COL    = "Small_cluster1_Electrolyzer_small"   # change to Small_cluster2 if needed
 TARGET_LABEL  = "Small_cluster1"
@@ -35,6 +35,10 @@ FEATURES = [
     "pipeline_cost_multiplier",      # idem
     "distance_from_large_cluster",
     "distance_Small_cluster1_to_Small_cluster2_km",
+    # Shape of the topology, joined from topology_parameters.csv by
+    # extract_design_sizes; skipped automatically on pre-v5 campaigns
+    "small_centrality_mean",
+    "rho_comp",
 ]
 
 # Features to show PDP for (top candidates)
@@ -62,6 +66,10 @@ if "distance_from_large_cluster" not in df.columns:
     if d_cols:
         df["distance_from_large_cluster"] = df[d_cols].min(axis=1)
         print(f"  Derived distance_from_large_cluster from: {d_cols}")
+
+# Mean centrality of the small clusters along the Large1-Large2 axis
+if {"S1_centrality", "S2_centrality"}.issubset(df.columns):
+    df["small_centrality_mean"] = (df["S1_centrality"] + df["S2_centrality"]) / 2
 
 # Select features present in data
 feature_cols = [f for f in FEATURES if f in df.columns]

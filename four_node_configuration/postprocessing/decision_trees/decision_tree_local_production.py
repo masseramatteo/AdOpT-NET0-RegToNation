@@ -13,7 +13,7 @@ from dt_plots import plot_decision_tree, plot_rf_comparison
 
 # SETTINGS
 do_preprocessing = 1
-results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\3000_simulations_24_may_2026\Snellius_3000_simulations"
+results_folder = r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\Snellius_simulations_10_09\6000_snellius_runs"
 
 # results_folders = {
 #     # "New price, small": r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M\AdOpT-NET0-RegToNation\four_node_configuration\results\parallel_creation_test_1200_with_latest_electricity_fluctu_in_small",
@@ -90,7 +90,13 @@ if INCLUDE_DISTANCES:
     independent_vars.extend([
         "distance_from_large_cluster",  # Average distance from small clusters to nearest large
         "distance_Small_cluster1_to_Small_cluster2_km",  # Distance between the two small clusters
-        "distance_Large_cluster1_to_Large_cluster2_km"  # Distance between the two large clusters
+        "distance_Large_cluster1_to_Large_cluster2_km",  # Distance between the two large clusters
+        # Shape of the topology, from the v5 generator (joined by extract_design_sizes
+        # on the scenario). centrality = how far along the L1-L2 axis the small
+        # clusters sit (the archetypes partition it), rho_comp = compactness.
+        # Dropped automatically if the campaign predates v5.
+        "small_centrality_mean",
+        "rho_comp",
     ])
 
 # Add all other features (economic and system parameters)
@@ -127,9 +133,18 @@ extracted_results_path = os.path.join(results_folder, "extracted_results.xlsx")
 df_merged = pd.read_excel(extracted_results_path)
 print(f"Loaded {len(df_merged)} runs from extracted_results.xlsx")
 
-# Features only present in campaigns that sampled them (v5 onwards)
-_missing_optional = [v for v in ("capex_ratio_small_big", "pipeline_cost_multiplier")
-                     if v in independent_vars and v not in df_merged.columns]
+# Features only present in campaigns that sampled or recorded them (v5 onwards).
+# 'small_centrality_mean' is derived further below from the topology columns, so
+# the availability check is on its source column.
+_optional_sources = {
+    "capex_ratio_small_big": "capex_ratio_small_big",
+    "pipeline_cost_multiplier": "pipeline_cost_multiplier",
+    "solar_cf_realized_mean": "solar_cf_realized_mean",
+    "rho_comp": "rho_comp",
+    "small_centrality_mean": "S1_centrality",
+}
+_missing_optional = [v for v, _src in _optional_sources.items()
+                     if v in independent_vars and _src not in df_merged.columns]
 if _missing_optional:
     print(f"Optional features not in this campaign, dropped: {_missing_optional}")
     independent_vars = [v for v in independent_vars if v not in _missing_optional]
@@ -227,6 +242,13 @@ df_merged['Small_cluster2_to_nearest_Large'] = df_merged[[
 # Calculate average distance from small clusters to nearest large cluster
 df_merged['distance_from_large_cluster'] = (df_merged['Small_cluster1_to_nearest_Large'] +
                                               df_merged['Small_cluster2_to_nearest_Large']) / 2
+
+# Mean centrality of the two small clusters along the Large1-Large2 axis, from
+# the v5 topology table. The archetypes partition this axis (A/B/D low, C high),
+# so it is the continuous version of the archetype label.
+if "S1_centrality" in df_merged.columns and "S2_centrality" in df_merged.columns:
+    df_merged["small_centrality_mean"] = (df_merged["S1_centrality"] +
+                                          df_merged["S2_centrality"]) / 2
 
 print(f"\nDistance statistics:")
 print(f"  Small_cluster1 to nearest Large: mean = {df_merged['Small_cluster1_to_nearest_Large'].mean():.2f} km, "

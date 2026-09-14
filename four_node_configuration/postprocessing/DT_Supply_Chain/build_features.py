@@ -107,6 +107,36 @@ def build():
     out["storage_large_share"] = _safe_div(large_stor, total_stor, fill=0.0)
     out["_any_storage"] = (total_stor > C.BUILD_EPS).astype(int)
 
+    # --- Electricity side of the small clusters ------------------------------
+    # Available since the v5 extraction (extract_design_sizes writes the
+    # electricity energy balance and the PV operation). Older extractions have
+    # neither, so both outputs fall back to NaN and are reported as missing.
+    _pv_cols = [f"{n}_Photovoltaic_electricity_output_sum" for n in SMALL]
+    _el_in_cols = [f"{n}_TOTAL_electrolyzer_electricity_input" for n in SMALL]
+    _el_imp_cols = [f"{n}_electricity_import_sum" for n in SMALL]
+
+    if all(c in df.columns for c in _pv_cols + _el_in_cols):
+        df[_pv_cols + _el_in_cols] = df[_pv_cols + _el_in_cols].fillna(0.0)
+        pv_gen = sum(df[c] for c in _pv_cols)
+        small_el_use = sum(df[c] for c in _el_in_cols)
+        # share of the small clusters' electricity demand covered by their own PV
+        out["pv_supply_share_small"] = np.minimum(_safe_div(pv_gen, small_el_use, fill=0.0), 1.0)
+    else:
+        print("  WARNING: PV / electrolyzer electricity columns missing "
+              "- 'pv_supply_share_small' set to NaN")
+        out["pv_supply_share_small"] = np.nan
+
+    if all(c in df.columns for c in _el_imp_cols) and "electricity_availability_small" in df.columns:
+        df[_el_imp_cols] = df[_el_imp_cols].fillna(0.0)
+        small_el_import = sum(df[c] for c in _el_imp_cols)
+        # two small nodes, each with electricity_availability_small MW of grid
+        grid_energy_max = 2.0 * df["electricity_availability_small"] * 8760.0
+        out["grid_utilization_small"] = _safe_div(small_el_import, grid_energy_max, fill=0.0)
+    else:
+        print("  WARNING: electricity import columns missing "
+              "- 'grid_utilization_small' set to NaN")
+        out["grid_utilization_small"] = np.nan
+
     # --- Topology ------------------------------------------------------------
     built = {}          # (a,b) -> bool series, arc built at all
     built_highp = {}    # (a,b) -> bool series, highP variant built
@@ -160,11 +190,23 @@ def build():
                   "distance_Large_cluster2_to_Small_cluster2_km"]].min(axis=1)
     df["distance_from_large_cluster"] = (s1_near + s2_near) / 2
 
+    # Mean centrality of the two small clusters along the Large1-Large2 axis
+    # (topology_parameters.csv, joined by extract_design_sizes on the scenario).
+    if {"S1_centrality", "S2_centrality"}.issubset(df.columns):
+        df["small_centrality_mean"] = (df["S1_centrality"] + df["S2_centrality"]) / 2
+
+    missing_required = []
     for col in C.DRIVER_INPUTS:
         if col in df.columns:
             out[col] = df[col].values
+        elif col in getattr(C, "OPTIONAL_DRIVER_INPUTS", set()):
+            print(f"  NOTE: driver input '{col}' not in this campaign - dropped")
         else:
+            missing_required.append(col)
             print(f"  WARNING: driver input '{col}' not found")
+    if missing_required:
+        print(f"  WARNING: {len(missing_required)} required driver input(s) missing: "
+              f"{missing_required}")
 
     out = out.reset_index(drop=True)
     out.to_csv(C.FEATURES_CSV, index=False)

@@ -4,6 +4,13 @@ BOTH creates models AND solves them in parallel using multiprocessing
 Uses Gurobi-recommended explicit environment management to avoid resource leaks
 """
 
+import os
+
+# Limit library thread pools (sklearn KMeans via OpenMP, numpy BLAS) to 1 per worker.
+# Must run before numpy/sklearn are imported; spawned workers inherit these.
+for _var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(_var, "1")
+
 import json
 from pathlib import Path
 import time

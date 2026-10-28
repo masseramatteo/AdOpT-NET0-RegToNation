@@ -1,0 +1,31 @@
+Flat-LHS topology design - coverage
+========================================================================
+topologies 1500, seed 2027, candidates tried 1757 of 2250 (acceptance 0.854)
+
+Archetype shares (expected A .258 / B .258 / C .007 / D .477)
+------------------------------------------------------------------------
+    A:   385  (0.257)
+    B:   379  (0.253)
+    C:     9  (0.006)
+    D:   727  (0.485)
+
+Archetypes able to build the kept triple
+------------------------------------------------------------------------
+    1:   530  (0.353)
+    2:   379  (0.253)
+    3:   561  (0.374)
+    4:    30  (0.020)
+
+Stratum fill of the sampled distances (30 strata, ideal 50 each; rejection removes the infeasible corners)
+------------------------------------------------------------------------
+    d_LL  min  36 max  62  empty 0
+    d_SL  min  22 max  62  empty 0
+    d_SS  min  38 max  67  empty 0
+
+Realised distances (km)
+------------------------------------------------------------------------
+    d_LL           400 -    1500, mean    914
+    d_SL_mean      101 -     500, mean    322
+    d_SS           100 -    1000, mean    539
+
+Max lon/lat projection residual: 0.2390 km

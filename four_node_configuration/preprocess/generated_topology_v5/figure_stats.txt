@@ -1,0 +1,39 @@
+==========================================================================
+v5 paired topology design - diagnostic figures
+==========================================================================
+design: 6000 topologies, 750 economies, 4500 distinct triples
+
+Monte Carlo over the parameter box (Sobol, 2^16 points) ...
+   feasible as A, B, C and D     1.93 %
+   feasible as A, B and D       32.60 %
+   feasible as A and B only     21.01 %
+   feasible as D only           29.66 %
+   infeasible                   14.79 %
+
+drawing the 3-way intersection sample (crossed A/B/D alternative) ...
+   acceptance 34.47 % of the box
+
+figures:
+  wrote feasibility_map.png
+  wrote design_coverage.png
+  wrote variance_confounding.png
+  wrote within_economy.png
+  wrote common_support.png
+
+--------------------------------------------------------------------------
+VARIANCE SUMMARY
+--------------------------------------------------------------------------
+              d_LL      d_SL      d_SS
+eta2 all4     0.145     0.076     0.145
+eta2 ABD     0.032     0.006     0.179
+eta2 cross     0.054     0.006     0.005
+w(within)     0.813     0.903     0.862
+varretain     0.891     0.755     0.842   (pooled)
+  A          0.999     0.790     0.668
+  B          0.999     0.790     0.668
+  C          0.262     0.342     0.678
+  D          0.787     0.872     0.865
+spread       0.677     0.651     0.706   (median economy)
+
+C box: d_LL <= 1029, d_SL >= 211, d_SS <= 938
+rows inside C box: A 751 (555 econ.), B 751 (555 econ.), C 1500 (750 econ.), D 832 (612 econ.)

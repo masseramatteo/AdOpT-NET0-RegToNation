@@ -1,0 +1,9 @@
+Spatial topology design (screening campaign) - generated description
+
+Each of the 216 economic samples is paired with 3 four-node configurations of its own, drawn from the feasible region of the one archetype assigned to that sample and ranked by the small-large distance, so that the small-large distance enters as a within-economy contrast (low / medium / high) with the economic parameters held constant.
+
+Distances are sampled as a scrambled Sobol sequence over d_LL [150, 500] km, d_SL [20, 300] km and d_SS [40, 300] km, filtered for geometric feasibility under each archetype and never clamped or rescaled; the sample is therefore uniform over each archetype's feasible region and the realized coverage per archetype is reported. Realized small-large distances: A 44-297 km; B 22-300 km; C 87-276 km; D 21-299 km.
+
+The box is the one used for the main campaign, opened downward: the main campaign sampled d_SL in [100, 500] km, which lies entirely above the distance at which transporting hydrogen from the hub becomes cheaper than producing it locally, so distance could not discriminate. The hub-hub and small-small distances follow d_SL down out of geometric necessity: with both small clusters attached to the same hub the triangle inequality forces d_SS <= 2 d_SL, and the midway archetype requires a hub-hub distance of the order of twice the small-large distance.
+
+Node positions are the closed-form solution of the three distance constraints under the archetype's symmetry convention, projected with an azimuthal-equidistant inverse projection and refined so that the great-circle distances used by the optimisation model reproduce the sampled distances.

@@ -1,0 +1,51 @@
+Screening design - d_SL opened downward, ranked in three within economy
+========================================================================
+economies 216, topologies 648, seed 42
+box: d_LL [150, 500], d_SL [20, 300], d_SS [40, 300]
+archetype shares {'A': 54, 'B': 54, 'C': 54, 'D': 54}
+centrality threshold = 0.9, nearness ratio = 0.9
+max projection residual 0.02 km
+
+Feasible share of the box, per group
+------------------------------------------------------------------------
+    AB:  77.1%
+    C:   3.6%
+    D:  73.6%
+
+Realized d_SL per archetype and slot (km)
+------------------------------------------------------------------------
+    arch                 SL_low                SL_mid               SL_high
+    A          44-153 (med 108)     158-225 (med 188)     231-297 (med 260)
+    B          22-156 (med 121)     156-227 (med 198)     229-300 (med 270)
+    C          87-170 (med 146)     170-219 (med 196)     220-276 (med 242)
+    D          21-149 (med 109)     152-225 (med 192)     226-299 (med 261)
+
+Within-economy contrast (realized d_SL, km)
+------------------------------------------------------------------------
+    A: high - low  median    152  p10    144  p90    169
+    B: high - low  median    149  p10    144  p90    174
+    C: high - low  median    100  p10     97  p90    112
+    D: high - low  median    153  p10    148  p90    180
+
+Co-movement of the other two distances over the same contrast (km)
+------------------------------------------------------------------------
+    arch    d_SL high-low               d_LL high-low               d_SS high-low
+    A      +154.4      -13.2 [ -51.9, +27.5]       +52.0 [ +27.7, +74.7]*
+    B      +154.3      +14.8 [ -26.1, +55.9]       +25.6 [  -0.9, +50.9] 
+    C      +103.5     +214.0 [+202.0,+226.0]*      +51.2 [ +28.6, +75.5]*
+    D      +159.4      +58.2 [ +21.5, +93.1]*      -23.0 [ -49.7,  +1.1] 
+    * = the co-moving distance shifts systematically with d_SL; the contrast is joint, not pure
+
+Marginal coverage of the sampled distances (all topologies)
+------------------------------------------------------------------------
+    d_LL      : 24/24 strata filled, range 150-499 km
+    d_SL_mean : 24/24 strata filled, range 21-300 km
+    d_SS      : 24/24 strata filled, range 41-300 km
+
+Archetype-distance confounding (eta^2 over topologies)
+------------------------------------------------------------------------
+    d_LL      : 0.020
+    d_SL_mean : 0.003
+    d_SS      : 0.024
+
+RESULT: 648 topologies, 216 economies x 3 slots, 648 distinct d_SL values

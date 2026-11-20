@@ -26,7 +26,13 @@ Design
    (Petelet, Iooss, Asserin, Loredo 2010, "Latin hypercube sampling with
    inequality constraints", AStA Adv Stat Anal 94(4):325-339): the Latin
    property of every marginal is preserved exactly, only the joint distribution
-   leaves the infeasible corner.
+   leaves the infeasible corner. Unlike the original cLHS (pairwise monotone
+   constraints, compatibility-matrix permutation) this is a greedy swap repair,
+   because the constraint is nonlinear in four variables.
+   repair="legacy" (default) is the v5 / flat-LHS procedure, kept bit-identical.
+   repair="balanced" randomises which constrained coordinate is swapped and then
+   runs a feasibility-preserving within-column swap search (CD + correlation
+   objective) to recover the space filling the repair destroyed.
 4. Each economy is paired with the topologies listed for it in the manifest
    (8 per economy in v5). Spatial and economic parameters are independent by
    construction; the QC report measures it.
@@ -38,6 +44,7 @@ run_table.csv.
 from __future__ import annotations
 
 import itertools
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -84,26 +91,172 @@ def unit_to_value(u, anchors):
 
 # ------------------------------------------------------------ constrained --
 
-def constrained_lhs_economies(param_grid, n, seed=42, margin=1.02, max_rounds=50):
+REPAIR_MODES = ("legacy", "balanced")
+GAMMA_WARN = 0.30          # infeasible share above which points pile on the frontier
+PETELET_RHO_PER_GAMMA = 2.778   # Petelet et al. 2010 eq. 4, pairwise X1<X2, uniform marginals
+
+# balanced-mode post-repair optimisation (feasibility-preserving column swaps)
+POLISH_MAX_ITER = 30000
+POLISH_NO_CHANGE = 3000    # stop after this many consecutive rejected swaps
+POLISH_CORR_TARGET = 0.05  # scale of the correlation term in the objective
+POLISH_W_CORR = 1.0
+
+
+def centred_discrepancy(U):
+    """Squared centred L2 discrepancy; identical to qmc.discrepancy(U, method='CD')."""
+    n, d = U.shape
+    z = np.abs(U - 0.5)
+    t1 = (13.0 / 12.0) ** d
+    t2 = np.prod(1.0 + 0.5 * z - 0.5 * z ** 2, axis=1).sum() * 2.0 / n
+    acc = 0.0
+    for i in range(n):                      # row-wise keeps memory O(n d)
+        acc += _cd_pair_row(U, z, i).sum()
+    return t1 - t2 + acc / n ** 2
+
+
+def _cd_pair_row(U, z, i):
+    """Pair terms of the CD sum between point i and every point."""
+    return np.prod(1.0 + 0.5 * z[i] + 0.5 * z - 0.5 * np.abs(U[i] - U), axis=1)
+
+
+def _cd_swap_delta(U, z, i1, i2, c):
+    """Change of the squared CD when U[i1, c] and U[i2, c] are exchanged. O(n d)."""
+    n = U.shape[0]
+
+    def rows_contrib(UU, zz):
+        r1, r2 = _cd_pair_row(UU, zz, i1), _cd_pair_row(UU, zz, i2)
+        pair = 2.0 * (r1.sum() + r2.sum()) - r1[i1] - r2[i2] - 2.0 * r1[i2]
+        single = (np.prod(1.0 + 0.5 * zz[i1] - 0.5 * zz[i1] ** 2)
+                  + np.prod(1.0 + 0.5 * zz[i2] - 0.5 * zz[i2] ** 2))
+        return pair / n ** 2 - 2.0 * single / n
+
+    old = rows_contrib(U, z)
+    U[i1, c], U[i2, c] = U[i2, c], U[i1, c]
+    z[i1, c], z[i2, c] = z[i2, c], z[i1, c]
+    new = rows_contrib(U, z)
+    U[i1, c], U[i2, c] = U[i2, c], U[i1, c]          # restore; caller decides
+    z[i1, c], z[i2, c] = z[i2, c], z[i1, c]
+    return new - old
+
+
+def _free_pair_mask(keys):
+    constrained = {k for k in CONSTRAINED_KEYS if k in keys}
+    d = len(keys)
+    mask = np.zeros((d, d), dtype=bool)
+    for a in range(d):
+        for b in range(a + 1, d):
+            if not (keys[a] in constrained and keys[b] in constrained):
+                mask[a, b] = True
+    return mask
+
+
+def _polish(U, points, to_params, keys, margin, rng):
+    """Greedy feasibility-preserving swap search (balanced mode).
+
+    Exchanges two values inside one column (stays Latin), accepted only if
+    every point stays feasible and J = CD/CD0 + w * maxcorr_free/target drops.
+    Correlations are computed on U; with equally spaced anchors the value map
+    is affine, so they equal the correlations of the parameter values.
+    """
+    n, d = U.shape
+    constrained_cols = {keys.index(k) for k in CONSTRAINED_KEYS if k in keys}
+    free = _free_pair_mask(keys)
+    z = np.abs(U - 0.5)
+    Xc = U - U.mean(axis=0)                 # column means invariant under swaps
+    var = (Xc ** 2).sum(axis=0)
+    C = Xc.T @ Xc                           # cross products, O(d) update per swap
+    norm = np.sqrt(np.outer(var, var))
+
+    def max_free_corr(CC):
+        return float(np.abs(CC / norm)[free].max())
+
+    cd = centred_discrepancy(U)
+    cd0, corr0 = cd, max_free_corr(C)
+
+    def objective(cd_, corr_):
+        return cd_ / cd0 + POLISH_W_CORR * corr_ / POLISH_CORR_TARGET
+
+    J = objective(cd, corr0)
+    accepted, no_change, it = 0, 0, 0
+    for it in range(1, POLISH_MAX_ITER + 1):
+        if no_change >= POLISH_NO_CHANGE:
+            break
+        c = int(rng.integers(d))
+        i1, i2 = (int(v) for v in rng.choice(n, size=2, replace=False))
+        # correlation after the swap
+        diff = Xc[i2, c] - Xc[i1, c]
+        dC = diff * (Xc[i1] - Xc[i2])
+        dC[c] = 0.0
+        C_new = C.copy()
+        C_new[c, :] += dC
+        C_new[:, c] += dC
+        corr_new = max_free_corr(C_new)
+        cd_new = cd + _cd_swap_delta(U, z, i1, i2, c)
+        J_new = objective(cd_new, corr_new)
+        if J_new >= J:
+            no_change += 1
+            continue
+        if c in constrained_cols:
+            U[i1, c], U[i2, c] = U[i2, c], U[i1, c]
+            p1, p2 = to_params(U[i1]), to_params(U[i2])
+            if not (is_feasible(p1, margin) and is_feasible(p2, margin)):
+                U[i1, c], U[i2, c] = U[i2, c], U[i1, c]
+                no_change += 1
+                continue
+            points[i1], points[i2] = p1, p2
+        else:
+            U[i1, c], U[i2, c] = U[i2, c], U[i1, c]
+            points[i1], points[i2] = to_params(U[i1]), to_params(U[i2])
+        z[i1, c], z[i2, c] = z[i2, c], z[i1, c]
+        Xc[i1, c], Xc[i2, c] = Xc[i2, c], Xc[i1, c]
+        C, cd, J = C_new, cd_new, J_new
+        accepted += 1
+        no_change = 0
+    return {"polish_iterations": it, "polish_accepted": accepted,
+            "cd_after_repair": float(cd0), "cd_after_polish": float(cd),
+            "maxcorr_free_after_repair": corr0, "maxcorr_free_after_polish": max_free_corr(C)}
+
+
+def constrained_lhs_economies(param_grid, n, seed=42, margin=1.02, max_rounds=50,
+                              repair="legacy"):
     """Return (list of parameter dicts, unit-cube array, qc dict).
 
     param_grid: {name: [anchor values]} for the numeric sampled parameters only.
+    repair:
+      "legacy"   - the v5 / flat-LHS procedure, kept bit-identical so those
+                   designs can be regenerated: constrained coordinates tried
+                   in the fixed CONSTRAINED_KEYS order (demand first).
+      "balanced" - coordinate tried in random order per infeasible point (the
+                   induced correlation is shared by all constrained variables),
+                   then a feasibility-preserving swap search that recovers the
+                   space filling and orthogonality lost in the repair.
     """
+    if repair not in REPAIR_MODES:
+        raise ValueError(f"repair must be one of {REPAIR_MODES}, got {repair!r}")
     keys = list(param_grid.keys())
     d = len(keys)
     U = qmc.LatinHypercube(d=d, optimization="random-cd", seed=seed).random(n)
     rng = np.random.default_rng(seed)
+    cd_initial = float(qmc.discrepancy(U, method="CD"))
 
     def to_params(row):
         return {k: unit_to_value(row[i], param_grid[k]) for i, k in enumerate(keys)}
 
     points = [to_params(U[i]) for i in range(n)]
     n_infeasible_initial = sum(not is_feasible(p, margin) for p in points)
+    gamma = n_infeasible_initial / n
+    if gamma > GAMMA_WARN:
+        warnings.warn(f"{gamma:.0%} of the LHS points are infeasible (> {GAMMA_WARN:.0%}): "
+                      "the repair will pile points on the feasibility frontier "
+                      "(Petelet et al. 2010). Consider widening the ranges or "
+                      f"lowering margin={margin}.", stacklevel=2)
 
     # Petelet-style repair: exchange one coordinate between an infeasible point
     # and a feasible one so that both end up feasible. Exchanging the unit
     # coordinate exchanges the stratum, so every marginal stays Latin.
+    constrained_present = [k for k in CONSTRAINED_KEYS if k in param_grid]
     swaps = 0
+    swaps_per_key = {k: 0 for k in constrained_present}
     for _ in range(max_rounds):
         bad = [i for i in range(n) if not is_feasible(points[i], margin)]
         if not bad:
@@ -111,9 +264,11 @@ def constrained_lhs_economies(param_grid, n, seed=42, margin=1.02, max_rounds=50
         good = [i for i in range(n) if is_feasible(points[i], margin)]
         for i in bad:
             fixed = False
-            for key in CONSTRAINED_KEYS:
-                if key not in param_grid:
-                    continue
+            if repair == "legacy":
+                order = constrained_present
+            else:
+                order = [constrained_present[t] for t in rng.permutation(len(constrained_present))]
+            for key in order:
                 c = keys.index(key)
                 for j in rng.permutation(good):
                     U[i, c], U[j, c] = U[j, c], U[i, c]
@@ -121,6 +276,7 @@ def constrained_lhs_economies(param_grid, n, seed=42, margin=1.02, max_rounds=50
                     if is_feasible(pi, margin) and is_feasible(pj, margin):
                         points[i], points[j] = pi, pj
                         swaps += 1
+                        swaps_per_key[key] += 1
                         fixed = True
                         break
                     U[i, c], U[j, c] = U[j, c], U[i, c]      # undo
@@ -131,8 +287,13 @@ def constrained_lhs_economies(param_grid, n, seed=42, margin=1.02, max_rounds=50
         raise RuntimeError(f"{len(bad)} economies still infeasible after repair; "
                            f"widen the ranges or lower margin={margin}")
 
-    qc = {"n": n, "d": d, "keys": keys, "margin": margin, "seed": seed,
-          "infeasible_before_repair": n_infeasible_initial, "swaps": swaps}
+    qc = {"n": n, "d": d, "keys": keys, "margin": margin, "seed": seed, "repair": repair,
+          "infeasible_before_repair": n_infeasible_initial, "gamma": gamma,
+          "swaps": swaps, "swaps_per_key": swaps_per_key, "cd_initial": cd_initial}
+    if repair == "balanced":
+        qc.update(_polish(U, points, to_params, keys, margin, rng))
+        if any(not is_feasible(p, margin) for p in points):     # defensive
+            raise RuntimeError("polish produced an infeasible point")
     return points, U, qc
 
 
@@ -174,8 +335,10 @@ def qc_report(economies, U, qc, run_rows, topo, corr_limit=0.05):
     keys, n = qc["keys"], qc["n"]
     lines = ["Sampling QC - constrained Latin hypercube + paired topologies", "=" * 72,
              f"economies {n}, dimensions {len(keys)}, seed {qc['seed']}, margin {qc['margin']}",
+             f"repair mode {qc.get('repair', 'legacy')}",
              f"infeasible before repair {qc['infeasible_before_repair']} "
              f"({qc['infeasible_before_repair'] / n * 100:.1f}%), coordinate swaps {qc['swaps']}",
+             "    swaps per column: " + ", ".join(f"{k} {v}" for k, v in qc.get("swaps_per_key", {}).items()),
              f"runs in table {len(run_rows)} "
              f"({len({r['economy'] for r in run_rows})} economies x "
              f"{len({r['slot'] for r in run_rows})} slots)", ""]
@@ -222,6 +385,10 @@ def qc_report(economies, U, qc, run_rows, topo, corr_limit=0.05):
     lines.append("    constrained pairs (correlation induced by the feasible region, reported):")
     for a, b in itertools.combinations(constrained, 2):
         lines.append(f"        {a:<30} x {b:<30} {df[a].corr(df[b]):+.3f}")
+    gamma = qc.get("gamma", qc["infeasible_before_repair"] / n)
+    lines.append(f"    constraint intensity gamma (infeasible share) {gamma:.3f}; "
+                 f"Petelet eq. 4 analogy rho ~ {PETELET_RHO_PER_GAMMA} gamma = "
+                 f"{PETELET_RHO_PER_GAMMA * gamma:.3f} (pairwise-constraint relation, indicative only)")
     if off[free_pairs].max() >= corr_limit:
         failures.append("economic parameters correlated above limit")
 
@@ -229,6 +396,16 @@ def qc_report(economies, U, qc, run_rows, topo, corr_limit=0.05):
     cd_plain = qmc.discrepancy(qmc.LatinHypercube(d=len(keys), seed=qc["seed"]).random(n), method="CD")
     lines += ["", "Space filling", "-" * 72,
               f"    centred L2 discrepancy {cd:.5f}  (plain random LHS, same seed: {cd_plain:.5f})"]
+    if "cd_initial" in qc:
+        stages = f"    CD stages: optimised LHS {qc['cd_initial']:.5f}"
+        if "cd_after_repair" in qc:
+            stages += (f" -> after repair {qc['cd_after_repair']:.5f}"
+                       f" -> after polish {qc['cd_after_polish']:.5f}")
+        lines.append(stages)
+    if "polish_accepted" in qc:
+        lines.append(f"    polish: {qc['polish_accepted']} swaps accepted in {qc['polish_iterations']} "
+                     f"iterations; max |corr| free pairs {qc['maxcorr_free_after_repair']:.3f} -> "
+                     f"{qc['maxcorr_free_after_polish']:.3f}")
 
     rt = pd.DataFrame(run_rows)
     sp = topo.loc[rt["scenario"], list(SPATIAL_COLS)].reset_index(drop=True)
@@ -267,13 +444,16 @@ def write_design(results_folder, economies, run_rows, report):
 
 def build_campaign(param_grid, fixed_combo, results_folder,
                    topology_folder=DEFAULT_TOPOLOGY_FOLDER, n_economies=750,
-                   n_economies_to_run=None, seed=42, margin=1.02, abort_on_fail=True):
+                   n_economies_to_run=None, seed=42, margin=1.02, abort_on_fail=True,
+                   repair="legacy"):
     """Economies -> pairing -> QC -> files. Returns the list of run parameter dicts.
 
     n_economies_to_run < n_economies gives a pilot that is a prefix of the full
     design (same economies, same topologies), so pilot runs are never wasted.
+    repair: see constrained_lhs_economies ("legacy" reproduces v5).
     """
-    economies, U, qc = constrained_lhs_economies(param_grid, n_economies, seed, margin)
+    economies, U, qc = constrained_lhs_economies(param_grid, n_economies, seed, margin,
+                                                 repair=repair)
     manifest, topo = load_manifest(topology_folder)
     if len(manifest) < n_economies:
         raise RuntimeError(f"design_manifest.csv has {len(manifest)} economies, "

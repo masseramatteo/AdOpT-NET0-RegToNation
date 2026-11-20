@@ -36,7 +36,7 @@ source $HOME/AdOpT-NET0-RegToNation/venv/bin/activate
 echo "Activated virtual environment."
 
 ### --- GUROBI ---
-export GUROBI_HOME=$HOME/opt/gurobi-installs/gurobi1301/linux64
+export GUROBI_HOME=$HOME/opt/gurobi-installs/gurobi1400/linux64
 export PATH=$GUROBI_HOME/bin:$PATH
 export LD_LIBRARY_PATH=$GUROBI_HOME/lib:$LD_LIBRARY_PATH
 echo "Gurobi runtime paths configured."

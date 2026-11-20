@@ -12,6 +12,14 @@ Usage:
     Set RESULTS_FOLDER at the bottom of this file.
 """
 
+import os
+
+# Limit library thread pools (sklearn KMeans via OpenMP, numpy BLAS) to 1 per worker.
+# Must run before numpy/sklearn are imported; spawned workers inherit these.
+# run_near_optimal.sh exports the same values (authoritative); this is the fallback.
+for _var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+    os.environ.setdefault(_var, "1")
+
 import json
 import sys
 import h5py

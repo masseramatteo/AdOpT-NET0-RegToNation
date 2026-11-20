@@ -415,7 +415,11 @@ def load_scenario_nodes(input_data_path, nodes, scenario):
     # Build path relative to this file's location
     current_file = Path(__file__).resolve()
     four_node_folder = current_file.parent  # four_node_configuration folder
-    scenario_file = four_node_folder / "preprocess" / "generated_topology_v5" / f"NodeLocations_{scenario}.csv"
+    # Topology folder: v5 by default; a campaign entry point can point elsewhere
+    # (FOUR_NODE_run_flatlhs.py sets generated_topology_flatlhs). Spawned workers
+    # inherit the environment.
+    folder = os.environ.get("FOUR_NODE_TOPOLOGY_FOLDER", "generated_topology_v5")
+    scenario_file = four_node_folder / "preprocess" / folder / f"NodeLocations_{scenario}.csv"
 
     if not scenario_file.exists():
         raise FileNotFoundError(f"Scenario file not found: {scenario_file}")

@@ -40,6 +40,13 @@ export PATH=$GUROBI_HOME/bin:$PATH
 export LD_LIBRARY_PATH=$GUROBI_HOME/lib:$LD_LIBRARY_PATH
 echo "Gurobi runtime paths configured."
 
+### --- LIBRARY THREADS (one per worker; Gurobi threads are set in Python) ---
+# sklearn KMeans (OpenMP) and numpy BLAS otherwise size their pools to the whole
+# node (192 CPUs) in every worker during read_data. Shell export is authoritative.
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+echo "Library threads: OMP=$OMP_NUM_THREADS OPENBLAS=$OPENBLAS_NUM_THREADS MKL=$MKL_NUM_THREADS NUMEXPR=$NUMEXPR_NUM_THREADS"
+python -c "import numpy, sklearn.cluster; from threadpoolctl import threadpool_info; print('threadpool check (expect 1):', [(p['internal_api'], p['num_threads']) for p in threadpool_info()])"
+
 ### --- MOVE TO CODE FOLDER ---
 cd $HOME/AdOpT-NET0-RegToNation/four_node_configuration
 echo "Working directory: $(pwd)"

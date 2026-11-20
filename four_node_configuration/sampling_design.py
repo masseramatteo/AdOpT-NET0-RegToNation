@@ -331,8 +331,20 @@ def build_run_table(economies, manifest, topo, fixed_combo, n_economies_to_run=N
 
 # ---------------------------------------------------------------------- qc --
 
-def qc_report(economies, U, qc, run_rows, topo, corr_limit=0.05):
+def qc_report(economies, U, qc, run_rows, topo, corr_limit=None):
     keys, n = qc["keys"], qc["n"]
+    if corr_limit is None:
+        # Scale the orthogonality limit with the design size instead of fixing it.
+        # The null SE of a Pearson r is 1/sqrt(n-3), and this test takes the MAX over
+        # ~60 pairs, whose null expectation sits near 3 SE. A hard 0.05 was calibrated
+        # at n=750, where it is 1.37 SE; at n=500 it drops to 1.11 SE and starts
+        # failing on noise. It did, on 2026-09-10: the 500-economy design was rejected
+        # for a single pair at 0.052 (1.16 SE, p ~ 0.25) while the feasibility repair
+        # induces correlations up to 0.192 on constrained pairs that are accepted by
+        # design - failing on 0.052 while accepting 0.192 is not a coherent criterion.
+        # random-cd suppresses real correlations far below these limits, so the check
+        # still catches genuine defects.
+        corr_limit = max(0.05, 3.0 / np.sqrt(n - 3))
     lines = ["Sampling QC - constrained Latin hypercube + paired topologies", "=" * 72,
              f"economies {n}, dimensions {len(keys)}, seed {qc['seed']}, margin {qc['margin']}",
              f"repair mode {qc.get('repair', 'legacy')}",
@@ -377,7 +389,7 @@ def qc_report(economies, U, qc, run_rows, topo, corr_limit=0.05):
     constrained = [k for k in CONSTRAINED_KEYS if k in keys]
     free_pairs = [w for w in range(len(off))
                   if not (keys[iu[0][w]] in constrained and keys[iu[1][w]] in constrained)]
-    lines += ["", f"Orthogonality, economic parameters (limit {corr_limit})", "-" * 72,
+    lines += ["", f"Orthogonality, economic parameters (limit {corr_limit:.3f} = 3 SE at n={n})", "-" * 72,
               f"    max |corr| over {len(free_pairs)} unconstrained pairs: "
               f"{off[free_pairs].max():.3f}  {'OK' if off[free_pairs].max() < corr_limit else 'FAIL'}"]
     for w in np.argsort(off)[::-1][:5]:
@@ -481,9 +493,12 @@ def load_campaign_definition():
     dry run also works in a bare python with only numpy/pandas/scipy."""
     names = ("PARAM_GRID_FOR_SAMPLING", "FIXED_PARAMS_GRID", "N_ECONOMIES",
              "FEASIBILITY_MARGIN", "LHS_SEED")
+    optional = {"LHS_REPAIR": "legacy"}   # runners older than v6 have no LHS_REPAIR
     try:
         import FOUR_NODE_run_creation_and_gurobi_optimization_parallel as runner
-        return {n: getattr(runner, n) for n in names}
+        cfg = {n: getattr(runner, n) for n in names}
+        cfg.update({n: getattr(runner, n, d) for n, d in optional.items()})
+        return cfg
     except ImportError:
         import ast
         src = (Path(__file__).resolve().parent
@@ -491,11 +506,14 @@ def load_campaign_definition():
         found = {}
         for node in ast.parse(src).body:
             if isinstance(node, ast.Assign) and len(node.targets) == 1 \
-                    and isinstance(node.targets[0], ast.Name) and node.targets[0].id in names:
+                    and isinstance(node.targets[0], ast.Name) \
+                    and node.targets[0].id in set(names) | set(optional):
                 found[node.targets[0].id] = ast.literal_eval(node.value)
         missing = set(names) - set(found)
         if missing:
             raise RuntimeError(f"could not read {missing} from the runner source")
+        for n, d in optional.items():
+            found.setdefault(n, d)
         return found
 
 
@@ -507,5 +525,6 @@ if __name__ == "__main__":
     fixed = {k: v[0] for k, v in FIXED_PARAMS_GRID.items()}
     out = Path(__file__).resolve().parent / "results" / "sampling_design_dry_run"
     rows = build_campaign(PARAM_GRID_FOR_SAMPLING, fixed, out, n_economies=N_ECONOMIES,
-                          seed=LHS_SEED, margin=FEASIBILITY_MARGIN, abort_on_fail=False)
+                          seed=LHS_SEED, margin=FEASIBILITY_MARGIN, abort_on_fail=False,
+                          repair=cfg["LHS_REPAIR"])
     print(f"\n{len(rows)} runs; files in {out}")

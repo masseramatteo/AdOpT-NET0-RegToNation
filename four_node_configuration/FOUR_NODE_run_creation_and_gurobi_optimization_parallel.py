@@ -8,7 +8,7 @@ import os
 
 # Limit library thread pools (sklearn KMeans via OpenMP, numpy BLAS) to 1 per worker.
 # Must run before numpy/sklearn are imported; spawned workers inherit these.
-for _var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
+for _var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
     os.environ.setdefault(_var, "1")
 
 import json
@@ -982,6 +982,8 @@ N_ECONOMIES = 750            # size of the full design
 N_ECONOMIES_TO_RUN = None    # None = all; e.g. 60 for the pilot (prefix of the full design)
 FEASIBILITY_MARGIN = 1.02    # g + import_availability_ratio >= margin (annual supply adequacy)
 LHS_SEED = 42
+LHS_REPAIR = "balanced"     # v6 (2026-11): spreads the feasibility swaps over all constrained
+                             # columns; "legacy" reproduces the v5 design bit-identically
 
 # Fixed parameters: full grid, must yield exactly one combination for the
 # paired design (several combinations would need several campaigns).
@@ -1012,12 +1014,13 @@ PARAM_GRID_FOR_SAMPLING = {
     # Annual-mean PV capacity factor. Anchor library covers 0.089-0.169
     # (Denmark to Madrid); see preprocess/solar_anchors.py
     "solar_cf_mean": [0.09, 0.13, 0.17],
-    "electricity_availability_small": [20, 70, 120],
+    "electricity_availability_small": [10, 55, 100],   # v6; v5 was [20, 70, 120]
     "electricity_availability_large": [500, 1250, 2000],
     "hydrogen_import_price": [150, 225, 300],
     # Small-cluster electrolyzer unit capex as a multiple of the large one
-    # (1.494 MEUR/MW); 1.34 was the fixed value up to the Sept 2026 campaign
-    "capex_ratio_small_big": [1.0, 1.5, 2.0],
+    # (1.494 MEUR/MW). Only scale difference between the two electrolyzers.
+    # 1.34 fixed up to Sept 2026; v5 sampled [1.0, 2.0]; v6 [1.2, 2.5]
+    "capex_ratio_small_big": [1.2, 1.85, 2.5],
     # Multiplier on gamma1, gamma3, gamma4 of both pipeline pressure levels
     "pipeline_cost_multiplier": [0.5, 1.25, 2.0],
     # "threads" viene aggiunto dal runner
@@ -1089,7 +1092,7 @@ if __name__ == "__main__":
     combinations = build_campaign(
         PARAM_GRID_FOR_SAMPLING, fixed_combinations[0], results_folder,
         n_economies=N_ECONOMIES, n_economies_to_run=N_ECONOMIES_TO_RUN,
-        seed=LHS_SEED, margin=FEASIBILITY_MARGIN,
+        seed=LHS_SEED, margin=FEASIBILITY_MARGIN, repair=LHS_REPAIR,
     )
 
     # Prepare run configs (economy-major: economy 1 -> runs 0001-0008, ...)

@@ -288,15 +288,33 @@ def select_anchor(target_cf: float, calibration: dict) -> tuple[str, float, floa
     """
     Pick the anchor that reaches ``target_cf`` with the smallest residual scale.
 
+    An anchor reaches beyond its own base capacity factor through the residual
+    scale, so the admissible range is the union of each anchor's ``cf_grid``
+    (the capacity factors realized across ``SCALE_GRID``), not the range of the
+    base values. A target outside every anchor's ``cf_grid`` is rejected --
+    ``np.interp`` would otherwise saturate at the grid ends and silently return
+    a scale that does not reach the target.
+
     :param float target_cf: requested annual-mean capacity factor
     :param dict calibration: as returned by :func:`load_calibration`
     :return: (anchor name, residual scale, predicted mean capacity factor)
     :rtype: tuple
+    :raises ValueError: if no anchor can realize ``target_cf``
     """
     best = None
+    reach_lo, reach_hi = np.inf, -np.inf
+
     for name, entry in calibration["anchors"].items():
         cf_grid = np.asarray(entry["cf_grid"], dtype=float)
         scale_grid = np.asarray(entry["scale_grid"], dtype=float)
+        reach_lo = min(reach_lo, cf_grid[0])
+        reach_hi = max(reach_hi, cf_grid[-1])
+
+        # Only consider anchors that actually bracket the target; outside their
+        # own cf_grid the interpolation clamps and the result is meaningless.
+        if not cf_grid[0] <= target_cf <= cf_grid[-1]:
+            continue
+
         # cf is monotone increasing in scale, so a plain interpolation inverts it
         scale = float(np.interp(target_cf, cf_grid, scale_grid))
         predicted = float(np.interp(scale, scale_grid, cf_grid))
@@ -304,14 +322,17 @@ def select_anchor(target_cf: float, calibration: dict) -> tuple[str, float, floa
         if best is None or penalty < best[3]:
             best = (name, scale, predicted, penalty)
 
-    name, scale, predicted, penalty = best
-    if penalty > 0.25:
+    if best is None:
         raise ValueError(
-            f"solar_cf_mean={target_cf:.4f} is outside the anchor library "
-            f"({calibration['cf_min']:.4f} - {calibration['cf_max']:.4f}); "
-            f"nearest anchor '{name}' would need scale {scale:.3f}. "
-            "Add an anchor site or narrow the sampled range."
+            f"solar_cf_mean={target_cf:.4f} cannot be realized by any anchor. "
+            f"Reachable range is {reach_lo:.4f} - {reach_hi:.4f} "
+            f"(anchor base capacity factors span "
+            f"{calibration['cf_min']:.4f} - {calibration['cf_max']:.4f}). "
+            "Add an anchor site in preprocess/solar_anchors.py and rebuild the "
+            "cache, or narrow the sampled range."
         )
+
+    name, scale, predicted, _ = best
     return name, scale, predicted
 
 

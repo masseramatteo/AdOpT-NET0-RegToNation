@@ -14,11 +14,12 @@ spec.loader.exec_module(utilities)
 calculate_distance_between_coordinates = utilities.calculate_distance_between_coordinates
 
 # ── Campaign to extract ──────────────────────────────────────────────────
-# v5 paired design (Sept 2026): 8 topologies per economy, economy-major run ids.
+# v6 final campaign (job 29511700, Nov 2026): same paired design and v5 topologies.
+# v5 was: Snellius_simulations_10_09\6000_snellius_runs
 OPTIMIZATION_FOLDER = (
     r"\\soliscom.uu.nl\geo\SD\Energy and Resources\GazzaniGroup\Matteo M"
     r"\AdOpT-NET0-RegToNation\four_node_configuration\results"
-    r"\Snellius_simulations_10_09\6000_snellius_runs"
+    r"\Snellius_simulations_20_11\Full_6000_simulations"
 )
 
 # ── Archetype configuration ──────────────────────────────────────────────
